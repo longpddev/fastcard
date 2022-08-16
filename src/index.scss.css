@@ -1,0 +1,102 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-size: 16px;
+  font-weight: normal;
+  font-family: Roboto, sans-serif;
+  -webkit-text-size-adjust: none;
+  hyphens: manual;
+  -webkit-hyphens: manual;
+  -webkit-font-smoothing: antialiased;
+
+  --header-height: 60px;
+  overflow-x: hidden;
+  @apply text-white bg-primary;
+}
+
+.header {
+  height: var(--header-height);
+}
+.main__inner,
+main {
+  min-height: calc(100vh - var(--header-height));
+}
+.c-container {
+  @apply container mx-auto px-4 max-w-[1240px];
+}
+
+footer {
+  box-shadow: 0 0 2px 1px theme("colors.black");
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"],
+textarea {
+  @apply w-full bg-primary rounded-md px-4 py-1.5 shadow-sm shadow-slate-900 outline-none;
+  box-shadow: inset 0 0.5px 1px 0.5px theme("colors.slate.700"), var(--tw-ring-offset-shadow, 0 0 #0000),
+    var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+
+  &.focus,
+  &:focus {
+    @apply shadow-blue-700;
+  }
+  &.first-active:valid {
+    @apply shadow-green-700;
+  }
+  &.invalid,
+  &:invalid {
+    @apply shadow-orange-700;
+  }
+}
+
+.top-page {
+  top: calc(var(--header-height) + 15px);
+}
+
+.submenu .link.active {
+  @apply bg-slate-700;
+}
+
+.submenu a:hover {
+  text-decoration: unset;
+}
+
+.shadow-top {
+  box-shadow: inset 0 4px 2px -3px theme("colors.slate.700"), var(--tw-ring-offset-shadow, 0 0 #0000),
+    var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.card-learn {
+  .card-learn__main {
+    min-height: var(--card-learn-height, unset);
+  }
+}
+
+.button {
+  @apply relative px-6 py-1 border-b-2 inset-0 border-current overflow-hidden transition-all select-none;
+  box-shadow: 0 0 14px -4px currentColor;
+
+  /*&:after {
+    content: "";
+    @apply inset-0 w-full h-full pointer-events-none block absolute  opacity-40 transition-all;
+    box-shadow: inset 0 0 0 0 currentColor;
+    background-image: linear-gradient(to top, currentColor, transparent); 
+  }
+  &:hover {
+    &:after {
+      box-shadow: inset 0 0 2px 1px currentColor;
+    }
+  }
+  */
+
+  &:active {
+    @apply top-[-3px];
+  }
+}
+
+a:hover {
+  text-decoration: underline;
+}

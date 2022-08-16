@@ -1,0 +1,1 @@
+export const CARD_LEARN_CSS_VAR = '--card-learn-height'
