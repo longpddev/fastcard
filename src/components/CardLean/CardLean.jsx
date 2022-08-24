@@ -9,8 +9,8 @@ import ShortCutClick from "../ShortCutClick";
 
 const animateOption = {
   slide: {
-    exit: { opacity: 0, left: "0%" },
-    initial: { opacity: 0, left: "100%" },
+    exit: { opacity: 0, left: "40%" },
+    initial: { opacity: 0, left: "70%" },
     animate: { opacity: 1, left: "50%" },
   },
   fade: {
@@ -26,7 +26,7 @@ const CardLean = () => {
   useEffect(() => {
     const timer = setInterval(() => {
       setState((prev) => prev + 1);
-    }, 1500);
+    }, 2500);
 
     return () => clearInterval(timer);
   }, []);
@@ -54,7 +54,7 @@ const CardLean = () => {
           )}
         </AnimatePresence>
       </div>
-      <div className="py-6 flex gap-6 justify-center items-center shadow-top mt-10">
+      <div className="pt-10 flex gap-6 justify-center items-center shadow-top mt-10">
         <ShortCutClick
           keys={["shift+r"]}
           Component="button"

@@ -12,7 +12,7 @@ const Title = ({ tabKey, children }) => {
       tabIndex={1}
       className={`px-4 py-1 md:border-l-[3px] md:border-b-0 border-b-[3px] border-transparent relative  text-lg cursor-pointer ${
         tabKey === tabActive
-          ? "border-blue-400 before:absolute before:inset-0 before:w-full before:h-full md:before:bg-gradient-to-r before:bg-gradient-to-t before:from-blue-400 before:opacity-30 before:to-transparent"
+          ? "border-blue-400 before:absolute before:inset-0 before:w-full before:h-full md:before:bg-blue-600 before:bg-blue-600 before:opacity-20"
           : ""
       }`}
       onClick={() => !typeStep && setTabActive(tabKey)}

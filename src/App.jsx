@@ -7,6 +7,7 @@ import Default from "./layouts/Default";
 import Blank from "./layouts/Blank";
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
+import HasLogin from "./components/Auth/HasLogin";
 function App() {
   return (
     <>
@@ -14,25 +15,31 @@ function App() {
         <Route
           path="/"
           element={
-            <Default>
-              <HomePage />
-            </Default>
+            <HasLogin>
+              <Default>
+                <HomePage />
+              </Default>
+            </HasLogin>
           }
         />
         <Route
           path="/create-card"
           element={
-            <Default>
-              <CreateCardPage />
-            </Default>
+            <HasLogin>
+              <Default>
+                <CreateCardPage />
+              </Default>
+            </HasLogin>
           }
         />
         <Route
           path="/learn"
           element={
-            <Default>
-              <h1>learn</h1>
-            </Default>
+            <HasLogin>
+              <Default>
+                <h1>learn</h1>
+              </Default>
+            </HasLogin>
           }
         />
 

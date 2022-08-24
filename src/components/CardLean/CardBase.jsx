@@ -8,10 +8,10 @@ const publicHeightCard = run(() => {
   let prev = null;
   return (height) => {
     if (!height) return;
-    // if (height > prev || prev === null) {
-    document.body.style.setProperty(CARD_LEARN_CSS_VAR, `${height}px`);
-    // }
-    // prev = height;
+    if (height > prev || prev === null) {
+      document.body.style.setProperty(CARD_LEARN_CSS_VAR, `${height}px`);
+    }
+    prev = height;
   };
 });
 export default function CardBase({ image, children, title, ...props }) {

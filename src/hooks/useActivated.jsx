@@ -1,11 +1,13 @@
-import { useRef } from "react";
+import { useCallback, useRef, useState } from "react";
 
 // use to check component first active or not
 // example input not active and when user click it then it will active
 export default function useActivated() {
-  const ref = useRef(false);
+  const ref = useRef();
+  const [state, setState] = useState(false);
+  ref.current = state;
   return {
-    onActive: () => (ref.current = true),
-    isActivated: () => ref.current,
+    onActive: useCallback(() => setState(true), []),
+    isActivated: useCallback(() => ref.current, []),
   };
 }

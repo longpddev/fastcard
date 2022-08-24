@@ -25,10 +25,10 @@ const PageTab = ({ children, defaultActive, typeStep, onNext, onPrev }) => {
       typeStep={typeStep}
     >
       <div className="md:flex-row flex-col flex gap-4 main__inner">
-        <div className="flex-none flex-wrap md:flex-nowrap overflow-hidden flex md:block md:min-w-[250px] md:self-start md:py-2 sticky top-page bg-slate-800 rounded-md">
+        <div className="block-up flex-none flex-wrap md:flex-nowrap overflow-hidden flex md:block md:min-w-[250px] md:self-start md:py-2 md:sticky top-page bg-slate-800 rounded-md">
           {TitleChildren}
         </div>
-        <div className="flex-1 bg-slate-800 rounded-md md:self-start p-4">
+        <div className="flex-1 bg-slate-800 rounded-md md:self-start p-4 block-up">
           {ContentChildren}
         </div>
       </div>
