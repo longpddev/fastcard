@@ -1,8 +1,8 @@
 import { useContext } from "./context";
 
 const Content = ({ tabKey, children }) => {
-  const { tabActive, typeStep, handle } = useContext();
-  const isActive = tabKey === tabActive;
+  const { tabActive, typeStep, handle, onSubmit } = useContext();
+  const isActive = tabKey.toString() === tabActive;
 
   return isActive ? (
     <>
@@ -28,7 +28,13 @@ const Content = ({ tabKey, children }) => {
               next
             </button>
           ) : (
-            <span></span>
+            <button
+              className="text-green-400 button"
+              onClick={() => onSubmit && onSubmit()}
+            >
+              {" "}
+              Submit{" "}
+            </button>
           )}
         </div>
       )}

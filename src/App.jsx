@@ -8,6 +8,10 @@ import Blank from "./layouts/Blank";
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
 import HasLogin from "./components/Auth/HasLogin";
+import CardListPage from "./pages/CardListPage/CardListPage";
+import CardDetailPage from "./pages/CardDetailPage/CardDetailPage";
+import LearningPage from "./pages/LearningPage";
+import AccountPage from "./pages/AccountPage";
 function App() {
   return (
     <>
@@ -32,12 +36,46 @@ function App() {
             </HasLogin>
           }
         />
+
         <Route
-          path="/learn"
+          path="/list-card"
           element={
             <HasLogin>
               <Default>
-                <h1>learn</h1>
+                <CardListPage />
+              </Default>
+            </HasLogin>
+          }
+        />
+
+        <Route
+          path="/card-detail/:id"
+          element={
+            <HasLogin>
+              <Default>
+                <CardDetailPage />
+              </Default>
+            </HasLogin>
+          }
+        />
+
+        <Route
+          path="/learn/:groupId"
+          element={
+            <HasLogin>
+              <Default>
+                <LearningPage />
+              </Default>
+            </HasLogin>
+          }
+        />
+
+        <Route
+          path="/account"
+          element={
+            <HasLogin>
+              <Default>
+                <AccountPage />
               </Default>
             </HasLogin>
           }

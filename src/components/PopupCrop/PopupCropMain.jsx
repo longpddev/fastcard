@@ -4,13 +4,26 @@ import Cropper from "react-easy-crop";
 
 const PopupCropMain = ({ url, cropHeight, setCroppedImage, setOpen }) => {
   const ref = useRef();
+  const resizeCropRef = useRef(false);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [rotation, setRotation] = useState(0);
   const [flip, setFlip] = useState({ horizontal: false, vertical: false });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
-
+  const closePopup = () => {
+    resizeCropRef.current = false;
+    setOpen && setOpen(false);
+  };
   const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
+    let minToZoom = Math.min(croppedArea.height, croppedArea.width);
+    minToZoom = parseInt(minToZoom * 1000) / 1000;
+
+    if (resizeCropRef.current === false && minToZoom !== 100) {
+      console.log(minToZoom);
+      resizeCropRef.current = true;
+      setZoom(minToZoom / 100);
+    }
+    console.log(croppedArea, croppedAreaPixels);
     setCroppedAreaPixels(croppedAreaPixels);
   }, []);
 
@@ -23,7 +36,7 @@ const PopupCropMain = ({ url, cropHeight, setCroppedImage, setOpen }) => {
       const result = await getCroppedImg(url, croppedAreaPixels);
 
       setCroppedImage(result);
-      setOpen && setOpen(false);
+      closePopup();
     } catch (e) {
       console.error(e);
     }
@@ -43,6 +56,10 @@ const PopupCropMain = ({ url, cropHeight, setCroppedImage, setOpen }) => {
 
     return () => container.removeEventListener("wheel", handleWheel, true);
   }, []);
+
+  useEffect(() => {
+    resizeCropRef.current = false;
+  }, [url]);
   return (
     <>
       <div
@@ -50,7 +67,6 @@ const PopupCropMain = ({ url, cropHeight, setCroppedImage, setOpen }) => {
         className="relative"
         style={{ minHeight: `${cropHeight}px` }}
         onWheel={(e) => {
-          console.log("wheel");
           scale += event.deltaY * -0.01;
         }}
       >
@@ -59,6 +75,7 @@ const PopupCropMain = ({ url, cropHeight, setCroppedImage, setOpen }) => {
           crop={crop}
           zoom={zoom}
           aspect={4 / 3}
+          cropSize={{ width: 400, height: 300 }}
           restrictPosition={false}
           onCropChange={setCrop}
           onRotationChange={setRotation}

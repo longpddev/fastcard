@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef } from "react";
 import { CARD_LEARN_CSS_VAR } from "../../constants";
 import Card from "../Card";
-
+import Markdown from "../../components/Markdown";
 const run = (callback) => callback();
 
 const publicHeightCard = run(() => {
@@ -14,7 +14,14 @@ const publicHeightCard = run(() => {
     prev = height;
   };
 });
-export default function CardBase({ image, children, title, ...props }) {
+export default function CardBase({
+  image,
+  children,
+  title,
+  width,
+  height,
+  ...props
+}) {
   const ref = useRef();
   useLayoutEffect(() => {
     const element = ref.current;
@@ -39,8 +46,26 @@ export default function CardBase({ image, children, title, ...props }) {
     >
       <Card className="min-h-[450px]">
         {title}
-        {image && <img src={image} alt="" className="mb-4" />}
-        <div className={`${image ? "pt-0" : ""} p-6`}>{children}</div>
+        {image && (
+          <div className="relative min-h-[250px] overflow-hidden mb-4">
+            <div
+              className="absolute inset-0 w-full h-full z-0"
+              style={{
+                background: `url(${image}) center center / cover no-repeat`,
+                filter: "blur(20px)",
+              }}
+            ></div>
+            <img
+              src={image}
+              alt=""
+              className="absolute top-0 bottom-0 h-full left-1/2 translate-x-[-50%] z-10"
+              style={{ aspectRatio: `${width}/${height}` }}
+            />
+          </div>
+        )}
+        <div className={`${image ? "pt-0" : ""} p-6`}>
+          <Markdown>{children}</Markdown>
+        </div>
       </Card>
     </div>
   );

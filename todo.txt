@@ -1,0 +1,16 @@
+CRUD detail group card
+Shortcut next prev of PageTab (ignore) {start:2022-09-03T16:29:48} {cm:2022-09-03} {duration:18m}
+Show description group card in create card step to show guild and workflow of group
+Improvement crop image {start:2022-09-03T15:07:04} {cm:2022-09-03} {duration:1h2m}
+Make card fake for dev {start:2022-09-03T16:53:43} {cm:2022-09-03} {duration:1h38m}
+Make function learning card {start:2022-09-04T09:38:39} {cm:2022-09-05} {duration:15h10m}
+Remind card use email
+Export Import card
+Page change user info
+Page for user change settings
+Confirm email when signin
+Improvement input checkbox {cm:2022-09-02}
+imporvement PageTab add hash when change tab {start:2022-09-03T14:39:52} {cm:2022-09-03} {duration:26m}
+Fix can't delete card have not image {start:2022-09-03T16:49:31} {cm:2022-09-03} {duration:2m}
+Create paginate for card list
+Change structure table {cm:2022-09-04}

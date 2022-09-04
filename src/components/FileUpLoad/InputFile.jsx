@@ -10,10 +10,12 @@ import { getFile, getName, invoke, validate } from "./functions";
 import GetImageFromInternet from "./GetImageFromInternet";
 import PopupCrop from "../PopupCrop";
 import { pushToast } from "../Toast";
+import { getImageBase64 } from "../../functions/common";
 const InputFile = ({
   maxSize = 1024 * 1024 * 2,
   type = /^image\/.+$/,
   onChange,
+  imageUrl,
   onError,
   setCroppedImage,
 }) => {
@@ -41,6 +43,16 @@ const InputFile = ({
   }, [fileValidate]);
 
   useEffect(() => {
+    if (!imageUrl) return;
+    if (Boolean(url)) return;
+
+    getImageBase64(imageUrl).then((url) => {
+      setUrl(url);
+      setOpen(true);
+    });
+  }, [imageUrl]);
+
+  useEffect(() => {
     const fileObject = getFile(file.current);
     if (onChange) onChange(fileObject);
     if (onError) onError(fileObject, fileValidate);
@@ -62,7 +74,7 @@ const InputFile = ({
           ref={file}
           type="file"
           onChange={invoke((e) => rerender({}), onActive)}
-          className="absolute inset-0 block w-full h-full  bg-transparent opacity-0 cursor-pointer"
+          className="absolute inset-0 block w-full h-full  bg-transparent opacity-0 cursor-pointer input"
         />
 
         <p>
@@ -79,7 +91,16 @@ const InputFile = ({
 
       <PopupCrop
         open={open}
-        setCroppedImage={setCroppedImage}
+        setCroppedImage={(result) => {
+          const fileOb = getFile(file.current);
+          setCroppedImage({
+            ...result,
+            fileName: fileOb
+              ? fileOb.name.replace(/\.[a-z]+$/, "")
+              : Math.random().toString(32).slice(2, 7),
+            extension: "png",
+          });
+        }}
         setOpen={(status) => {
           setOpen(status);
 

@@ -15,10 +15,13 @@ export const queryApi = createApi({
     },
   }),
   endpoints: (builder) => ({
-    getGroupCard: builder.query({
-      query: () => `card-group`,
+    getListCard: builder.query({
+      query: (groupId) => `card${groupId ? `?groupId=${groupId}` : ""}`,
+    }),
+    getCardDetail: builder.query({
+      query: (id) => `card/${id}`,
     }),
   }),
 });
 
-export const { useGetGroupCardQuery } = queryApi;
+export const { useGetListCardQuery, useGetCardDetailQuery } = queryApi;

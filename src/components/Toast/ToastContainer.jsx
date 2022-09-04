@@ -14,13 +14,11 @@ function reverse(arr) {
 const OutsideTheApp = ({ children }) => createPortal(children, document.body);
 const ToastContainer = () => {
   const { toast, removeToast } = useSubscribeToast();
-  console.log(toast);
-  // reverse(toast);
   return (
     <OutsideTheApp>
       <div
         className={clsx(
-          "fixed top-0 right-0  z-50 max-w-[250px] w-full grid gap-3 overflow-hidden",
+          "fixed top-0 right-0  z-50 max-w-[350px] w-full grid gap-3 overflow-hidden",
           {
             "p-4": toast.length > 0,
           }
@@ -28,7 +26,6 @@ const ToastContainer = () => {
       >
         <AnimatePresence>
           {reverse(toast).map((item) => {
-            console.log(item.id);
             return (
               <ToastElement
                 toast={item}

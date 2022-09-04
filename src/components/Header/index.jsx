@@ -27,12 +27,12 @@ const Header = memo(() => {
       icon: "fas fa-list-ul",
     },
     {
-      path: "/account-detail",
-      label: "Account Detail",
+      path: "/account",
+      label: "Account",
       icon: "fas fa-user-gear",
     },
     {
-      path: "#",
+      path: "",
       label: "Logout",
       icon: "fa-solid fa-arrow-right-from-bracket",
       props: {

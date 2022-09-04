@@ -28,6 +28,9 @@ const LoginPage = () => {
   const handleSubmit = () => {
     dispatch(loginThunk(data))
       .then(watchThunk)
+      .then(() => {
+        window.open(location.origin, "_self");
+      })
       .catch(({ error }) => {
         resetPassword();
         pushToast.error("Email or password is wrong");

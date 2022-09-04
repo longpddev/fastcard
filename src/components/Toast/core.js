@@ -64,12 +64,6 @@ const createToast = curry((type, message) => {
     notifyToast();
   };
 });
-export const pushToast = {};
-
-Object.keys(TYPE).forEach((key) => {
-  const value = TYPE[key];
-  pushToast[key] = createToast(value);
-});
 
 export const removeToast = (toastItem) => {
   toastMap.delete(toastItem);
@@ -87,3 +81,16 @@ export const useSubscribeToast = () => {
 
   return { toast, removeToast, pushToast };
 };
+
+export const pushToast = {};
+export const pushFastToast = {};
+
+Object.keys(TYPE).forEach((key) => {
+  const value = TYPE[key];
+  pushToast[key] = createToast(value);
+  pushFastToast[key] = (message) =>
+    createToast(value, {
+      message,
+      time: 2000,
+    });
+});

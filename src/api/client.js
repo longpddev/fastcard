@@ -1,17 +1,28 @@
-import { token } from "../functions/common";
+import { isCurrentOrigin, isValidUrl, token } from "../functions/common";
 
 const handleError = (error) => {
   console.error(error);
 };
 export const baseUrl = `${import.meta.env.VITE_URL_BACKEND}/api/v1`;
-const createMethod = async (point, method, body = null) => {
+const createMethod = async (point, method, body = null, headers) => {
+  const getBody = () => {
+    const isObject = typeof body === "object";
+    const isEmpty = !Boolean(body);
+    const isFormData = body instanceof FormData;
+    if (isFormData) return body;
+    if (isEmpty) return undefined;
+    if (isObject) return JSON.stringify(body);
+    return body;
+  };
   let result = await fetch(`${baseUrl}${point}`, {
     method,
-    body: body ? JSON.stringify(body) : body,
+    body: getBody(),
     mode: "cors",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: headers
+      ? headers
+      : {
+          "Content-Type": "application/json",
+        },
   });
   let isOk = result.ok;
   result = await result.json();
@@ -23,25 +34,31 @@ const createMethod = async (point, method, body = null) => {
   return result;
 };
 
-const createMethodAuth = async (point, method, body = null) => {
-  let result = await fetch(`${baseUrl}${point}`, {
+const createMethodAuth = async (point, method, body = null) =>
+  await createMethod(
+    point,
     method,
-    body: body ? JSON.stringify(body) : body,
-    mode: "cors",
-    headers: new Headers({
+    body,
+    new Headers({
       Authorization: `Bearer ${token.get()}`,
       "Content-Type": "application/json",
-    }),
-  });
-  let isOk = result.ok;
-  result = await result.json();
+    })
+  );
 
-  if (!isOk) {
-    console.error(result);
-    return Promise.reject(result);
+export const uploadfile = async (point, data) => {
+  const formData = new FormData();
+
+  for (let [name, value] of Object.entries(data)) {
+    formData.append(name, value);
   }
-
-  return result;
+  return await createMethod(
+    point,
+    "POST",
+    formData,
+    new Headers({
+      Authorization: `Bearer ${token.get()}`,
+    })
+  );
 };
 
 const paramToString = (params) => {
@@ -82,4 +99,10 @@ export const clientAuth = {
 
 export default client;
 
-export const getMedia = (url) => `${import.meta.env.VITE_URL_BACKEND}/${url}`;
+export const getMedia = (url) => {
+  if (isValidUrl(url)) {
+    return url;
+  } else {
+    return `${import.meta.env.VITE_URL_BACKEND}/${url}`;
+  }
+};

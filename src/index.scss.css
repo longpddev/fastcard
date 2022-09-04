@@ -3,6 +3,12 @@
 @tailwind utilities;
 
 @layer base {
+ 
+
+  th,
+  td {
+    @apply px-4 py-2;
+  }
   body {
     font-size: 16px;
     font-weight: normal;
@@ -19,11 +25,7 @@
     --shadow-block-down: inset 0 1px 1.5px 0.2px theme("colors.black");
     --shadow-block-up: inset 0 1px 1.5px 0.2px theme("colors.slate.600");
   }
-  .input,
-  [type="text"],
-  [type="password"],
-  [type="email"],
-  textarea {
+  .input {
     @apply w-full bg-primary rounded-md px-4 py-1.5 shadow-sm shadow-slate-700 outline-none;
     box-shadow: var(--shadow-block-down), var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000),
       var(--tw-shadow);
@@ -118,6 +120,131 @@
   a:hover {
     text-decoration: underline;
   }
+
+  .table-border {
+    td {
+      @apply border-t border-gray-700;
+    }
+
+    td,
+    th {
+      @apply border-l border-gray-700;
+
+      &:first-child {
+        @apply border-l-0;
+      }
+    }
+  }
+
+  .table-border-full {
+    th,
+    td {
+      @apply border border-gray-700;
+    }
+  }
+
+  .markdown {
+    * {
+      line-height: 1.25em;
+    }
+    h1, h2, h3, h4, p, table, ul, ol, blockquote{
+      margin-bottom: .5em;
+      margin-top: .5em;
+    }
+
+    h1, h2, h3, h4 {
+      @apply font-medium;
+    }
+    h1 {
+      @apply text-5xl;
+    }
+  
+    h2 {
+      @apply text-3xl;
+    }
+  
+    h3 {
+      @apply text-xl;
+    }
+  
+    h4 {
+      @apply text-lg;
+    }
+
+    ul {
+      @apply pl-6;
+
+      li {
+        @apply list-disc;
+      }
+    }
+
+    ol {
+      @apply pl-6;
+
+      li {
+        @apply list-decimal;
+      }
+    }
+    
+    strong {
+      @apply text-slate-300;
+      filter: drop-shadow(0 0 5px currentColor);
+    }
+
+    a {
+      @apply text-sky-400 underline;
+    }
+
+    blockquote {
+      @apply border-l-2 border-sky-400 px-3 py-1;
+      @apply relative before:absolute before:inset-0 before:w-full before:h-full before:bg-sky-400 before:opacity-10;
+    }
+
+    table {
+      width: 100%;
+      th,
+      td {
+        @apply border border-gray-700 py-2;
+      }
+    }
+
+    & > *:first-child {
+      margin-top: unset;
+    }
+    input[type=checkbox] {
+      position: relative;
+      cursor: pointer;
+      margin-right: 5px;
+    }
+    input[type=checkbox]:before {
+      content: "";
+      display: block;
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      top: 0;
+      left: 0;
+      border: 1px solid theme('colors.slate.500');
+      border-radius: 3px;
+      background-color: theme("colors.slate.800");
+    }
+    input[type=checkbox]:checked:after {
+      content: "";
+      display: block;
+      width: 5px;
+      height: 10px;
+      border: solid theme("colors.sky.400");
+      border-width: 0 2px 2px 0;
+      -webkit-transform: rotate(45deg);
+      -ms-transform: rotate(45deg);
+      transform: rotate(45deg);
+      position: absolute;
+      top: 2px;
+      left: 6px;
+    }
+
+  }
 }
 
 .shake-animate {
@@ -136,4 +263,107 @@
   60% {
     left: 5px;
   }
+}
+
+.animate-progress {
+  &:before {
+    content: "";
+    box-shadow: 0 0 30px 30px white;
+    @apply absolute top-0 bottom-0 h-full w-5 bg-slate-50 z-10;
+    animation: animate-progress 1000ms infinite;
+  }
+}
+
+@keyframes animate-progress {
+  0% {
+    left: 0;
+  }
+
+  100% {
+    left: 100%;
+  }
+}
+
+.icon-circle-shadow {
+  --icon-circle-shadow: 0px
+  text-shadow: 0px 0px var(--icon-circle-shadow) currentColor;
+
+  &:hover {
+    --icon-circle-shadow: 5px;
+  }
+  &:active {
+    --icon-circle-shadow: 15px;
+    text-shadow: 0 0 15px currentColor;
+  }
+}
+
+
+body {
+  background: #234;
+}
+
+@keyframes firework {
+  0% { 
+    transform: translate(-50%, 60vh);
+    width: 0.5vmin;
+    opacity: 1;
+  }
+  50% { 
+    width: 0.5vmin;
+    opacity: 1;
+  }
+  100% { 
+    width: 45vmin; 
+    opacity: 0; 
+  }
+}
+
+.firework,
+.firework::before,
+.firework::after,
+.firework-delay,
+.firework-delay::before,
+.firework-delay::after {
+  --top: 60vh;
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  opacity: 0;
+  transform: translate(-50%, -50%);
+  width: 0.5vmin;
+  aspect-ratio: 1;
+  background:
+    /* random backgrounds */
+    radial-gradient(circle, #ff0 0.2vmin, #0000 0) 50% 00%,
+    radial-gradient(circle, #ff0 0.3vmin, #0000 0) 00% 50%,
+    radial-gradient(circle, #ff0 0.5vmin, #0000 0) 50% 99%,
+    radial-gradient(circle, #ff0 0.2vmin, #0000 0) 99% 50%,
+    radial-gradient(circle, #ff0 0.3vmin, #0000 0) 80% 90%,
+    radial-gradient(circle, #ff0 0.5vmin, #0000 0) 95% 90%,
+    radial-gradient(circle, #ff0 0.5vmin, #0000 0) 10% 60%,
+    radial-gradient(circle, #ff0 0.2vmin, #0000 0) 31% 80%,
+    radial-gradient(circle, #ff0 0.3vmin, #0000 0) 80% 10%,
+    radial-gradient(circle, #ff0 0.2vmin, #0000 0) 90% 23%,
+    radial-gradient(circle, #ff0 0.3vmin, #0000 0) 45% 20%,
+    radial-gradient(circle, #ff0 0.5vmin, #0000 0) 13% 24%
+    ;
+  background-size: 0.5vmin 0.5vmin;
+  background-repeat: no-repeat;
+  animation: firework 2s;
+  animation-iteration-count: 3;
+}
+
+.firework-delay,
+.firework-delay::before,
+.firework-delay::after {
+  animation-delay: 2s;
+}
+
+.firework::before {
+  transform: translate(-50%, -50%) rotate(25deg) !important; 
+}
+
+.firework::after {
+  transform: translate(-50%, -50%) rotate(-37deg) !important;
 }

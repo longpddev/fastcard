@@ -1,9 +1,19 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { clientAuth } from "../../api/client";
+import { watchThunk } from "../../functions/common";
+import {
+  createGroupCardThunk,
+  selectorGroupNameExist,
+} from "../../services/card/cardSlice";
+import { progressDone, progressStart } from "../ProgressGlobal/ProgressGlobal";
 import { pushToast } from "../Toast/core";
 const FastAdd = ({ onClose, ...props }) => {
   const inputRef = useRef();
   const [value, valueSet] = useState("");
+  const checkGroupNameExist = useSelector(selectorGroupNameExist);
+
+  const dispatch = useDispatch();
   const handleAdd = () => {
     const val = value.trim();
     if (val.length === 0) {
@@ -12,21 +22,23 @@ const FastAdd = ({ onClose, ...props }) => {
       return;
     }
 
-    clientAuth
-      .POST("/card-group", {
-        body: {
-          name: value,
-        },
-      })
+    if (checkGroupNameExist(value)) {
+      shake();
+      pushToast.warning("The group card already exist, Please try again!");
+      return;
+    }
+    progressStart();
+    dispatch(createGroupCardThunk({ name: value }))
+      .then(watchThunk)
       .then(() => {
         pushToast.success("Create success");
         valueSet("");
         onClose && onClose();
       })
       .catch((e) => {
-        console.error(e);
         pushToast.error("Create error please try again");
-      });
+      })
+      .finally(progressDone);
   };
   const shake = () => {
     inputRef.current.classList.add("shake-animate");
@@ -43,16 +55,32 @@ const FastAdd = ({ onClose, ...props }) => {
       element.removeEventListener("animationend", handle);
     };
   }, []);
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleAdd();
+    }
+    console.log(e.key);
+    if (e.key === "Esc") {
+      valueSet("");
+      onClose && onClose();
+    }
+  };
   return (
     <div className="flex mt-4" {...props}>
       <input
         ref={inputRef}
         type="text"
         value={value}
+        onKeyDown={handleKeyDown}
         onChange={(e) => valueSet(e.target.value)}
-        className="relative transition-all left-0 right-0"
+        placeholder="Name of Group: e.g. Lean something"
+        className="relative transition-all left-0 right-0 input"
       />
-      <button onClick={handleAdd} className="button text-sm ml-2">
+      <button
+        onClick={handleAdd}
+        className="button text-green-400 text-sm ml-2"
+      >
         Add
       </button>
     </div>

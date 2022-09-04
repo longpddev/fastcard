@@ -40,7 +40,7 @@ export const InputValidate = ({
     <div className={className}>
       <input
         value={value}
-        className={clsx(inputClass, {
+        className={clsx("input", inputClass, {
           "first-active": plug.isActivated(),
         })}
         name={name}

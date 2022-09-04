@@ -1,34 +1,6 @@
 import React from "react";
 import { useState } from "react";
-
-function isImage64(url) {
-  return /^data:image\/(jpeg|png|jpg)(;base64,).*/.test(url);
-}
-
-function getImageBase64(url) {
-  if (!isImage64(url)) return Promise.resolve(url);
-
-  return new Promise((res, rej) => {
-    const image = new Image();
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-    image.crossOrigin = "anonymous";
-    image.onload = () => {
-      canvas.width = image.width;
-      canvas.height = image.height;
-      ctx.drawImage(image, 0, 0);
-      canvas.toBlob((file) => {
-        res(URL.createObjectURL(file));
-      }, "image/png");
-    };
-
-    image.onerror = (error) => {
-      console.warning(error);
-      res(url);
-    };
-    image.src = url;
-  });
-}
+import { getImageBase64 } from "../../functions/common";
 
 const GetImageFromInternet = ({ setUrl, onSuccess }) => {
   const [typing, setTyping] = useState("");
@@ -46,10 +18,22 @@ const GetImageFromInternet = ({ setUrl, onSuccess }) => {
         <span>or,</span>
         <input
           type="text"
-          className="inline-block bg-transparent py-1 ml-3"
+          className="inline-block bg-transparent py-1 ml-3 input"
           value={typing}
           placeholder="Paste url here"
           onPaste={handlePasteImage}
+          onDrop={(e) => {
+            e.preventDefault();
+            const meta = e.dataTransfer.getData("text/html");
+            if (!meta) return;
+            const fragment = document.createElement("div");
+            fragment.innerHTML = meta;
+            const image = fragment.getElementsByTagName("img")[0];
+            if (!image || !image.getAttribute("src")) return;
+            getImageBase64(image.getAttribute("src")).then((url) =>
+              setUrl(url)
+            );
+          }}
           onChange={(e) => setTyping(e.target.value.trim())}
         />
         <button

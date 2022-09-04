@@ -4,11 +4,17 @@ import { useState } from "react";
 import InputFile from "./InputFile";
 import ShowCroppedImage from "./ShowCroppedImage";
 
-const FileUpLoad = ({ croppedImage, setCroppedImage }) => {
+const FileUpLoad = ({
+  croppedImage,
+  imageUrl,
+  setImageUrl,
+  setCroppedImage,
+}) => {
   return (
     <>
       {!croppedImage && (
         <InputFile
+          imageUrl={imageUrl}
           croppedImage={croppedImage}
           setCroppedImage={setCroppedImage}
         />
@@ -17,7 +23,10 @@ const FileUpLoad = ({ croppedImage, setCroppedImage }) => {
       {croppedImage && (
         <ShowCroppedImage
           fileImage={croppedImage}
-          onReset={() => setCroppedImage(null)}
+          onReset={() => {
+            setCroppedImage(null);
+            setImageUrl && setImageUrl(undefined);
+          }}
         />
       )}
     </>
