@@ -5,7 +5,7 @@ import CardExplain from "./CardExplain";
 import CardQuestion from "./CardQuestion";
 
 import { motion, AnimatePresence } from "framer-motion";
-import ShortCutClick from "../ShortCutClick";
+import ShortCutClick, { GlobalKeys } from "../ShortCutClick";
 import { useDispatch, useSelector } from "react-redux";
 import { path } from "ramda";
 import { getMedia } from "../../api/client";
@@ -49,7 +49,6 @@ const CardLean = ({ groupId }) => {
           isFrontSet(true);
         })
         .catch((e) => {
-          console.log(e);
           pushFastToast.error("Sometime error, please try again");
         });
     const caseOb = {
@@ -63,7 +62,8 @@ const CardLean = ({ groupId }) => {
 
     return caseOb[type]();
   };
-
+  const image = new Image();
+  image.src = getMedia(card.backCard.image.path);
   return (
     <div className="relative card-learn h-full">
       <div className="card-learn__main mb-4">
@@ -100,47 +100,54 @@ const CardLean = ({ groupId }) => {
       </div>
       <div className="pt-10 flex gap-6 justify-center items-center shadow-top mt-10">
         {isFront ? (
-          <ShortCutClick
-            keys={["Enter"]}
-            Component="button"
-            className="button text-sky-300"
-            onClick={() => isFrontSet(false)}
+          <GlobalKeys
+            handlers={{
+              Enter: () => isFrontSet(false),
+            }}
           >
-            View results
-          </ShortCutClick>
+            <button
+              className="button text-sky-300"
+              onClick={() => isFrontSet(false)}
+            >
+              View results
+            </button>
+          </GlobalKeys>
         ) : (
-          <>
-            <ShortCutClick
-              keys={["shift+r"]}
-              Component="button"
+          <GlobalKeys
+            handlers={{
+              "SPACE_BAR+r": () => handleAction(CARD_LEAN_TYPE.repeat),
+              "SPACE_BAR+g": () => handleAction(CARD_LEAN_TYPE.good),
+              "SPACE_BAR+h": () => handleAction(CARD_LEAN_TYPE.hard),
+            }}
+          >
+            <button
+              title="SPACE_BAR+r"
               onClick={() => {
                 handleAction(CARD_LEAN_TYPE.repeat);
               }}
               className="text-stone-400 text-xl button"
             >
               Repeat
-            </ShortCutClick>
-            <ShortCutClick
-              keys={["shift+g"]}
-              Component="button"
+            </button>
+            <button
+              title="SPACE_BAR+g"
               onClick={() => {
                 handleAction(CARD_LEAN_TYPE.good);
               }}
               className="text-green-400 text-xl button"
             >
               Good
-            </ShortCutClick>
-            <ShortCutClick
-              keys={["shift+h"]}
-              Component="button"
+            </button>
+            <button
+              title="SPACE_BAR+h"
               onClick={() => {
                 handleAction(CARD_LEAN_TYPE.hard);
               }}
               className="text-red-400 text-xl button"
             >
               Hard
-            </ShortCutClick>
-          </>
+            </button>
+          </GlobalKeys>
         )}
       </div>
     </div>
