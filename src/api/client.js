@@ -100,6 +100,7 @@ export const clientAuth = {
 export default client;
 
 export const getMedia = (url) => {
+  if (!url) return;
   if (isValidUrl(url)) {
     return url;
   } else {

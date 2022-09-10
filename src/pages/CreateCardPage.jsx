@@ -141,7 +141,6 @@ const CreateCardPage = () => {
             .then(() => {
               reset();
               gotoTop();
-              groupIdSet(undefined);
               controlRef.current && controlRef.current.reset();
               pushToast.success("Create card success");
             })

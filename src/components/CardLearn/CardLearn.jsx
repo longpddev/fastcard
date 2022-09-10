@@ -15,6 +15,8 @@ import {
 } from "../../services/card/cardSlice";
 import { watchThunk } from "../../functions/common";
 import { pushFastToast } from "../Toast/core";
+import { CARD_TYPE } from "../../constants";
+import CardAnswer from "./CardAnswer";
 
 const animateOption = {
   slide: {
@@ -33,7 +35,7 @@ const CARD_LEAN_TYPE = {
   good: "good",
   repeat: "repeat",
 };
-const CardLean = ({ groupId }) => {
+const CardLearn = ({ groupId }) => {
   const [isFront, isFrontSet] = useState(true);
   const process = useSelector((s) => s.card.process)[groupId];
   const dispatch = useDispatch();
@@ -62,8 +64,12 @@ const CardLean = ({ groupId }) => {
 
     return caseOb[type]();
   };
-  const image = new Image();
-  image.src = getMedia(card.backCard.image.path);
+
+  if (card.backCard.image) {
+    const image = new Image();
+    image.src = getMedia(card.backCard.image.path);
+  }
+  console.log(card.frontCard.type);
   return (
     <div className="relative card-learn h-full">
       <div className="card-learn__main mb-4">
@@ -74,10 +80,11 @@ const CardLean = ({ groupId }) => {
               className="absolute top-0 left-[50%] translate-x-[-50%] w-[min-content]"
               {...animateOption.slide}
             >
-              <CardExplain
-                image={getMedia(card.frontCard.image.path)}
-                width={card.frontCard.image.width}
-                height={card.frontCard.image.height}
+              <CardCreator
+                type={card.frontCard.type}
+                image={getMedia(card.frontCard.image?.path)}
+                width={card.frontCard.image?.width}
+                height={card.frontCard.image?.height}
                 children={card.frontCard.content}
               />
             </motion.div>
@@ -88,10 +95,11 @@ const CardLean = ({ groupId }) => {
               className="absolute top-0 left-[50%] translate-x-[-50%] w-[min-content]"
               {...animateOption.slide}
             >
-              <CardQuestion
-                image={getMedia(card.backCard.image.path)}
-                width={card.backCard.image.width}
-                height={card.backCard.image.height}
+              <CardCreator
+                type={card.backCard.type}
+                image={getMedia(card.backCard.image?.path)}
+                width={card.backCard.image?.width}
+                height={card.backCard.image?.height}
                 children={card.backCard.content}
               />
             </motion.div>
@@ -117,6 +125,7 @@ const CardLean = ({ groupId }) => {
             handlers={{
               "SPACE_BAR+r": () => handleAction(CARD_LEAN_TYPE.repeat),
               "SPACE_BAR+g": () => handleAction(CARD_LEAN_TYPE.good),
+              Enter: () => handleAction(CARD_LEAN_TYPE.good),
               "SPACE_BAR+h": () => handleAction(CARD_LEAN_TYPE.hard),
             }}
           >
@@ -154,4 +163,16 @@ const CardLean = ({ groupId }) => {
   );
 };
 
-export default CardLean;
+const CardCreator = ({ type, ...props }) => {
+  if (!(type in CARD_TYPE)) throw new Error("type do not exist");
+
+  switch (type) {
+    case CARD_TYPE.question:
+      return <CardQuestion {...props} />;
+    case CARD_TYPE.answer:
+      return <CardAnswer {...props} />;
+    case CARD_TYPE.explain:
+      return <CardExplain {...props} />;
+  }
+};
+export default CardLearn;
