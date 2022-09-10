@@ -12,7 +12,7 @@ const AccountPage = () => {
       <PageTab.Title tabKey={ACCOUNT_PAGE.settings}> Settings </PageTab.Title>
 
       <PageTab.Content tabKey={ACCOUNT_PAGE.detail}>
-        Coming soon
+        Coming soon...
       </PageTab.Content>
       <PageTab.Content tabKey={ACCOUNT_PAGE.settings}>
         <AccountSetting />
