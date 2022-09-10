@@ -69,7 +69,6 @@ const CardLearn = ({ groupId }) => {
     const image = new Image();
     image.src = getMedia(card.backCard.image.path);
   }
-  console.log(card.frontCard.type);
   return (
     <div className="relative card-learn h-full">
       <div className="card-learn__main mb-4">

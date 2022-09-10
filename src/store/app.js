@@ -22,7 +22,6 @@ export const store = configureStore({
 run(async () => {
   const tokenData = token.get();
   if (!tokenData) return;
-  console.log(tokenData);
   const { dispatch } = store;
 
   await dispatch(getUserInfo());

@@ -10,7 +10,6 @@ const CardListPage = () => {
     () => groupCard.ids.map((id) => groupCard.entities[id]),
     [groupCard]
   );
-  console.log(path([0, "id"], groupCardList));
   return (
     <PageTab
       key={groupCardList.length}

@@ -25,7 +25,6 @@ const SignUpPage = () => {
   const handleSubmit = () => {
     dispatch(signupThunk({ email: data.email, password: data.password }))
       .then(watchThunk)
-      .then((action) => console.log(action))
       .catch(({ error }) => {
         pushToast.error(error.message);
         resetField();
