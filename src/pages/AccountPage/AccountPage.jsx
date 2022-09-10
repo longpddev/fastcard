@@ -11,7 +11,9 @@ const AccountPage = () => {
       <PageTab.Title tabKey={ACCOUNT_PAGE.detail}> Detail </PageTab.Title>
       <PageTab.Title tabKey={ACCOUNT_PAGE.settings}> Settings </PageTab.Title>
 
-      <PageTab.Content tabKey={ACCOUNT_PAGE.detail}>content</PageTab.Content>
+      <PageTab.Content tabKey={ACCOUNT_PAGE.detail}>
+        coming soon...
+      </PageTab.Content>
       <PageTab.Content tabKey={ACCOUNT_PAGE.settings}>
         <AccountSetting />
       </PageTab.Content>
