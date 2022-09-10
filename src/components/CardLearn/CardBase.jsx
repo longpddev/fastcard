@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef } from "react";
 import { CARD_LEARN_CSS_VAR } from "../../constants";
 import Card from "../Card";
-import Markdown from "../../components/Markdown";
+import Markdown from "../Markdown";
 const run = (callback) => callback();
 
 const publicHeightCard = run(() => {

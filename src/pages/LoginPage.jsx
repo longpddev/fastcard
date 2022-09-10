@@ -22,7 +22,6 @@ const LoginPage = () => {
   const resetPassword = () => setData({ ...data, password: "" });
 
   useEffect(() => {
-    console.log("login page");
     if (isLogin) navigate("/");
   }, [isLogin]);
   const handleSubmit = () => {

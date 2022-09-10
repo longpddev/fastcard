@@ -42,7 +42,6 @@ export const delay = (time) => {
     return new Promise((res) => {
       setTimeout(() => {
         res(...argus);
-        console.log(time);
       }, time);
     });
   };
@@ -118,7 +117,6 @@ export const getFileImageField = (imageOb) =>
 
 export const runIdle = (cb) =>
   function () {
-    console.log(this);
     if ("queueMicrotask" in window) {
       queueMicrotask(cb.bind(this, ...arguments));
     } else {

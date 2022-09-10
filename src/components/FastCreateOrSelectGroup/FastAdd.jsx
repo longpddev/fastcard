@@ -60,7 +60,6 @@ const FastAdd = ({ onClose, ...props }) => {
     if (e.key === "Enter") {
       handleAdd();
     }
-    console.log(e.key);
     if (e.key === "Esc") {
       valueSet("");
       onClose && onClose();

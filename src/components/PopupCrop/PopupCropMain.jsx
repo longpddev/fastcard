@@ -19,11 +19,9 @@ const PopupCropMain = ({ url, cropHeight, setCroppedImage, setOpen }) => {
     minToZoom = parseInt(minToZoom * 1000) / 1000;
 
     if (resizeCropRef.current === false && minToZoom !== 100) {
-      console.log(minToZoom);
       resizeCropRef.current = true;
       setZoom(minToZoom / 100);
     }
-    console.log(croppedArea, croppedAreaPixels);
     setCroppedAreaPixels(croppedAreaPixels);
   }, []);
 

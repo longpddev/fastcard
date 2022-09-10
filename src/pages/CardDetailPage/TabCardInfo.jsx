@@ -34,7 +34,6 @@ const creatorComponent =
           const result = await uploadImageAndGetData(
             getFileImageField(croppedImage)
           );
-          console.log(result);
           imageId = result.id;
         }
       }
@@ -65,7 +64,6 @@ const creatorComponent =
           <LoadingIcon className="text-4xl" />
         </div>
       );
-    console.log(cardData);
     return (
       <ContentTab onSubmit={handleSubmit}>
         {cardData.image && !isEditImage ? (

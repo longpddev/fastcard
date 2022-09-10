@@ -33,7 +33,6 @@ const useFormData = run(() => {
   };
   return () => {
     const [data, setData] = useState(initState);
-    console.log(data);
     return {
       getData: (tab, field) => data[tab][field],
       setData: (tab, field, value) => {
@@ -61,7 +60,6 @@ const CreateCardPage = () => {
   const controlRef = useRef();
   const validGroup = () => {
     const result = Boolean(groupId);
-    console.log(groupId);
     if (!result) pushToast.warning("Please chose group card");
     return result;
   };
@@ -157,7 +155,6 @@ const CreateCardPage = () => {
             <FileUpLoad
               croppedImage={getData(CARD_TYPE.question, "fileImage")}
               setCroppedImage={(value) => {
-                console.log(value);
                 setData(CARD_TYPE.question, "fileImage", value);
               }}
             />
