@@ -1,4 +1,4 @@
-import{R as ue,a as Jr,j as we,F as ni,p as O,c as ei}from"./index.4258475f.js";const $e=["http","https","mailto","tel"];function ti(n){const e=(n||"").trim(),t=e.charAt(0);if(t==="#"||t==="/")return e;const r=e.indexOf(":");if(r===-1)return e;let l=-1;for(;++l<$e.length;){const i=$e[l];if(r===i.length&&e.slice(0,i.length).toLowerCase()===i)return e}return l=e.indexOf("?"),l!==-1&&r>l||(l=e.indexOf("#"),l!==-1&&r>l)?e:"javascript:void(0)"}/*!
+import{R as ue,a as Jr,j as we,F as ni,p as O,c as ei}from"./index.1edf818b.js";const $e=["http","https","mailto","tel"];function ti(n){const e=(n||"").trim(),t=e.charAt(0);if(t==="#"||t==="/")return e;const r=e.indexOf(":");if(r===-1)return e;let l=-1;for(;++l<$e.length;){const i=$e[l];if(r===i.length&&e.slice(0,i.length).toLowerCase()===i)return e}return l=e.indexOf("?"),l!==-1&&r>l||(l=e.indexOf("#"),l!==-1&&r>l)?e:"javascript:void(0)"}/*!
  * Determine if an object is a Buffer
  *
  * @author   Feross Aboukhadijeh <https://feross.org>
