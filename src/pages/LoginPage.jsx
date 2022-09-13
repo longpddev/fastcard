@@ -15,8 +15,8 @@ const LoginPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [data, setData] = useState({
-    email: "",
-    password: "",
+    email: "demo@gmail.com ",
+    password: "admin123",
   });
 
   const resetPassword = () => setData({ ...data, password: "" });
