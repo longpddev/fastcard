@@ -7,9 +7,12 @@ import ToastContainer from "./components/Toast/ToastContainer";
 import { Provider } from "react-redux";
 import { store } from "./store/app";
 import ProgressGlobal from "./components/ProgressGlobal";
+
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <BrowserRouter>
+    <BrowserRouter
+      basename={import.meta.env.MODE === "production" ? "/fastcard" : "/"}
+    >
       <Provider store={store}>
         <ProgressGlobal />
         <ToastContainer />

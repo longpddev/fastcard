@@ -29,7 +29,6 @@ const ShowListCardOfGroup = ({ groupId }) => {
   const { data, isLoading, refetch } = useGetListCardQuery(groupId, {
     refetchOnMountOrArgChange: true,
   });
-
   return (
     <div>
       <EditGroupCard groupId={groupId} className="mb-4" />

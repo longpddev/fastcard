@@ -29,14 +29,17 @@ const CardDetailPage = () => {
     always({}),
     keyBy("type")
   )(path(["data", "cardStep"])(data));
-
+  console.log(isLoading);
+  const cardExist = (type) => Boolean(cardStepOb[type]);
   const handleSubmit = () => refetch();
   return (
     <PageTab defaultActive={PAGE_TAB.card_group}>
       <PageTab.Title tabKey={PAGE_TAB.card_group}>Select Group</PageTab.Title>
       <PageTab.Title tabKey={PAGE_TAB.question}>Question</PageTab.Title>
       <PageTab.Title tabKey={PAGE_TAB.answer}>Answer</PageTab.Title>
-      <PageTab.Title tabKey={PAGE_TAB.explain}>Explain</PageTab.Title>
+      {cardExist(PAGE_TAB.explain) && (
+        <PageTab.Title tabKey={PAGE_TAB.explain}>Explain</PageTab.Title>
+      )}
 
       <PageTab.Content tabKey={PAGE_TAB.card_group}>
         <TabGroup
@@ -61,14 +64,16 @@ const CardDetailPage = () => {
           onSubmit={() => handleSubmit()}
         />
       </PageTab.Content>
-      <PageTab.Content tabKey={PAGE_TAB.explain}>
-        <TabCardExplain
-          cardId={id}
-          isLoading={isLoading}
-          cardData={cardStepOb[CARD_TYPE.explain]}
-          onSubmit={() => handleSubmit()}
-        />
-      </PageTab.Content>
+      {cardExist(PAGE_TAB.explain) && (
+        <PageTab.Content tabKey={PAGE_TAB.explain}>
+          <TabCardExplain
+            cardId={id}
+            isLoading={isLoading}
+            cardData={cardStepOb[CARD_TYPE.explain]}
+            onSubmit={() => handleSubmit()}
+          />
+        </PageTab.Content>
+      )}
     </PageTab>
   );
 };

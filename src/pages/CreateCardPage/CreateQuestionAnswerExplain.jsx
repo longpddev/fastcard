@@ -1,18 +1,17 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
-import FastCreateOrSelectGroup from "../components/FastCreateOrSelectGroup";
-import FileUpLoad from "../components/FileUpLoad";
-import PageTab from "../components/PageTab";
-import { pushToast } from "../components/Toast";
-import EditorMarkdown from "../components/EditorMarkdown";
+import FastCreateOrSelectGroup from "../../components/FastCreateOrSelectGroup";
+import FileUpLoad from "../../components/FileUpLoad";
+import PageTab from "../../components/PageTab";
+import { pushToast } from "../../components/Toast";
+import EditorMarkdown from "../../components/EditorMarkdown";
 import {
   capitalize,
   getFileImageField,
-  getFileNameWithExtension,
   run,
   watchThunk,
-} from "../functions/common";
-import { createCardThunk } from "../services/card/cardSlice";
+} from "../../functions/common";
+import { createCardThunk } from "../../services/card/cardSlice";
 const CARD_TYPE = {
   card_group: "card_group",
   question: "question",
@@ -53,7 +52,7 @@ const useFormData = run(() => {
   };
 });
 
-const CreateCardPage = () => {
+const CreateQuestionAnswerExplain = () => {
   const dispatch = useDispatch();
   const { getData, setData, reset } = useFormData();
   const [groupId, groupIdSet] = useState("");
@@ -203,4 +202,4 @@ const CreateCardPage = () => {
   );
 };
 
-export default CreateCardPage;
+export default CreateQuestionAnswerExplain;

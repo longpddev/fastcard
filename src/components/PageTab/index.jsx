@@ -32,6 +32,7 @@ const PageTab = ({
   };
 
   Children.forEach(children, (item) => {
+    if (!item) return;
     if (item.type.displayName === "Title") TitleChildren.push(item);
     if (item.type.displayName === "Content") ContentChildren.push(item);
   });

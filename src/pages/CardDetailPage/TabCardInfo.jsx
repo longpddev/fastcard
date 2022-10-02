@@ -11,12 +11,17 @@ import {
   updateImageAndGetData,
   uploadImageAndGetData,
 } from "../../services/card/cardSlice";
-import { getFileImageField, pickKey, watchThunk } from "../../functions/common";
+import {
+  getFileImageField,
+  pickKey,
+  run,
+  watchThunk,
+} from "../../functions/common";
 import { pushToast } from "../../components/Toast";
 
 const creatorComponent =
   (cardType) =>
-  ({ cardId, isLoading, cardData, onSubmit }) => {
+  ({ cardId, cardData, onSubmit }) => {
     const [isEditImage, isEditImageSet] = useState(false);
     const [croppedImage, setCroppedImage] = useState();
     const [content, setContent] = useState(cardData.content);
@@ -58,12 +63,7 @@ const creatorComponent =
         pushToast.error("Update error please try again!");
       }
     };
-    if (isLoading)
-      return (
-        <div className="text-center">
-          <LoadingIcon className="text-4xl" />
-        </div>
-      );
+
     return (
       <ContentTab onSubmit={handleSubmit}>
         {cardData.image && !isEditImage ? (
@@ -116,6 +116,54 @@ const creatorComponent =
     );
   };
 
-export const TabCardQuestion = creatorComponent(CARD_TYPE.question);
-export const TabCardAnswer = creatorComponent(CARD_TYPE.answer);
-export const TabCardExplain = creatorComponent(CARD_TYPE.explain);
+export const TabCardQuestion = run(() => {
+  const Component = creatorComponent(CARD_TYPE.question);
+
+  return ({ isLoading, ...props }) => {
+    return (
+      <>
+        {isLoading ? (
+          <div className="text-center">
+            <LoadingIcon className="text-4xl" />
+          </div>
+        ) : (
+          <Component {...props} />
+        )}
+      </>
+    );
+  };
+});
+export const TabCardAnswer = run(() => {
+  const Component = creatorComponent(CARD_TYPE.answer);
+
+  return ({ isLoading, ...props }) => {
+    return (
+      <>
+        {isLoading ? (
+          <div className="text-center">
+            <LoadingIcon className="text-4xl" />
+          </div>
+        ) : (
+          <Component {...props} />
+        )}
+      </>
+    );
+  };
+});
+export const TabCardExplain = run(() => {
+  const Component = creatorComponent(CARD_TYPE.explain);
+
+  return ({ isLoading, ...props }) => {
+    return (
+      <>
+        {isLoading ? (
+          <div className="text-center">
+            <LoadingIcon className="text-4xl" />
+          </div>
+        ) : (
+          <Component {...props} />
+        )}
+      </>
+    );
+  };
+});

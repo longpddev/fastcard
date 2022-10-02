@@ -5,41 +5,56 @@ import {
 } from "@reduxjs/toolkit";
 import { clientAuth, uploadfile } from "../../api/client";
 import { CARD_TYPE } from "../../constants";
+import { run } from "../../functions/common";
 
 export const createCardThunk = createAsyncThunk(
   "card/createCard",
   async ({ groupId, question, answer, explain }) => {
-    const [questionImage, answerImage, explainImage] = await Promise.all([
-      uploadImageAndGetData(question.fileImage),
-      uploadImageAndGetData(answer.fileImage),
-      uploadImageAndGetData(explain.fileImage),
-    ]);
+    const [questionImage, answerImage, explainImage] = await Promise.all(
+      run(() => {
+        const result = [
+          uploadImageAndGetData(question.fileImage),
+          uploadImageAndGetData(answer.fileImage),
+        ];
+        explain && result.push(uploadImageAndGetData(explain.fileImage));
+        return result;
+      })
+    );
 
-    const result = await clientAuth.POST("/card", {
-      body: {
-        info: {
-          cardGroupId: groupId,
-        },
-        cardQuestion: {
-          imageId: questionImage ? questionImage.id : null,
-          content: question.detail,
-          type: CARD_TYPE.question,
-          cardGroupId: groupId,
-        },
-        cardAnswer: {
-          imageId: answerImage ? answerImage.id : null,
-          content: answer.detail,
-          type: CARD_TYPE.answer,
-          cardGroupId: groupId,
-        },
-        cardExplain: {
-          imageId: explainImage ? explainImage.id : null,
-          content: explain.detail,
-          type: CARD_TYPE.explain,
-          cardGroupId: groupId,
-        },
-      },
-    });
+    const result = await clientAuth.POST(
+      explain ? "/card" : "/card/noexplain",
+      {
+        body: run(() => {
+          const result = {
+            info: {
+              cardGroupId: groupId,
+            },
+            cardQuestion: {
+              imageId: questionImage ? questionImage.id : null,
+              content: question.detail,
+              type: CARD_TYPE.question,
+              cardGroupId: groupId,
+            },
+            cardAnswer: {
+              imageId: answerImage ? answerImage.id : null,
+              content: answer.detail,
+              type: CARD_TYPE.answer,
+              cardGroupId: groupId,
+            },
+          };
+
+          explain &&
+            (result.cardExplain = {
+              imageId: explainImage ? explainImage.id : null,
+              content: explain.detail,
+              type: CARD_TYPE.explain,
+              cardGroupId: groupId,
+            });
+
+          return result;
+        }),
+      }
+    );
     return result;
   }
 );
