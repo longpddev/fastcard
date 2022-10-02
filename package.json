@@ -3,12 +3,10 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "/fastcard",
   "scripts": {
     "dev": "vite --host",
     "build": "vite build",
     "preview": "vite preview",
-    "homepage": "https://longpddev.github.io/fastcard",
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {

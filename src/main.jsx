@@ -10,9 +10,7 @@ import ProgressGlobal from "./components/ProgressGlobal";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <BrowserRouter
-      basename={import.meta.env.MODE === "production" ? "/fastcard" : "/"}
-    >
+    <BrowserRouter>
       <Provider store={store}>
         <ProgressGlobal />
         <ToastContainer />
