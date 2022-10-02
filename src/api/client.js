@@ -101,6 +101,7 @@ export default client;
 
 export const getMedia = (url) => {
   if (!url) return;
+  console.log(isValidUrl(url), url);
   if (isValidUrl(url)) {
     return url;
   } else {

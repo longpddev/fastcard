@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from "react";
-import client, { getMedia } from "../../api/client";
-import { delay, isCurrentOrigin, isValidUrl } from "../../functions/common";
+import { clientAuth, getMedia } from "../../api/client";
+import { isCurrentOrigin, isValidUrl } from "../../functions/common";
 
 import Popup from "../Popup";
 import { pushToast } from "../Toast";
@@ -10,7 +10,7 @@ const getSourceUrl = async (url) => {
   if (isCurrentOrigin(url)) {
     return url;
   } else {
-    const result = await client.POST("/file-temp/get", {
+    const result = await clientAuth.POST("/file-temp/get", {
       body: {
         url,
       },

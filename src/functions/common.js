@@ -18,7 +18,7 @@ export const animate = (callback) => {
 
 export const isValidUrl = (url) => {
   const urlRegex =
-    /^(blob:)?((http(s?)?):\/\/)?([wW]{3}\.)?[a-zA-Z0-9\-.]+\.?[a-zA-Z]{2,}(\.[a-zA-Z]{2,})?.*$/g;
+    /^((blob:)|((http(s?)):\/\/))([wW]{3}\.)?[a-zA-Z0-9\-.]+\.?(\.[a-zA-Z]{2,})?.*$/g;
   const result = url.match(urlRegex);
 
   return result !== null;
