@@ -7,8 +7,8 @@ const pwaOptions = {
   base: "/",
   includeAssets: ["favicon.ico"],
   manifest: {
-    name: "PWA Router",
-    short_name: "PWA Router",
+    name: "Card app",
+    short_name: "Card app",
     theme_color: "#234",
     icons: [
       {
@@ -50,7 +50,7 @@ if (process.env.SW === "true") {
   pwaOptions.manifest.short_name = "PWA Inject";
 }
 
-if (claims) pwaOptions.registerType = "autoUpdate";
+pwaOptions.registerType = "autoUpdate";
 
 if (reload) {
   // @ts-expect-error just ignore
