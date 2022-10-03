@@ -29,6 +29,19 @@ const AccountSetting = () => {
             handleChange("maxCardInDay", v) || settings.maxCardInDay
           }
         />
+        <Field
+          type="select"
+          options={[
+            ["fade", "Fade"],
+            ["none", "Disable"],
+            ["slide", "Slide"],
+          ]}
+          label="Animation Card"
+          value={settings.cardAnimate}
+          onChange={(v) =>
+            handleChange("cardAnimate", v) || settings.cardAnimate
+          }
+        />
       </div>
       <div className="flex justify-center mt-4">
         <button

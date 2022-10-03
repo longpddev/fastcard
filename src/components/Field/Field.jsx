@@ -1,5 +1,6 @@
 import MarkDownField from "./MarkDownField";
 import NumberField from "./NumberField";
+import SelectField from "./SelectField";
 import StringField from "./StringField";
 import TextareaField from "./TextareaField";
 
@@ -8,6 +9,7 @@ const FIELD_TYPE = {
   string: "text",
   text: "textarea",
   markdown: "markdown",
+  select: "select",
 };
 const Field = (props) => {
   if (!(props.type in FIELD_TYPE))
@@ -18,6 +20,7 @@ const Field = (props) => {
     [FIELD_TYPE.string]: () => <StringField {...props} />,
     [FIELD_TYPE.text]: () => <TextareaField {...props} />,
     [FIELD_TYPE.markdown]: () => <MarkDownField {...props} />,
+    [FIELD_TYPE.select]: () => <SelectField {...props} />,
   };
 
   return caseOb[props.type]();

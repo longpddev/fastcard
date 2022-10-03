@@ -1,6 +1,7 @@
-import { useEffect, useLayoutEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { CARD_LEARN_CSS_VAR } from "../../constants";
 import Card from "../Card";
+import LoadingIcon from "../LoadingIcon";
 import Markdown from "../Markdown";
 const run = (callback) => callback();
 
@@ -41,10 +42,10 @@ export default function CardBase({
   return (
     <div
       ref={ref}
-      className="min-w-[600px]  w-[min-content] mx-auto"
+      className="min-w-[90vw] md:min-w-[600px]  w-[min-content] mx-auto"
       data-index={Math.random().toString(32).slice(2, 7)}
     >
-      <Card className="min-h-[450px]">
+      <Card className="min-h-[350px]">
         {title}
         {image && (
           <div className="relative min-h-[250px] overflow-hidden mb-4">
@@ -55,7 +56,7 @@ export default function CardBase({
                 filter: "blur(20px)",
               }}
             ></div>
-            <img
+            <Image
               src={image}
               alt=""
               className="absolute top-0 bottom-0 h-full left-1/2 translate-x-[-50%] z-10"
@@ -70,3 +71,27 @@ export default function CardBase({
     </div>
   );
 }
+
+const Image = ({ ...props }) => {
+  const [loaded, loadedSet] = useState(false);
+  return (
+    <>
+      <div
+        style={{
+          transition: loaded
+            ? "opacity 0s 0s linear"
+            : "opacity 0.3s 0.2s linear",
+          opacity: loaded ? 0 : 1,
+        }}
+        className="absolute top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%]"
+      >
+        <LoadingIcon className="animate-spin text-sky-400 text-2xl "></LoadingIcon>
+      </div>
+      <img
+        style={{ opacity: loaded ? 1 : 0 }}
+        onLoad={() => loadedSet(true)}
+        {...props}
+      />
+    </>
+  );
+};

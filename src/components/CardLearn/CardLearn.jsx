@@ -17,6 +17,7 @@ import { watchThunk } from "../../functions/common";
 import { pushFastToast } from "../Toast/core";
 import { CARD_TYPE } from "../../constants";
 import CardAnswer from "./CardAnswer";
+import useUserSettings from "../../hooks/useUserSettings";
 
 const animateOption = {
   slide: {
@@ -29,6 +30,7 @@ const animateOption = {
     initial: { opacity: 0 },
     animate: { opacity: 1 },
   },
+  none: {},
 };
 const CARD_LEAN_TYPE = {
   hard: "hard",
@@ -38,6 +40,7 @@ const CARD_LEAN_TYPE = {
 const CardLearn = ({ groupId }) => {
   const [isFront, isFrontSet] = useState(true);
   const process = useSelector((s) => s.card.process)[groupId];
+  const settings = useUserSettings();
   const dispatch = useDispatch();
   const card = path([groupId, "card", "rows", process])(
     useSelector((s) => s.card.learnToday.entities)
@@ -69,6 +72,10 @@ const CardLearn = ({ groupId }) => {
     const image = new Image();
     image.src = getMedia(card.backCard.image.path);
   }
+
+  const animateSetting = settings.cardAnimate
+    ? animateOption[settings.cardAnimate]
+    : animateOption.fade;
   return (
     <div className="relative card-learn h-full">
       <div className="card-learn__main mb-4">
@@ -77,7 +84,7 @@ const CardLearn = ({ groupId }) => {
             <motion.div
               key="front"
               className="absolute top-0 left-[50%] translate-x-[-50%] w-[min-content]"
-              {...animateOption.slide}
+              {...animateSetting}
             >
               <CardCreator
                 type={card.frontCard.type}
@@ -92,7 +99,7 @@ const CardLearn = ({ groupId }) => {
             <motion.div
               key="back"
               className="absolute top-0 left-[50%] translate-x-[-50%] w-[min-content]"
-              {...animateOption.slide}
+              {...animateSetting}
             >
               <CardCreator
                 type={card.backCard.type}
@@ -130,6 +137,7 @@ const CardLearn = ({ groupId }) => {
           >
             <button
               title="SPACE_BAR+r"
+              key={CARD_LEAN_TYPE.repeat}
               onClick={() => {
                 handleAction(CARD_LEAN_TYPE.repeat);
               }}
@@ -139,6 +147,7 @@ const CardLearn = ({ groupId }) => {
             </button>
             <button
               title="SPACE_BAR+g"
+              key={CARD_LEAN_TYPE.good}
               onClick={() => {
                 handleAction(CARD_LEAN_TYPE.good);
               }}
@@ -148,6 +157,7 @@ const CardLearn = ({ groupId }) => {
             </button>
             <button
               title="SPACE_BAR+h"
+              key={CARD_LEAN_TYPE.hard}
               onClick={() => {
                 handleAction(CARD_LEAN_TYPE.hard);
               }}
