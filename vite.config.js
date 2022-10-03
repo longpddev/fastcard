@@ -50,7 +50,7 @@ if (process.env.SW === "true") {
   pwaOptions.manifest.short_name = "PWA Inject";
 }
 
-pwaOptions.registerType = "autoUpdate";
+if (claims) pwaOptions.registerType = "autoUpdate";
 
 if (reload) {
   // @ts-expect-error just ignore
