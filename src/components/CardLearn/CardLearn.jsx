@@ -1,11 +1,10 @@
 import React from "react";
-import { useEffect } from "react";
 import { useState } from "react";
 import CardExplain from "./CardExplain";
 import CardQuestion from "./CardQuestion";
 
 import { motion, AnimatePresence } from "framer-motion";
-import ShortCutClick, { GlobalKeys } from "../ShortCutClick";
+import { GlobalKeys } from "../ShortCutClick";
 import { useDispatch, useSelector } from "react-redux";
 import { path } from "ramda";
 import { getMedia } from "../../api/client";
@@ -15,9 +14,10 @@ import {
 } from "../../services/card/cardSlice";
 import { watchThunk } from "../../functions/common";
 import { pushFastToast } from "../Toast/core";
-import { CARD_TYPE } from "../../constants";
+import { CARD_LEAN_TYPE, CARD_TYPE } from "../../constants";
 import CardAnswer from "./CardAnswer";
 import useUserSettings from "../../hooks/useUserSettings";
+import { ButtonControl } from "./ButtonControl";
 
 const animateOption = {
   slide: {
@@ -32,11 +32,7 @@ const animateOption = {
   },
   none: {},
 };
-const CARD_LEAN_TYPE = {
-  hard: "hard",
-  good: "good",
-  repeat: "repeat",
-};
+
 const CardLearn = ({ groupId }) => {
   const [isFront, isFrontSet] = useState(true);
   const process = useSelector((s) => s.card.process)[groupId];
@@ -112,62 +108,11 @@ const CardLearn = ({ groupId }) => {
           )}
         </AnimatePresence>
       </div>
-      <div className="pt-10 flex gap-6 justify-center items-center shadow-top mt-10">
-        {isFront ? (
-          <GlobalKeys
-            handlers={{
-              Enter: () => isFrontSet(false),
-            }}
-          >
-            <button
-              className="button text-sky-300"
-              onClick={() => isFrontSet(false)}
-            >
-              View results
-            </button>
-          </GlobalKeys>
-        ) : (
-          <GlobalKeys
-            handlers={{
-              "SPACE_BAR+r": () => handleAction(CARD_LEAN_TYPE.repeat),
-              "SPACE_BAR+g": () => handleAction(CARD_LEAN_TYPE.good),
-              Enter: () => handleAction(CARD_LEAN_TYPE.good),
-              "SPACE_BAR+h": () => handleAction(CARD_LEAN_TYPE.hard),
-            }}
-          >
-            <button
-              title="SPACE_BAR+r"
-              key={CARD_LEAN_TYPE.repeat}
-              onClick={() => {
-                handleAction(CARD_LEAN_TYPE.repeat);
-              }}
-              className="text-stone-400 text-xl button"
-            >
-              Repeat
-            </button>
-            <button
-              title="SPACE_BAR+g"
-              key={CARD_LEAN_TYPE.good}
-              onClick={() => {
-                handleAction(CARD_LEAN_TYPE.good);
-              }}
-              className="text-green-400 text-xl button"
-            >
-              Good
-            </button>
-            <button
-              title="SPACE_BAR+h"
-              key={CARD_LEAN_TYPE.hard}
-              onClick={() => {
-                handleAction(CARD_LEAN_TYPE.hard);
-              }}
-              className="text-red-400 text-xl button"
-            >
-              Hard
-            </button>
-          </GlobalKeys>
-        )}
-      </div>
+      <ButtonControl
+        isFront={isFront}
+        isFrontSet={isFrontSet}
+        handleAction={handleAction}
+      />
     </div>
   );
 };

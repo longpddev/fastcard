@@ -5,3 +5,9 @@ export const CARD_TYPE = {
   answer: "answer",
   explain: "explain",
 };
+
+export const CARD_LEAN_TYPE = {
+  hard: "hard",
+  good: "good",
+  repeat: "repeat",
+};
