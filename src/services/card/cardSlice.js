@@ -155,7 +155,11 @@ export const getCardLearnTodayThunk = createAsyncThunk(
         return {
           groupId,
           card: {
-            rows: card.data.rows,
+            rows: card.data.rows?.sort(() => {
+              const ram = Math.random();
+              if (ram === 0.5) return 0;
+              return ram > 0.5 ? 1 : -1;
+            }),
             count: card.data.count,
           },
         };
