@@ -10,16 +10,16 @@ const EditorMarkdown = ({
   ...props
 }) => {
   return (
-    <div className={clsx(className, "flex")} {...props}>
+    <div className={clsx(className, "flex flex-wrap")} {...props}>
       <textarea
-        className="md:w-1/2 w-full input"
+        className="md:w-1/2 w-full input flex-1 min-w-[300px]"
         cols="30"
         rows="10"
         value={value}
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
       ></textarea>
-      <Markdown className="md:w-1/2 w-full block-down rounded-md p-2">
+      <Markdown className="md:w-1/2 w-full min-w-[300px] flex-1 block-down rounded-md p-2">
         {value || "Preview"}
       </Markdown>
     </div>

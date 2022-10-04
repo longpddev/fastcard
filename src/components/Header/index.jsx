@@ -12,6 +12,7 @@ const Header = memo(() => {
   const { isLogin } = useLogin();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   useEffect(() => {
     console.count("header create");
   }, []);
@@ -57,7 +58,11 @@ const Header = memo(() => {
           />
         </Link>
         <div className="ml-auto py-2"></div>
-        <div className="group relative py-2">
+        <div
+          className="group relative py-2"
+          // force init element for submenu auto close
+          key={Math.random().toString(32).slice(2, 7)}
+        >
           {isLogin ? (
             <>
               <IconCircle

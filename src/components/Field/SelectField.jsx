@@ -13,7 +13,9 @@ const SelectField = ({ label, value, options, onChange, ...props }) => {
         {...props}
       >
         {options.map(([key, value]) => (
-          <option value={key}>{value}</option>
+          <option key={key} value={key}>
+            {value}
+          </option>
         ))}
       </select>
     </>

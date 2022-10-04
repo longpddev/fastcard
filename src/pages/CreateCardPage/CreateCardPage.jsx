@@ -36,7 +36,7 @@ const ChoiceType = ({ query, setQuery }) => (
 );
 const CreateCardPage = () => {
   const [query, setQuery] = useSearchParams();
-  console.log(query.get("type"));
+
   switch (query.get("type")) {
     case "explain":
       return (
