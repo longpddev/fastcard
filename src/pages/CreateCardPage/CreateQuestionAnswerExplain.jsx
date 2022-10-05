@@ -12,6 +12,7 @@ import {
   watchThunk,
 } from "../../functions/common";
 import { createCardThunk } from "../../services/card/cardSlice";
+import { progressWatchPromise } from "../../components/ProgressGlobal";
 const CARD_TYPE = {
   card_group: "card_group",
   question: "question",
@@ -143,7 +144,8 @@ const CreateQuestionAnswerExplain = () => {
             })
             .catch(() => {
               pushToast.error("Sometime error please try again!");
-            });
+            })
+            .finally(progressWatchPromise());
         }}
       >
         <PageTab.Title tabKey={CARD_TYPE.question}>Question card</PageTab.Title>

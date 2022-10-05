@@ -9,6 +9,7 @@ import useActivated from "../hooks/useActivated";
 import { useValidate } from "../hooks/useValidate";
 import { signupThunk } from "../services/auth/authSlice";
 import { InputValidate } from "../components/InputValidate";
+import { progressWatchPromise } from "../components/ProgressGlobal";
 const SignUpPage = () => {
   titlePage("Sign up");
   const { plug, onSubmit } = useValidate();
@@ -28,7 +29,8 @@ const SignUpPage = () => {
       .catch(({ error }) => {
         pushToast.error(error.message);
         resetField();
-      });
+      })
+      .finally(progressWatchPromise());
   };
 
   useEffect(() => {}, []);

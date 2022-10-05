@@ -8,6 +8,7 @@ import {
 } from "../../services/auth/authSlice";
 import { pushToast } from "../../components/Toast/core";
 import Field from "../../components/Field/Field";
+import { progressWatchPromise } from "../../components/ProgressGlobal";
 const AccountSetting = () => {
   const settings = useSelector((s) => s.auth.settings);
   const dispatch = useDispatch();
@@ -15,7 +16,8 @@ const AccountSetting = () => {
     dispatch(syncAccountSettingsThunk())
       .then(watchThunk)
       .then(() => pushToast.success("Save success"))
-      .catch(() => pushToast.error("Save error please try again"));
+      .catch(() => pushToast.error("Save error please try again"))
+      .finally(progressWatchPromise());
   const handleChange = (key, value) => dispatch(changeSettings({ key, value }));
   const handleReset = () => dispatch(getUserInfo());
   return (

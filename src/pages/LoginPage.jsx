@@ -33,7 +33,8 @@ const LoginPage = () => {
       .catch(({ error }) => {
         resetPassword();
         pushToast.error("Email or password is wrong");
-      });
+      })
+      .finally(progressWatchPromise());
   };
   return (
     <FormAuth title="Log in" onSubmit={onSubmit(handleSubmit)}>

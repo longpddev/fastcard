@@ -6,6 +6,13 @@ export const progressEmitter = EmitterIdle();
 export const progressDone = () => progressEmitter.emit("end");
 export const progressStart = () => progressEmitter.emit("start");
 
+// use in finally of promise
+export const progressWatchPromise = () => {
+  progressStart();
+  return () => progressDone();
+};
+
+window.progressWatchPromise = progressWatchPromise;
 const ProgressGlobal = () => {
   const [isDone, isDoneSet] = useState(false);
   const [isShow, isShowSet] = useState(false);

@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { watchThunk } from "../functions/common";
 import { deleteCardThunk } from "../services/card/cardSlice";
 import { pushToast } from "../components/Toast/core";
+import { progressWatchPromise } from "./ProgressGlobal";
 const CardDetailItem = ({
   id,
   image,
@@ -24,7 +25,8 @@ const CardDetailItem = ({
       })
       .catch(() => {
         pushToast.error("Delete error please try again!");
-      });
+      })
+      .finally(progressWatchPromise());
   };
   return (
     <div
@@ -35,13 +37,13 @@ const CardDetailItem = ({
       {...props}
     >
       <img src={image} alt="" className="rounded-md object-cover w-10 h-10" />
-      <div className="ml-4">
+      <div className="ml-4 flex-1">
         <p>{title}</p>
         <p className="text-slate-400 text-sm mt-2">{createdAt.toString()}</p>
       </div>
       <Link
         to={`/card-detail/${id}`}
-        className="button text-blue-400 px-4 ml-auto"
+        className="button text-blue-400 px-3 ml-auto flex-none"
       >
         <i className="fas fa-eye"></i>
       </Link>
@@ -50,7 +52,7 @@ const CardDetailItem = ({
           if (confirm("Are you sure for delete this Card hard work for create"))
             handleDelete();
         }}
-        className="button text-red-400 ml-3 px-4"
+        className="button text-red-400 ml-3 px-3 flex-none"
       >
         <i className="fas fa-trash-can"></i>
       </button>
