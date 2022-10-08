@@ -1,16 +1,26 @@
 import { path } from "ramda";
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { maybe, titlePage } from "../functions/common";
+import { getCardLearnTodayThunk } from "../services/card/cardSlice";
 
 const HomePage = () => {
   titlePage("Home page");
+  const dispatch = useDispatch();
   const groupCardEntities = useSelector((s) => s.card.groupCard.entities);
   const learnToday = maybe(useSelector((s) => s.card.learnToday))
     .map((item) => item.ids.map((key) => item.entities[key]))
     .get();
+  useEffect(() => {
+    // auto update list learn
+    const timer = setInterval(
+      () => dispatch(getCardLearnTodayThunk()),
+      1000 * 60
+    );
 
+    return () => clearInterval(timer);
+  }, []);
   return (
     <div>
       <h1 className="text-center text-2xl md:text-4xl md:mb-10 md-6">
