@@ -7,6 +7,10 @@ import { getMedia } from "../../api/client";
 import EditGroupCard from "./EditGroupCard";
 import { maybe } from "../../functions/common";
 import { path } from "ramda";
+import { useState } from "react";
+import Pagination from "../../components/Pagination";
+
+const ITEM_PER_PAGE = 10;
 
 const getTitle = (cardStep) =>
   cardStep.length > 0 &&
@@ -26,9 +30,13 @@ const getImage = (cardStep) =>
     .get();
 
 const ShowListCardOfGroup = ({ groupId }) => {
-  const { data, isLoading, refetch } = useGetListCardQuery(groupId, {
-    refetchOnMountOrArgChange: true,
-  });
+  const [pageIndex, pageIndexSet] = useState(1);
+  const { data, isLoading, refetch } = useGetListCardQuery(
+    { groupId, limit: ITEM_PER_PAGE, pageIndex: pageIndex },
+    {
+      refetchOnMountOrArgChange: true,
+    }
+  );
   return (
     <div>
       <EditGroupCard groupId={groupId} className="mb-4" />
@@ -56,6 +64,14 @@ const ShowListCardOfGroup = ({ groupId }) => {
             className="mb-4"
           />
         ))}
+
+      {!isLoading && (
+        <Pagination
+          onChange={(page) => pageIndexSet(page)}
+          current={pageIndex}
+          max={Math.ceil(data.data.count / ITEM_PER_PAGE)}
+        />
+      )}
     </div>
   );
 };

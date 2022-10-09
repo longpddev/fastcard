@@ -16,7 +16,12 @@ export const queryApi = createApi({
   }),
   endpoints: (builder) => ({
     getListCard: builder.query({
-      query: (groupId) => `card${groupId ? `?groupId=${groupId}` : ""}`,
+      query: ({ groupId, limit = 10, pageIndex = 1 }) =>
+        `card${
+          groupId
+            ? `?groupId=${groupId}&limit=${limit}&pageIndex=${pageIndex}`
+            : ""
+        }`,
     }),
     getCardDetail: builder.query({
       query: (id) => `card/${id}`,
