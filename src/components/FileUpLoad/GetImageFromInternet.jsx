@@ -22,7 +22,7 @@ const GetImageFromInternet = ({ setUrl, onSuccess }) => {
           value={typing}
           placeholder="Paste url here"
           onPaste={handlePasteImage}
-          onDrop={(e) => {
+          onDrop={async (e) => {
             e.preventDefault();
             const meta = e.dataTransfer.getData("text/html");
             if (!meta) return;
@@ -30,9 +30,10 @@ const GetImageFromInternet = ({ setUrl, onSuccess }) => {
             fragment.innerHTML = meta;
             const image = fragment.getElementsByTagName("img")[0];
             if (!image || !image.getAttribute("src")) return;
-            getImageBase64(image.getAttribute("src")).then((url) =>
-              setUrl(url)
-            );
+            getImageBase64(image.getAttribute("src")).then((url) => {
+              console.log(url);
+              setUrl(url);
+            });
           }}
           onChange={(e) => setTyping(e.target.value.trim())}
         />

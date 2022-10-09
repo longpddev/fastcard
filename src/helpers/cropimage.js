@@ -105,7 +105,7 @@ export const createImage = (url) =>
 export default async function getCroppedImg(imageSrc, pixelCrop) {
   const image = await createImage(imageSrc);
   const canvas = document.createElement("canvas");
-  const size = getMaxSizeImage(pixelCrop.width, pixelCrop.height, 500);
+  const size = getMaxSizeImage(pixelCrop.width, pixelCrop.height, 700);
   canvas.width = size.width;
   canvas.height = size.height;
   const ctx = canvas.getContext("2d");
