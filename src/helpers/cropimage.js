@@ -105,10 +105,10 @@ export const createImage = (url) =>
 export default async function getCroppedImg(imageSrc, pixelCrop) {
   const image = await createImage(imageSrc);
   const canvas = document.createElement("canvas");
-  canvas.width = pixelCrop.width;
-  canvas.height = pixelCrop.height;
+  const size = getMaxSizeImage(pixelCrop.width, pixelCrop.height, 500);
+  canvas.width = size.width;
+  canvas.height = size.height;
   const ctx = canvas.getContext("2d");
-
   // ctx.fillStyle = "#ffffff";
   // ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(
@@ -119,8 +119,8 @@ export default async function getCroppedImg(imageSrc, pixelCrop) {
     pixelCrop.height,
     0,
     0,
-    pixelCrop.width,
-    pixelCrop.height
+    canvas.width,
+    canvas.height
   );
 
   // As Base64 string
@@ -138,6 +138,17 @@ export default async function getCroppedImg(imageSrc, pixelCrop) {
   });
 }
 
+function getMaxSizeImage(w, h, maxWidthOrHeight) {
+  if (maxWidthOrHeight < w) {
+    const ratio = h / w;
+    return { width: maxWidthOrHeight, height: maxWidthOrHeight * ratio };
+  } else if (maxWidthOrHeight < h) {
+    const ratio = w / h;
+    return { width: maxWidthOrHeight * ratio, height: maxWidthOrHeight };
+  }
+
+  return { width: w, height: h };
+}
 function getCanvas() {
   let canvas = document.querySelector("canvas");
 
