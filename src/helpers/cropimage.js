@@ -16,8 +16,14 @@ export function rotateSize(width, height, rotation) {
   };
 }
 
-export const createImage = (url) =>
-  new Promise((resolve, reject) => {
+/**
+ * @param {string} url
+ *
+ * @return { Promise<HTMLImageElement> }
+ */
+export const createImage = (url) => {
+  /** @type { Promise<HTMLImageElement> } */
+  return new Promise((resolve, reject) => {
     const image = new Image();
     image.addEventListener("load", (...data) => {
       resolve(image);
@@ -26,6 +32,7 @@ export const createImage = (url) =>
     image.setAttribute("crossOrigin", "anonymous"); // needed to avoid cross-origin issues on CodeSandbox
     image.src = url;
   });
+};
 
 /**
  * This function was adapted from the one in the ReadMe of https://github.com/DominicTobias/react-image-crop
@@ -161,4 +168,26 @@ function getCanvas() {
   }
 
   return canvas;
+}
+
+export async function linkImageToFile(src) {
+  /** @type { Promise<HTMLImageElement>} image */
+  const image = await createImage(src);
+  const { width, height } = image;
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext("2d");
+
+  ctx?.drawImage(image, 0, 0);
+
+  return await new Promise((res, rej) => {
+    canvas.toBlob((file) => {
+      res({
+        file: file,
+        width: canvas.width,
+        height: canvas.height,
+      });
+    }, "image/jpeg");
+  });
 }

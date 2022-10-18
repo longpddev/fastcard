@@ -367,3 +367,44 @@ body {
 .firework::after {
   transform: translate(-50%, -50%) rotate(-37deg) !important;
 }
+
+.point-animate:before {
+  content: '';
+  width: 2px;
+  height: 1em;
+  display: block;
+  animation: point_animate 800ms infinite;
+}
+
+@keyframes point_animate {
+  0% {
+    background-color: currentColor;
+  }
+
+  100% {
+    background-color: transparent;
+  }
+}
+
+.icon-center-button {
+  i {
+    @apply absolute top-1/2 left-1/2 translate-y-[-50%] translate-x-[-50%];
+  }
+}
+
+.zoom-and-fadeout {
+  animation: zoom-and-fadeout 300ms;
+}
+
+@keyframes zoom-and-fadeout {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.5);
+  }
+}
+

@@ -11,7 +11,7 @@ const StringField = ({ label, value, onChange, ...props }) => {
         type="number"
         id={id}
         className="input mt-1"
-        value={value.string()}
+        value={value.toString()}
         onChange={(e) => onChange(e.target.value)}
         {...props}
       />

@@ -26,7 +26,19 @@ export const queryApi = createApi({
     getCardDetail: builder.query({
       query: (id) => `card/${id}`,
     }),
+    getVideoList: builder.query({
+      query: ({ limit = 10, pageIndex = 1 }) =>
+        `video?limit=${limit}&pageIndex=${pageIndex}`,
+    }),
+    getVideoById: builder.query({
+      query: (id) => `video/${id}`,
+    }),
   }),
 });
 
-export const { useGetListCardQuery, useGetCardDetailQuery } = queryApi;
+export const {
+  useGetListCardQuery,
+  useGetCardDetailQuery,
+  useGetVideoListQuery,
+  useGetVideoByIdQuery,
+} = queryApi;

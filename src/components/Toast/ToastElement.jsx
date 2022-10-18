@@ -2,6 +2,7 @@ import clsx from "clsx";
 import { motion } from "framer-motion";
 import React, { useCallback, useEffect, useRef } from "react";
 import { animate } from "../../functions/common";
+import Markdown from "../Markdown";
 import { COUNT_DOWN, TYPE } from "./core";
 
 const ToastElement = ({ toast, removeToast }) => {
@@ -37,7 +38,7 @@ const ToastElement = ({ toast, removeToast }) => {
   return (
     <motion.div
       layout
-      className="rounded-sm bg-slate-800 shadow-lg shadow-slate-900 flex px-4 py-2 pl-3 w-full items-center text-slate-50 overflow-hidden relative"
+      className="rounded-sm bg-slate-800 shadow-lg shadow-slate-900 flex px-4 py-2 pl-3 w-fulltext-slate-50 overflow-hidden relative"
       animate={{
         opacity: 1,
         left: "0%",
@@ -72,7 +73,9 @@ const ToastElement = ({ toast, removeToast }) => {
         )}
         title={toast.type}
       ></i>
-      <span className="text-sm">{toast.message}</span>
+      <div className="text-sm">
+        <Markdown>{toast.message}</Markdown>
+      </div>
 
       {TYPE.loading !== toast.type && (
         <div

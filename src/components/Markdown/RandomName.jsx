@@ -2,9 +2,11 @@ import clsx from "clsx";
 import React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-const Markdown = ({ children, className = "", ...props }) => (
+const RandomName = ({ children, className = "", isPure = false, ...props }) => (
   <ReactMarkdown
-    className={clsx(className, "markdown")}
+    className={clsx(className, {
+      markdown: !isPure,
+    })}
     style={{ whileSpace: "pre-wrap" }}
     {...props}
     remarkPlugins={[remarkGfm]}
@@ -13,4 +15,4 @@ const Markdown = ({ children, className = "", ...props }) => (
   </ReactMarkdown>
 );
 
-export default Markdown;
+export default RandomName;

@@ -12,6 +12,9 @@ import CardListPage from "./pages/CardListPage/CardListPage";
 import CardDetailPage from "./pages/CardDetailPage/CardDetailPage";
 import LearningPage from "./pages/LearningPage";
 import AccountPage from "./pages/AccountPage";
+import VideoTranscriptDetailPage from "./pages/VideoTranscriptDetailPage";
+import VideoTranscriptCreatePage from "./pages/VideoTranscriptCreatePage";
+import VideoTranscriptListPage from "./pages/VideoTranscriptListPage";
 function App() {
   return (
     <>
@@ -65,6 +68,36 @@ function App() {
             <HasLogin>
               <Default>
                 <LearningPage />
+              </Default>
+            </HasLogin>
+          }
+        />
+        <Route
+          path="/video/create"
+          element={
+            <HasLogin>
+              <Default>
+                <VideoTranscriptCreatePage />
+              </Default>
+            </HasLogin>
+          }
+        />
+        <Route
+          path="/video"
+          element={
+            <HasLogin>
+              <Default>
+                <VideoTranscriptListPage />
+              </Default>
+            </HasLogin>
+          }
+        />
+        <Route
+          path="/video/:videoId"
+          element={
+            <HasLogin>
+              <Default>
+                <VideoTranscriptDetailPage />
               </Default>
             </HasLogin>
           }
