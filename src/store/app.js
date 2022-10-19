@@ -6,12 +6,14 @@ import cardSlice, {
   getGroupCardThunk,
 } from "../services/card/cardSlice";
 import { queryApi } from "../services/queryApi";
+import videoTranscriptSlice from "../services/videoTranscript/videoTranscriptSlice";
 
 export const store = configureStore({
   reducer: {
     [queryApi.reducerPath]: queryApi.reducer,
     auth: authSlice,
     card: cardSlice,
+    videoTranscript: videoTranscriptSlice,
   },
 
   middleware: (getDefaultMiddleware) =>

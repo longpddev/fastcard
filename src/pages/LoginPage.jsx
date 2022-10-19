@@ -8,6 +8,7 @@ import { useValidate } from "../hooks/useValidate";
 import { loginThunk } from "../services/auth/authSlice";
 import { pushToast } from "../components/Toast/core";
 import { useLogin } from "../hooks/useLogin";
+import { progressWatchPromise } from "../components/ProgressGlobal";
 const LoginPage = () => {
   titlePage("login");
   const { plug, onSubmit } = useValidate();

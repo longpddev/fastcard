@@ -49,6 +49,7 @@ export function segment({
 export function Video(settings) {
   const videoCl = videoControl();
   const emitter = new TinyEmitter();
+  let initialed = false;
   const _segments = [];
   const _segmentsIndexing = {};
   let _currentSegment = 0;
@@ -69,13 +70,21 @@ export function Video(settings) {
     return currentSegment(currentSegment() - 1);
   }
 
+  function setSegmentByTime(time) {
+    if (!(time in _segmentsIndexing))
+      throw new Error(`Time: ${time} do not exist!`);
+    const index = _segmentsIndexing[time];
+    currentSegment(index);
+    getCurrentSegment().activeMe();
+  }
+
   function currentSegment(value) {
     if (isNaN(value)) {
       return _currentSegment;
     }
-    emitter.emit("segmentChange", value);
     if (value >= _segments.length) value = _segments.length - 1;
     if (value < 0) value = 0;
+    emitter.emit("segmentChange", _segments[value]);
     return (_currentSegment = value);
   }
 
@@ -138,6 +147,7 @@ export function Video(settings) {
               : transcript[nextTranscript].time;
           addSegment({ ...item, timeEnd }, index);
         });
+        initialed = true;
         res(true);
       });
     });
@@ -152,6 +162,7 @@ export function Video(settings) {
     destroy,
     init,
     getCurrentSegment,
+    isInitialed: () => initialed,
     getVideoEl: videoCl.getVideoEl,
     getAllSegment,
     on,
@@ -161,6 +172,7 @@ export function Video(settings) {
       const currentSegment = getCurrentSegment();
       currentSegment.activeMe();
     },
+    setSegmentByTime,
     prevSegment,
   };
 }
@@ -243,6 +255,14 @@ export function videoControl() {
   function getVideoEl() {
     return videoEl;
   }
+
+  function control(show) {
+    if (show) {
+      videoEl.setAttribute("controls", "");
+    } else {
+      videoEl.removeAttribute("controls");
+    }
+  }
   return {
     currentTime: () => videoEl.currentTime,
     setSrc,
@@ -253,5 +273,6 @@ export function videoControl() {
     play,
     getVideoEl,
     emitter,
+    control,
   };
 }

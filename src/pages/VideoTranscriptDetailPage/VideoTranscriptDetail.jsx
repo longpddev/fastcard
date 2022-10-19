@@ -3,16 +3,43 @@ import VideoPlayer from "../../components/VideoPlayer";
 import { useParams } from "react-router-dom";
 import { useGetVideoByIdQuery } from "../../services/queryApi";
 import { getMedia } from "../../api/client";
+import { useThunk } from "../../hooks/useThunk";
+import {
+  getVideoTranscriptByIdThunk,
+  setCurrentProcess,
+  updateVideoDataThunk,
+} from "../../services/videoTranscript/videoTranscriptSlice";
+import { useEffect } from "react";
+import { store } from "../../store/app";
+import { useCallback } from "react";
+import { useDispatch } from "react-redux";
+function useAutoSaveProgress(id) {
+  const dispatch = useDispatch();
+  return useCallback((newProcess) => {
+    console.log(store.getState());
+    const selectorMetadata = () => store.getState().videoTranscript.metadata;
+    if (selectorMetadata().processIndex !== newProcess) {
+      dispatch(setCurrentProcess(newProcess));
+      dispatch(
+        updateVideoDataThunk({ id, field: { metadata: selectorMetadata() } })
+      );
+    }
+  });
+}
+
 const VideoTranscriptDetail = () => {
   const { videoId } = useParams();
-  const { isLoading, data } = useGetVideoByIdQuery(videoId);
-  const videoData = data?.data;
+  const data = useThunk(getVideoTranscriptByIdThunk, videoId);
+  const autoSave = useAutoSaveProgress(videoId);
+  const videoData = data;
   return (
     <div>
       {videoData && (
         <VideoPlayer
           srcVideo={getMedia(videoData.path)}
           transcript={JSON.parse(videoData.transcript)}
+          startBy={videoData.metadata?.processIndex}
+          onSegmentChange={(segment) => autoSave(segment.timeStart)}
         ></VideoPlayer>
       )}
     </div>

@@ -95,8 +95,8 @@ const VideoTranscriptCreate = () => {
     video.length > 0 &&
     json.length > 0 &&
     thumbnail.length > 0 &&
-    title &&
-    description;
+    title.trim() &&
+    description.trim();
 
   const hasValue = video && video.length > 0;
   const urlDemo = useMemo(
@@ -107,8 +107,8 @@ const VideoTranscriptCreate = () => {
   const handleCreate = () => {
     createVideoLearn(
       {
-        title,
-        description,
+        title: title.trim(),
+        description: description.trim(),
         transcript: json,
         thumbnailSrc: thumbnail,
         videoFile: video[0],
@@ -154,7 +154,7 @@ const VideoTranscriptCreate = () => {
           label="Title*"
           value={title}
           placeholder="Eg: Video title"
-          onChange={(v) => titleSet(v.trim())}
+          onChange={(v) => titleSet(v)}
         ></Field>
       </div>
       <div className="mb-4">
@@ -163,7 +163,7 @@ const VideoTranscriptCreate = () => {
           label="Description*"
           value={description}
           placeholder="Eg: Video description"
-          onChange={(v) => descriptionSet(v.trim())}
+          onChange={(v) => descriptionSet(v)}
         ></Field>
       </div>
       {isPrev ? (

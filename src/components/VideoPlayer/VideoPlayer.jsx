@@ -2,7 +2,9 @@ import React, { useEffect, useRef, useState } from "react";
 import { Video } from "./function";
 import Segment from "./Segment";
 import TypeTranslate from "./TypeTranslate";
-const VideoPlayer = ({ srcVideo, transcript }) => {
+
+const VideoPlayer = ({ srcVideo, transcript, startBy, onSegmentChange }) => {
+  const [isFocus, isFocusSet] = useState(false);
   const containerVideoRef = useRef();
   const [_, forceRender] = useState();
   const [heightVo, heightVoSet] = useState();
@@ -18,10 +20,20 @@ const VideoPlayer = ({ srcVideo, transcript }) => {
     control.init(srcVideo, transcript).then(() => {
       divEl.appendChild(video);
       forceRender({});
+      if (startBy) {
+        try {
+          console.log(startBy);
+          control.setSegmentByTime(startBy);
+        } catch (e) {
+          console.error(e);
+        }
+      }
     });
 
-    control.on("segmentChange", () => {
+    control.on("segmentChange", (segment) => {
+      console.log(segment);
       forceRender({});
+      onSegmentChange && onSegmentChange(segment);
     });
 
     const observer = new ResizeObserver((entries) => {
@@ -52,6 +64,15 @@ const VideoPlayer = ({ srcVideo, transcript }) => {
     }
   };
   const control = videoControl.current;
+
+  useEffect(() => {
+    const videoCl = videoControl.current;
+
+    if (!videoCl || (videoCl && !videoCl.isInitialed())) return;
+    videoCl.videoCl.control(!isFocus);
+  }, [isFocus, control && control.isInitialed()]);
+
+  console.log(control);
   return (
     <div className="flex flex-wrap">
       <div
@@ -63,23 +84,25 @@ const VideoPlayer = ({ srcVideo, transcript }) => {
           onClick={handleFullScreen}
         >
           {isFullScreen ? (
-            <i class="fa-solid fa-compress"></i>
+            <i className="fa-solid fa-compress"></i>
           ) : (
-            <i class="fa-solid fa-expand "></i>
+            <i className="fa-solid fa-expand "></i>
           )}
         </button>
         <div className="w-full" ref={div}></div>
-        {control && (
+        {control && control.isInitialed() && (
           <TypeTranslate
             className="absolute left-0 bottom-14 w-full px-6 text- text-xl text-center"
             key={control.getCurrentSegment().timeStart}
             text={control.getCurrentSegment().text}
             onDone={() => control.next()}
-            style={{ bottom: `${heightVo / 5}px` }}
+            isFocus={isFocus}
+            isFocusSet={isFocusSet}
+            style={{ bottom: `${(isFocus ? heightVo / 2 : heightVo) / 5}px` }}
           ></TypeTranslate>
         )}
       </div>
-      {control && (
+      {control && control.isInitialed() && (
         <div
           className="overflow-auto w-full lg:w-[350px] lg:h-full p-4 border border-slate-600"
           style={{ height: heightVo === undefined ? "" : heightVo }}

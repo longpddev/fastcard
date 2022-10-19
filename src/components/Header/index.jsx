@@ -28,6 +28,12 @@ const Header = memo(() => {
       icon: "fas fa-list-ul",
     },
     {
+      path: "/video",
+      label: "Video transcript",
+      icon: "fab fa-youtube",
+    },
+
+    {
       path: "/account",
       label: "Account",
       icon: "fas fa-user-gear",

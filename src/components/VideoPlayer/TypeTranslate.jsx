@@ -28,8 +28,14 @@ const KEY_IGNORE = {
   CapsLock: "CapsLock",
 };
 
-const TypeTranslate = ({ className, text, onDone, style }) => {
-  const [isFocus, isFocusSet] = useState(false);
+const TypeTranslate = ({
+  className,
+  text,
+  onDone,
+  style,
+  isFocus,
+  isFocusSet,
+}) => {
   const isProgress = useRef(false);
   isProgress.current = false;
   const ref = useRef();
@@ -90,7 +96,7 @@ const TypeTranslate = ({ className, text, onDone, style }) => {
       style={{
         ...style,
         "text-shadow":
-          "white .5px 0px,white -.5px 0px, white 0px .5px,white 0px -.5px",
+          "black .5px 0px,black -.5px 0px, black 0px .5px,black 0px -.5px",
       }}
     >
       {arrChar.map((item, index) => (
@@ -98,7 +104,7 @@ const TypeTranslate = ({ className, text, onDone, style }) => {
           <Point isActive={isFocus && index === currentPoint}></Point>
           <span
             className={clsx({
-              "text-slate-300 opacity-30": arrCharMark[index] === 0,
+              "text-slate-300 opacity-40": arrCharMark[index] === 0,
               "text-red-500": arrCharMark[index] === -1,
               "text-sky-400": arrCharMark[index] === 1,
             })}

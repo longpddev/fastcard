@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { getMedia } from "../../api/client";
 import { useGetVideoListQuery } from "../../services/queryApi";
+import VideoTranscriptItem from "./VideoTranscriptItem";
 
 const VideoTranscriptList = () => {
   const { isLoading, data } = useGetVideoListQuery({ limit: 10, pageIndex: 1 });
@@ -15,36 +16,6 @@ const VideoTranscriptList = () => {
             <VideoTranscriptItem videoData={item} key={item.id} />
           ))}
       </div>
-    </div>
-  );
-};
-
-const VideoTranscriptItem = ({ videoData }) => {
-  return (
-    <div>
-      <Link to={`/video/${videoData.id}`}>
-        <div className="w-full">
-          <div className="pt-[56.25%] relative">
-            <div
-              className="absolute inset-0 w-full h-full z-[-1]"
-              style={{
-                background: `url("${getMedia(
-                  videoData.thumbnail.path
-                )}") no-repeat center`,
-                filter: "blur(20px)",
-              }}
-            ></div>
-            <div className="absolute inset-0 w-full h-full flex justify-center">
-              <img
-                src={getMedia(videoData.thumbnail.path)}
-                alt=""
-                className="block"
-              />
-            </div>
-          </div>
-        </div>
-        <h3 className="mt-4">{videoData.title}</h3>
-      </Link>
     </div>
   );
 };
