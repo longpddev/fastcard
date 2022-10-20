@@ -85,7 +85,7 @@ const AccountDetail = () => {
       <p className="text-center text-slate-200 mt-6">Change password</p>
       <div className="mb-4">
         <InputValidate
-          type="text"
+          type="password"
           plug={passwordPlug}
           name="oldpassword"
           label="Old password"
@@ -95,7 +95,7 @@ const AccountDetail = () => {
       </div>
       <div className="mb-4">
         <InputValidate
-          type="text"
+          type="password"
           plug={passwordPlug}
           label="New password"
           name="newpassword"
@@ -106,7 +106,7 @@ const AccountDetail = () => {
       </div>
       <div className="mb-4">
         <InputValidate
-          type="text"
+          type="password"
           plug={passwordPlug}
           label="Repeat password"
           name="repeatpassword"
