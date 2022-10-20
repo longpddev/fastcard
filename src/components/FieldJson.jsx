@@ -1,8 +1,8 @@
 import React, { useLayoutEffect } from "react";
 import { useEffect } from "react";
 import { useState } from "react";
-import Markdown from "../../components/Markdown";
-import { pushFastToast } from "../../components/Toast";
+import Markdown from "@components/Markdown";
+import { pushFastToast } from "@components/Toast";
 
 function parseTranscript(value) {
   let parsed;

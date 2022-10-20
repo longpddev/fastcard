@@ -3,9 +3,13 @@ import useActivated from "./useActivated";
 
 export const useValidate = () => {
   const validObject = useRef({});
+  const prevValCheck = useRef({});
   const { onActive, isActivated } = useActivated();
   return {
-    plug: useCallback({ globe: validObject, isActivated: isActivated }, []),
+    plug: useCallback(
+      { globe: validObject, isActivated: isActivated, prevValCheck },
+      []
+    ),
     onSubmit:
       (handle) =>
       (...argus) => {

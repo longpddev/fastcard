@@ -57,6 +57,7 @@ export const token = {
 };
 
 export const watchThunk = (data) => {
+  console.log(data);
   if (data.meta.requestStatus === "rejected") {
     console.error(data);
     console.trace(data.error.stack);
@@ -165,3 +166,71 @@ export const maybe = function (data) {
 };
 
 maybe.prototype.Maybe = Maybe;
+
+export const formatByteUnit = (size) => {
+  let unitSize = size;
+  let unit = "byte";
+
+  if (Math.floor(unitSize / 1024) > 1) {
+    unit = "Kb";
+    unitSize /= 1024;
+  }
+
+  if (Math.floor(unitSize / 1024) > 1) {
+    unit = "Mb";
+    unitSize /= 1024;
+  }
+
+  unitSize = Math.ceil(unitSize * 100) / 100;
+
+  return {
+    unitSize,
+    unit,
+    text: unitSize + " " + unit,
+  };
+};
+
+export function parseProgress(cb) {
+  let prevLoaded = 0,
+    prevTime = new Date().getTime();
+  return (loaded, total) => {
+    const currentTime = new Date().getTime();
+    const diff = loaded - prevLoaded;
+    const percent = Math.ceil((loaded / total) * 100 * 10) / 10;
+    const speed = (diff / (currentTime - prevTime)) * 1000;
+    prevTime = currentTime;
+    prevLoaded = loaded;
+
+    cb({
+      percent,
+      loaded,
+      total,
+      speed,
+      format: {
+        loaded: formatByteUnit(loaded),
+        total: formatByteUnit(total),
+        speed: formatByteUnit(speed),
+      },
+    });
+  };
+}
+
+export const checklistValidate = {
+  password: [
+    {
+      fn: (value) => value.length > 5,
+      mess: "password too short",
+    },
+    {
+      fn: (value) =>
+        [/[a-z]+/.test(value), /[0-9]+/.test(value)].every((i) => i),
+      mess: "password contain numbers",
+    },
+  ],
+  repeatPassword: (pw) => [
+    {
+      fn: (value) => pw === value,
+      mess: "password doesn't match",
+    },
+  ],
+};

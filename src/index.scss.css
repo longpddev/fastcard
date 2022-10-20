@@ -270,17 +270,17 @@
     content: "";
     box-shadow: 0 0 30px 30px white;
     @apply absolute top-0 bottom-0 h-full w-5 bg-slate-50 z-10;
-    animation: animate-progress 1000ms infinite;
+    animation: animate-progress 1000ms infinite linear;
   }
 }
 
 @keyframes animate-progress {
   0% {
-    left: 0;
+    left: -200%;
   }
 
   100% {
-    left: 100%;
+    left: 200%;
   }
 }
 

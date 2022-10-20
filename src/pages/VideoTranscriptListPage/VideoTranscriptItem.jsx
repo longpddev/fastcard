@@ -2,13 +2,12 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { getMedia } from "../../api/client";
 import VideoTranscriptMoreFeature from "./VideoTranscriptMoreFeature";
-
-const VideoTranscriptItem = ({ videoData }) => {
+const VideoTranscriptItem = ({ videoData, requestRefresh }) => {
   return (
-    <div className="relative group">
+    <div className="relative group block-up">
       <Link to={`/video/${videoData.id}`}>
         <div className="w-full">
-          <div className="pt-[56.25%] relative ">
+          <div className="pt-[56.25%] relative  overflow-hidden">
             <div
               className="absolute inset-0 w-full h-full z-[-1]"
               style={{
@@ -27,11 +26,12 @@ const VideoTranscriptItem = ({ videoData }) => {
             </div>
           </div>
         </div>
-        <h3 className="mt-4">{videoData.title}</h3>
+        <h3 className="py-2 text-center bg-slate-800">{videoData.title}</h3>
       </Link>
       <VideoTranscriptMoreFeature
         id={videoData.id}
         className="group-hover:opacity-100 opacity-0 absolute top-2 right-2"
+        requestRefresh={requestRefresh}
       />
     </div>
   );

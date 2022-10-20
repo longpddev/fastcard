@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import FormAuth from "../components/FormAuth";
 import { pushToast } from "../components/Toast";
-import { titlePage, watchThunk } from "../functions/common";
+import { checklistValidate, titlePage, watchThunk } from "../functions/common";
 import useActivated from "../hooks/useActivated";
 import { useValidate } from "../hooks/useValidate";
 import { signupThunk } from "../services/auth/authSlice";
@@ -50,17 +50,7 @@ const SignUpPage = () => {
         className="mb-4"
         name="password"
         placeholder="Password"
-        checkList={[
-          {
-            fn: (value) => value.length > 5,
-            mess: "password too short",
-          },
-          {
-            fn: (value) =>
-              [/[a-z]+/.test(value), /[0-9]+/.test(value)].every((i) => i),
-            mess: "password contain numbers",
-          },
-        ]}
+        checkList={checklistValidate.password}
         plug={plug}
         value={data.password}
         onChange={(e) => setData({ ...data, password: e.target.value })}
@@ -69,12 +59,7 @@ const SignUpPage = () => {
         type="password"
         className="mb-6"
         name="repeatpassword"
-        checkList={[
-          {
-            fn: (value) => data.password === value,
-            mess: "password doesn't match",
-          },
-        ]}
+        checkList={checklistValidate.repeatPassword(data.password)}
         placeholder="Confirm Password"
         plug={plug}
         value={data.repeatPassword}

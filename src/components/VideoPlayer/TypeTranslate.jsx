@@ -75,7 +75,6 @@ const TypeTranslate = ({
 
   useEffect(() => {
     ref.current && ref.current.focus();
-    console.log(currentPoint);
   }, []);
 
   return (
@@ -95,7 +94,7 @@ const TypeTranslate = ({
       ref={ref}
       style={{
         ...style,
-        "text-shadow":
+        textShadow:
           "black .5px 0px,black -.5px 0px, black 0px .5px,black 0px -.5px",
       }}
     >
@@ -119,8 +118,6 @@ const TypeTranslate = ({
 };
 
 const Point = ({ isActive }) => {
-  const ref = useRef();
-
   if (!isActive) return null;
 
   return (

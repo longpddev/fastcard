@@ -72,7 +72,6 @@ const VideoPlayer = ({ srcVideo, transcript, startBy, onSegmentChange }) => {
     videoCl.videoCl.control(!isFocus);
   }, [isFocus, control && control.isInitialed()]);
 
-  console.log(control);
   return (
     <div className="flex flex-wrap">
       <div

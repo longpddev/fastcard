@@ -1,14 +1,15 @@
 import clsx from "clsx";
-import { useEffect, useRef } from "react";
-
+import { useEffect, useMemo, useRef } from "react";
+const defaultChecklist = [];
 export const InputValidate = ({
   onChange,
   plug,
   value,
   name,
-  checkList = [],
+  checkList = defaultChecklist,
   className,
   inputClass = "",
+  label,
   ...props
 }) => {
   const message = useRef("");
@@ -24,20 +25,24 @@ export const InputValidate = ({
       })
     ) {
       plug.globe.current[name] = true;
+
       message.current = "";
     }
   };
   const handleChange = (e) => {
-    const val = e.target.value;
-    checkValid(val);
     onChange && onChange(e);
   };
-
-  useEffect(() => {
+  useMemo(() => {
     checkValid(value);
-  }, []);
+  }, [value, checkList]);
+
   return (
     <div className={className}>
+      {label && (
+        <label htmlFor="" className="mb-1 inline-block">
+          {label}
+        </label>
+      )}
       <input
         value={value}
         className={clsx("input", inputClass, {

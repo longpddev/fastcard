@@ -179,7 +179,7 @@ export async function linkImageToFile(src) {
   canvas.height = height;
   const ctx = canvas.getContext("2d");
 
-  ctx?.drawImage(image, 0, 0);
+  ctx?.drawImage(image, 0, 0, width, height, 0, 0, canvas.width, canvas.height);
 
   return await new Promise((res, rej) => {
     canvas.toBlob((file) => {
@@ -189,5 +189,21 @@ export async function linkImageToFile(src) {
         height: canvas.height,
       });
     }, "image/jpeg");
+  });
+}
+
+export async function getWidthHeightFileVideo(file) {
+  const video = document.createElement("video");
+
+  return await new Promise((res, rej) => {
+    video.src = URL.createObjectURL(file);
+
+    video.onloadeddata = function () {
+      res({
+        file,
+        width: video.videoHeight,
+        height: video.videoWidth,
+      });
+    };
   });
 }

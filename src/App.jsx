@@ -1,20 +1,21 @@
 import { useState } from "react";
 import { Route, Routes } from "react-router-dom";
-import CreateCardPage from "./pages/CreateCardPage";
-import HomePage from "./pages/HomePage";
-import NotFound from "./pages/NotFound";
+import CreateCardPage from "@pages/CreateCardPage";
+import HomePage from "@pages/HomePage";
+import NotFound from "@pages/NotFound";
 import Default from "./layouts/Default";
 import Blank from "./layouts/Blank";
-import LoginPage from "./pages/LoginPage";
-import SignUpPage from "./pages/SignUpPage";
-import HasLogin from "./components/Auth/HasLogin";
-import CardListPage from "./pages/CardListPage/CardListPage";
-import CardDetailPage from "./pages/CardDetailPage/CardDetailPage";
-import LearningPage from "./pages/LearningPage";
-import AccountPage from "./pages/AccountPage";
-import VideoTranscriptDetailPage from "./pages/VideoTranscriptDetailPage";
-import VideoTranscriptCreatePage from "./pages/VideoTranscriptCreatePage";
-import VideoTranscriptListPage from "./pages/VideoTranscriptListPage";
+import LoginPage from "@pages/LoginPage";
+import SignUpPage from "@pages/SignUpPage";
+import HasLogin from "@components/Auth/HasLogin";
+import CardListPage from "@pages/CardListPage/CardListPage";
+import CardDetailPage from "@pages/CardDetailPage/CardDetailPage";
+import LearningPage from "@pages/LearningPage";
+import AccountPage from "@pages/AccountPage";
+import VideoTranscriptDetailPage from "@pages/VideoTranscriptDetailPage";
+import VideoTranscriptCreatePage from "@pages/VideoTranscriptCreatePage";
+import VideoTranscriptListPage from "@pages/VideoTranscriptListPage";
+import VideoTranscriptEditPage from "@pages/VideoTranscriptEditPage/index";
 function App() {
   return (
     <>
@@ -92,16 +93,28 @@ function App() {
             </HasLogin>
           }
         />
-        <Route
-          path="/video/:videoId"
-          element={
-            <HasLogin>
-              <Default>
-                <VideoTranscriptDetailPage />
-              </Default>
-            </HasLogin>
-          }
-        />
+        <Route path="/video/:videoId">
+          <Route
+            index
+            element={
+              <HasLogin>
+                <Default>
+                  <VideoTranscriptDetailPage />
+                </Default>
+              </HasLogin>
+            }
+          />
+          <Route
+            path="edit"
+            element={
+              <HasLogin>
+                <Default>
+                  <VideoTranscriptEditPage />
+                </Default>
+              </HasLogin>
+            }
+          />
+        </Route>
 
         <Route
           path="/account"

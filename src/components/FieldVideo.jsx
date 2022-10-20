@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { useMemo } from "react";
 import { useEffect } from "react";
 import { useRef } from "react";
-import { pushFastToast, pushToast } from "../../components/Toast";
+import { pushToast } from "@components/Toast";
+import { formatByteUnit } from "@/functions/common";
 
 const FieldVideo = ({
   value,
@@ -15,14 +15,22 @@ const FieldVideo = ({
   return (
     <div>
       {!hasValue && (
-        <FieldFileUi value={value} valueSet={valueSet} accept={"video/*"} />
+        <FieldFileUi
+          value={value}
+          valueSet={valueSet}
+          accept={"video/*"}
+          size={1024 * 1024 * 100}
+        />
       )}
 
       {hasValue && (
         <div className="block-up rounded-md p-4 mb-4">
           <PreviewVideo
             src={urlDemo}
-            onRemove={() => valueSet([])}
+            onRemove={() => {
+              valueSet([]);
+              thumbnailSet("");
+            }}
             thumbnail={thumbnail}
             thumbnailSet={thumbnailSet}
           />
@@ -38,6 +46,8 @@ const PreviewVideo = ({ src, onRemove, thumbnail, thumbnailSet }) => {
   async function getThumbnailVideo(videoEl) {
     const canvas = document.createElement("canvas");
     const { videoWidth, videoHeight } = videoEl;
+    console.dir(videoEl);
+
     canvas.width = 400;
     canvas.height = Math.floor(((400 * videoHeight) / videoWidth) * 10) / 10;
     const ctx = canvas.getContext("2d");
@@ -53,32 +63,13 @@ const PreviewVideo = ({ src, onRemove, thumbnail, thumbnailSet }) => {
       canvas.height
     );
 
-    const file = await new Promise((res, rej) => {
-      canvas.toBlob((file) => {
-        res(file);
-      });
-    });
-
-    return file;
+    return canvas.toDataURL();
   }
-  useEffect(() => {
-    console.log({ thumbnail, loaded });
-    if (!loaded || thumbnail) return;
 
-    getThumbnailVideo(ref.current).then((file) =>
-      thumbnailSet(URL.createObjectURL(file))
-    );
-  }, [loaded, thumbnail]);
   return (
     <div className="relative max-w-[600px] mx-auto">
-      <video
-        src={src}
-        onLoadedData={(e) => loadedSet(true)}
-        ref={ref}
-        controls
-        className=""
-      ></video>
-      <div className="absolute z-10 top-1 right-1 drop-shadow-[0_0_4px_black]">
+      <video src={src} ref={ref} controls className=""></video>
+      <div className="absolute z-10 top-1 right-4 drop-shadow-[0_0_4px_black]">
         <button
           onClick={onRemove}
           className="p-2 hover:text-orange-400 relative w-6 h-6 icon-center-button"
@@ -87,11 +78,9 @@ const PreviewVideo = ({ src, onRemove, thumbnail, thumbnailSet }) => {
         </button>
         <button
           onClick={() =>
-            getThumbnailVideo(ref.current).then((file) => {
-              const src = URL.createObjectURL(file);
-              thumbnailSet(src);
-              console.log(src);
-              pushToast.success(`Create thumbnail success ![link](${src} "Preview")
+            getThumbnailVideo(ref.current).then((linkImage) => {
+              thumbnailSet(linkImage);
+              pushToast.success(`Create thumbnail success ![link](${linkImage} "Preview")
               `);
             })
           }
@@ -107,6 +96,13 @@ const PreviewVideo = ({ src, onRemove, thumbnail, thumbnailSet }) => {
           className="absolute inset-0 w-full h-full block pointer-events-none transition-all opacity-100 scale-100"
           alt=""
         />
+      )}
+
+      {!thumbnail && (
+        <p className="mt-2">
+          <span className="text-orange-400">Notice:</span> click icon to create
+          thumbnail for video
+        </p>
       )}
     </div>
   );
@@ -129,16 +125,25 @@ const ImagePreviewVideoAnimate = (props) => {
   );
 };
 
-const FieldFileUi = ({ value, valueSet, remove, accept, ...props }) => {
+const FieldFileUi = ({ value, valueSet, remove, accept, size, ...props }) => {
   const handleChange = ({ target: { files } }) => {
     const regex = new RegExp(accept.replace("*", ".*"));
     const checkFile = (file) => {
-      const result = regex.test(file.type);
+      let result = regex.test(file.type);
       if (!result) {
         const fileName =
           file.name.length > 20 ? file.name.slice(0, 20) + "..." : file.name;
         pushToast.error(
           `File: ${fileName} with type: ${file.type}. Which don\'t except please pick another.`
+        );
+      }
+      result = file.size <= size;
+
+      if (!result) {
+        pushToast.error(
+          `${formatByteUnit(file.size).text} > ${
+            formatByteUnit(size).text
+          } that size limit for upload. Please choose file size lower.`
         );
       }
       return result;

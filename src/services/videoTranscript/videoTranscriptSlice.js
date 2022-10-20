@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { clientAuth, uploadfile } from "../../api/client";
-
 export const createVideoTranscriptThunk = createAsyncThunk(
   "videoTranscript/createVideoTranscriptThunk",
   async ({
@@ -13,18 +12,24 @@ export const createVideoTranscriptThunk = createAsyncThunk(
     height,
     metadata = {},
     transcript,
+    onProgressUpload,
   }) => {
-    return await uploadfile("/video/upload", {
-      file,
-      name,
-      title,
-      description,
-      thumbnailId,
-      width,
-      height,
-      metadata: JSON.stringify(metadata),
-      transcript,
-    });
+    return await uploadfile(
+      "/video/upload",
+      {
+        file,
+        name,
+        title,
+        description,
+        thumbnailId,
+        width,
+        height,
+        metadata: JSON.stringify(metadata),
+        transcript,
+      },
+      "POST",
+      { onProgressUpload }
+    );
   }
 );
 
@@ -45,6 +50,31 @@ export const updateVideoDataThunk = createAsyncThunk(
     });
 
     return result.data;
+  }
+);
+
+export const updateVideoTranscriptionSourceThunk = createAsyncThunk(
+  "videoTranscript/updateVideoTranscriptionSource",
+  async ({ id, file, width, height, onProgressUpload }) => {
+    return await uploadfile(
+      `/video/${id}/change-video`,
+      {
+        file,
+        width,
+        height,
+      },
+      "PUT",
+      {
+        onProgressUpload,
+      }
+    );
+  }
+);
+
+export const deleteVideoTranscriptThunk = createAsyncThunk(
+  "videoTranscript/deleteVideoTranscript",
+  async (id) => {
+    return await clientAuth.DELETE(`/video/${id}`);
   }
 );
 

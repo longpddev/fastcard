@@ -1,12 +1,26 @@
 import clsx from "clsx";
 import React from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import MoreFeature from "../../components/MoreFeature";
-import { pushToast } from "../../components/Toast/core";
-const VideoTranscriptMoreFeature = ({ id, className = "" }) => {
+import MoreFeature from "@components/MoreFeature";
+import { progressWatchPromise } from "@components/ProgressGlobal";
+import { pushFastToast, pushToast } from "@components/Toast/core";
+import { watchThunk } from "../../functions/common";
+import { deleteVideoTranscriptThunk } from "../../services/videoTranscript/videoTranscriptSlice";
+const VideoTranscriptMoreFeature = ({ id, className = "", requestRefresh }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const handleDelete = () => {
-    pushToast.warning("feature do not done yet");
+    dispatch(deleteVideoTranscriptThunk(id))
+      .then(watchThunk)
+      .then(() => {
+        pushFastToast.success("Delete video transcript success");
+        requestRefresh && requestRefresh();
+      })
+      .catch(() =>
+        pushFastToast.error("Delete video transcript error, please try again")
+      )
+      .finally(progressWatchPromise());
   };
   return (
     <MoreFeature className={clsx(className, "")}>
@@ -15,7 +29,7 @@ const VideoTranscriptMoreFeature = ({ id, className = "" }) => {
           <ItemFeature
             className="hover:text-sky-400"
             icon={"fa-solid fa-pen-to-square"}
-            onClick={() => navigate(`/video/edit/${id}`)}
+            onClick={() => navigate(`/video/${id}/edit`)}
           >
             Edit
           </ItemFeature>

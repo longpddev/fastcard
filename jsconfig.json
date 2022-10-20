@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "jsx": "react",
+    "target": "ES6",
+    "baseUrl": "./",
+    "paths": {
+      "@components/*": [
+        "src/components/*",
+        "src/components/*/index"
+      ],
+      "@pages/*": [
+        "src/pages/*",
+        "src/pages/*/index",
+      ],
+      "@services/*": [
+        "src/services/*",
+        "src/services/*/index",
+      ],
+      "@hooks/*": [
+        "src/hooks/*",
+        "src/hooks/*/index",
+      ],
+      "@/*": [
+        "src/*",
+        "src/*/index"
+      ],
+    }
+  }
+}

@@ -6,6 +6,7 @@ import { TabCardAnswer, TabCardExplain, TabCardQuestion } from "./TabCardInfo";
 import TabGroup from "./TabGroup";
 import { always, curry, ifElse, isEmpty, isNil, path } from "ramda";
 import { CARD_TYPE } from "../../constants";
+import { titlePage } from "@/functions/common";
 const PAGE_TAB = {
   card_group: "card_group",
   question: "question",
@@ -23,7 +24,7 @@ const keyBy = curry((key, data) =>
 const CardDetailPage = () => {
   const { id } = useParams();
   const { data, isLoading, refetch } = useGetCardDetailQuery(id);
-
+  titlePage("Card detail");
   const cardStepOb = ifElse(
     isNil,
     always({}),

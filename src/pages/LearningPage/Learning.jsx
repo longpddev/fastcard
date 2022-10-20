@@ -1,3 +1,4 @@
+import { titlePage } from "@/functions/common";
 import { path } from "ramda";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -6,6 +7,7 @@ import CardLearn from "../../components/CardLearn";
 import LoadingIcon from "../../components/LoadingIcon";
 import { initProcess } from "../../services/card/cardSlice";
 const Learning = () => {
+  titlePage("Learning");
   let { groupId } = useParams();
   groupId = parseInt(groupId);
   const isExistInLearn = useSelector((s) =>

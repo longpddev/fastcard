@@ -1,7 +1,6 @@
 import React from "react";
 import VideoPlayer from "../../components/VideoPlayer";
 import { useParams } from "react-router-dom";
-import { useGetVideoByIdQuery } from "../../services/queryApi";
 import { getMedia } from "../../api/client";
 import { useThunk } from "../../hooks/useThunk";
 import {
@@ -13,6 +12,8 @@ import { useEffect } from "react";
 import { store } from "../../store/app";
 import { useCallback } from "react";
 import { useDispatch } from "react-redux";
+import HeaderPage from "@components/HeaderPage";
+import { titlePage } from "@/functions/common";
 function useAutoSaveProgress(id) {
   const dispatch = useDispatch();
   return useCallback((newProcess) => {
@@ -28,12 +29,14 @@ function useAutoSaveProgress(id) {
 }
 
 const VideoTranscriptDetail = () => {
+  titlePage("Learn with video");
   const { videoId } = useParams();
-  const data = useThunk(getVideoTranscriptByIdThunk, videoId);
+  const { data } = useThunk(getVideoTranscriptByIdThunk, videoId);
   const autoSave = useAutoSaveProgress(videoId);
   const videoData = data;
   return (
     <div>
+      <HeaderPage title="Learn with video" />
       {videoData && (
         <VideoPlayer
           srcVideo={getMedia(videoData.path)}

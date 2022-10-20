@@ -12,6 +12,7 @@ export const loginThunk = createAsyncThunk(
         password: encodePassword(password),
       },
     });
+    console.log(result);
     token.set(result.data.token);
     return result.data;
   }
@@ -58,6 +59,31 @@ export const syncAccountSettingsThunk = createAsyncThunk(
     });
 
     return result.data;
+  }
+);
+
+export const updateAccountThunk = createAsyncThunk(
+  "auth/updateAccount",
+  async ({ username }) => {
+    return await clientAuth.PUT("/users", {
+      body: {
+        name: username,
+      },
+    });
+  }
+);
+
+export const changePasswordThunk = createAsyncThunk(
+  "auth/changePassword",
+  async ({ oldPassword, newPassword }) => {
+    const result = await clientAuth.PUT("/auth/change-password", {
+      body: {
+        oldPassword: encodePassword(oldPassword),
+        newPassword: encodePassword(newPassword),
+      },
+    });
+
+    return result;
   }
 );
 

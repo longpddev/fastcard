@@ -52,7 +52,7 @@ const MoreFeatureContent = ({ children }) => {
     <div
       ref={ref}
       className={clsx(
-        "absolute top-[100%] z-10 overflow-hidden rounded-md py-2 bg-slate-600",
+        "absolute top-[100%] mt-1 z-10 overflow-hidden rounded-md py-1 bg-slate-600",
         {
           "right-0": leftOrRight === "right",
           "left-0": leftOrRight === "left",
