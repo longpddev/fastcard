@@ -91,7 +91,7 @@ const VideoPlayer = ({ srcVideo, transcript, startBy, onSegmentChange }) => {
         <div className="w-full" ref={div}></div>
         {control && control.isInitialed() && (
           <TypeTranslate
-            className="absolute left-0 bottom-14 w-full px-6 text- text-xl text-center"
+            className="absolute left-0 bottom-14 w-full px-6 md:py-2 md:text-2xl text-xl text-center"
             key={control.getCurrentSegment().timeStart}
             text={control.getCurrentSegment().text}
             onDone={() => control.next()}

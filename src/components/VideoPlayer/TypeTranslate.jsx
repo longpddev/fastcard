@@ -36,6 +36,7 @@ const TypeTranslate = ({
   isFocus,
   isFocusSet,
 }) => {
+  const [tmpText, tmpTextSet] = useState("");
   const isProgress = useRef(false);
   isProgress.current = false;
   const ref = useRef();
@@ -47,7 +48,25 @@ const TypeTranslate = ({
   const arrCharMark = useMemo(() => {
     return arrChar.map(() => 0);
   }, [arrChar]);
+  const handleTyping = (char) => {
+    const currentKey = arrChar[currentPoint];
+    const isNextable = arrChar.length > currentPoint + 1;
+    if (char in KEY_IGNORE) return false;
+    if (char !== currentKey) {
+      arrCharMark[currentPoint] === 0 && (arrCharMark[currentPoint] = -1);
+      return false;
+    }
+    if (isNextable) {
+      arrCharMark[currentPoint] === 0 && (arrCharMark[currentPoint] = 1);
+      currentPointSet((prev) => prev + 1);
+    } else {
+      onDone();
+      tmpTextSet("");
+    }
 
+    isProgress.current = true;
+    return true;
+  };
   const handleKeydown = (e) => {
     if (isProgress.current === true) {
       console.log("you type so fast, we dont have speed to control process");
@@ -56,21 +75,7 @@ const TypeTranslate = ({
 
     e.preventDefault();
     const key = e.key;
-    const currentKey = arrChar[currentPoint];
-    const isNextable = arrChar.length > currentPoint + 1;
-    if (key in KEY_IGNORE) return;
-    if (key !== currentKey) {
-      arrCharMark[currentPoint] === 0 && (arrCharMark[currentPoint] = -1);
-      return;
-    }
-    if (isNextable) {
-      arrCharMark[currentPoint] === 0 && (arrCharMark[currentPoint] = 1);
-      currentPointSet((prev) => prev + 1);
-    } else {
-      onDone();
-    }
-
-    isProgress.current = true;
+    handleTyping(key);
   };
 
   useEffect(() => {
@@ -88,22 +93,37 @@ const TypeTranslate = ({
           "border border-transparent cursor-pointer": !isFocus,
         }
       )}
-      onKeyDown={handleKeydown}
-      onFocus={isFocusSet.bind(undefined, true)}
-      onBlur={isFocusSet.bind(undefined, false)}
-      ref={ref}
       style={{
         ...style,
         textShadow:
           "black .5px 0px,black -.5px 0px, black 0px .5px,black 0px -.5px",
       }}
     >
+      <input
+        type="text"
+        ref={ref}
+        // onKeyDown={handleKeydown}
+        onFocus={isFocusSet.bind(undefined, true)}
+        onBlur={isFocusSet.bind(undefined, false)}
+        value={tmpText}
+        onChange={(e) => {
+          const val = e.target.value;
+          if (!val) {
+            tmpTextSet("");
+            return;
+          }
+          if (handleTyping(val[val.length - 1])) {
+            tmpTextSet(val);
+          }
+        }}
+        className="absolute inset-0 w-full h-full bg-orange-400 text-transparent opacity-0"
+      />
       {arrChar.map((item, index) => (
         <>
           <Point isActive={isFocus && index === currentPoint}></Point>
           <span
             className={clsx({
-              "text-slate-300 opacity-40": arrCharMark[index] === 0,
+              "text-slate-300 opacity-50": arrCharMark[index] === 0,
               "text-red-500": arrCharMark[index] === -1,
               "text-sky-400": arrCharMark[index] === 1,
             })}

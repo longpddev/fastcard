@@ -18,7 +18,7 @@ function parseTranscript(value) {
     if (!("text" in item))
       throw `Missing "text" field in the ${index + 1}th transcript`;
     if (!("timeFormat" in item))
-      throw `Missing "time" field in the ${index + 1}th transcript`;
+      throw `Missing "timeFormat" field in the ${index + 1}th transcript`;
 
     if (typeof item.time !== "number")
       throw `"time" field must is number in the ${index + 1}th transcript`;
