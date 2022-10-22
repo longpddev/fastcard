@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
 import { BrowserRouter } from "react-router-dom";
@@ -15,7 +15,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <BrowserRouter>
       <Provider store={store}>
         <ProgressGlobal />
-        <ToastContainer />
+        <Suspense fallback={null}>
+          <ToastContainer />
+        </Suspense>
         <PopupWordDefinitions />
         <App />
       </Provider>
