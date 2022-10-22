@@ -1,6 +1,6 @@
-import React, { useCallback, useMemo, useState } from "react";
-import { clientAuth, getMedia } from "../../api/client";
-import { isCurrentOrigin, isValidUrl } from "../../functions/common";
+import React, { useMemo, useState } from "react";
+import { clientAuth, getMedia } from "@/api/client";
+import { isCurrentOrigin, isValidUrl } from "@/functions/common";
 
 import Popup from "../Popup";
 import { pushToast } from "../Toast";

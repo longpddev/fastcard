@@ -1,17 +1,4 @@
-import React, { Suspense } from "react";
-import LoadingIcon from "../LoadingIcon";
-const Lazy = React.lazy(() => import("./RandomName"));
-const MarkdownLazyLoad = (props) => {
-  const Loading = (
-    <div className="flex justify-center w-full">
-      <LoadingIcon></LoadingIcon>
-    </div>
-  );
-  return (
-    <Suspense fallback={Loading}>
-      <Lazy {...props} />
-    </Suspense>
-  );
-};
+import React from "react";
+const MarkdownLazyLoad = React.lazy(() => import("./RandomName"));
 
 export default MarkdownLazyLoad;

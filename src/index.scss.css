@@ -20,7 +20,7 @@
 
     --header-height: 60px;
     overflow-x: hidden;
-    @apply text-white bg-primary;
+    @apply text-slate-200 bg-primary;
 
     --shadow-block-down: inset 0 1px 1.5px 0.2px theme("colors.black");
     --shadow-block-up: inset 0 1px 1.5px 0.2px theme("colors.slate.600");

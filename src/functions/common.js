@@ -57,7 +57,6 @@ export const token = {
 };
 
 export const watchThunk = (data) => {
-  console.log(data);
   if (data.meta.requestStatus === "rejected") {
     console.error(data);
     console.trace(data.error.stack);
@@ -103,6 +102,13 @@ export const pickKey = curry((keys, source) =>
     return acc;
   }, {})
 );
+
+/**
+ *
+ * @param {string} text
+ */
+export const firstCapitalize = (text) =>
+  text[0].toUpperCase() + text.slice(1, text.length);
 
 export const getFileNameWithExtension = (objectFile) =>
   objectFile.fileName + "." + objectFile.extension;
@@ -233,4 +239,8 @@ export const checklistValidate = {
       mess: "password doesn't match",
     },
   ],
+};
+
+export const getTextSelect = () => {
+  return window.getSelection().toString();
 };

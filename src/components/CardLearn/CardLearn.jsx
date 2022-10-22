@@ -4,19 +4,15 @@ import CardExplain from "./CardExplain";
 import CardQuestion from "./CardQuestion";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { GlobalKeys } from "../ShortCutClick";
 import { useDispatch, useSelector } from "react-redux";
 import { path } from "ramda";
-import { getMedia } from "../../api/client";
-import {
-  nextProcess,
-  updateCardLearnedThunk,
-} from "../../services/card/cardSlice";
-import { watchThunk } from "../../functions/common";
+import { getMedia } from "@/api/client";
+import { nextProcess, updateCardLearnedThunk } from "@services/card/cardSlice";
+import { watchThunk } from "@/functions/common";
 import { pushFastToast } from "../Toast/core";
-import { CARD_LEAN_TYPE, CARD_TYPE } from "../../constants";
+import { CARD_LEAN_TYPE, CARD_TYPE } from "@/constants";
 import CardAnswer from "./CardAnswer";
-import useUserSettings from "../../hooks/useUserSettings";
+import useUserSettings from "@hooks/useUserSettings";
 import { ButtonControl } from "./ButtonControl";
 
 const animateOption = {

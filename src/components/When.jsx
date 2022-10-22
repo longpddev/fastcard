@@ -5,7 +5,6 @@ const When = ({ component, if: condition, children, render, ...props }) => {
 
   if (!condition) return null;
   const childrenIdFn = typeof children === "function";
-  console.log(children);
   return (
     <Component {...props}>{childrenIdFn ? children() : children}</Component>
   );

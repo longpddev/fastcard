@@ -1,11 +1,12 @@
 import { titlePage } from "@/functions/common";
 import { path } from "ramda";
-import React, { useEffect } from "react";
+import React, { useEffect, Suspense } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import CardLearn from "../../components/CardLearn";
-import LoadingIcon from "../../components/LoadingIcon";
-import { initProcess } from "../../services/card/cardSlice";
+import LoadingIcon from "@components/LoadingIcon";
+import { initProcess } from "@services/card/cardSlice";
+
+const CardLearn = React.lazy(() => import("@components/CardLearn"));
 const Learning = () => {
   titlePage("Learning");
   let { groupId } = useParams();
@@ -43,7 +44,11 @@ const Learning = () => {
         <div className="firework"></div>
       </>
     );
-  return <CardLearn groupId={groupId}></CardLearn>;
+  return (
+    <Suspense fallback={null}>
+      <CardLearn groupId={groupId}></CardLearn>
+    </Suspense>
+  );
 };
 
 export default Learning;

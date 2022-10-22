@@ -12,6 +12,7 @@ const HomePage = () => {
   const learnToday = maybe(useSelector((s) => s.card.learnToday))
     .map((item) => item.ids.map((key) => item.entities[key]))
     .get();
+
   useEffect(() => {
     // auto update list learn
     const timer = setInterval(
