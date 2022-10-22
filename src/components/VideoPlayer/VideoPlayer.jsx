@@ -1,7 +1,10 @@
+import { KEY_NAME, SPECIAL_KEY } from "@/constants/index";
+import useShortcut from "@hooks/useShortcut";
 import React, { useEffect, useRef, useState } from "react";
 import { Video } from "./function";
 import Segment from "./Segment";
 import TypeTranslate from "./TypeTranslate";
+import { clsx } from "clsx";
 
 const VideoPlayer = ({ srcVideo, transcript, startBy, onSegmentChange }) => {
   const [isFocus, isFocusSet] = useState(false);
@@ -15,14 +18,15 @@ const VideoPlayer = ({ srcVideo, transcript, startBy, onSegmentChange }) => {
     const divEl = div.current;
 
     if (!divEl) return;
-    const control = (videoControl.current = Video());
+    const control = (videoControl.current = Video({
+      className: "w-full h-full",
+    }));
     const video = control.getVideoEl();
     control.init(srcVideo, transcript).then(() => {
       divEl.appendChild(video);
       forceRender({});
       if (startBy) {
         try {
-          console.log(startBy);
           control.setSegmentByTime(startBy);
         } catch (e) {
           console.error(e);
@@ -31,7 +35,6 @@ const VideoPlayer = ({ srcVideo, transcript, startBy, onSegmentChange }) => {
     });
 
     control.on("segmentChange", (segment) => {
-      console.log(segment);
       forceRender({});
       onSegmentChange && onSegmentChange(segment);
     });
@@ -54,13 +57,9 @@ const VideoPlayer = ({ srcVideo, transcript, startBy, onSegmentChange }) => {
     const el = containerVideoRef.current;
     if (!el) return;
     if (isFullScreen) {
-      document.exitFullscreen().then(() => {
-        isFullScreenSet(!isFullScreen);
-      });
+      document.exitFullscreen();
     } else {
-      el.requestFullscreen().then(() => {
-        isFullScreenSet(!isFullScreen);
-      });
+      el.requestFullscreen();
     }
   };
   const control = videoControl.current;
@@ -72,6 +71,43 @@ const VideoPlayer = ({ srcVideo, transcript, startBy, onSegmentChange }) => {
     videoCl.videoCl.control(!isFocus);
   }, [isFocus, control && control.isInitialed()]);
 
+  useShortcut(SPECIAL_KEY.Ctrl + "r", (e) => {
+    const videoCl = videoControl.current;
+    if (!videoCl || !videoCl.isInitialed()) return;
+    e.preventDefault();
+    videoCl.getCurrentSegment()?.play();
+  });
+
+  useShortcut(
+    KEY_NAME.F11,
+    () => {
+      handleFullScreen();
+    },
+    [isFullScreen]
+  );
+
+  useEffect(() => {
+    const containerEl = containerVideoRef.current;
+
+    if (!containerEl) return;
+
+    const handleFullScreenChange = (e) => {
+      if (document.fullscreenElement) {
+        isFullScreenSet(true);
+      } else {
+        isFullScreenSet(false);
+      }
+    };
+
+    containerEl.addEventListener("fullscreenchange", handleFullScreenChange);
+
+    return () => {
+      containerEl.removeEventListener(
+        "fullscreenchange",
+        handleFullScreenChange
+      );
+    };
+  }, []);
   return (
     <div className="flex flex-wrap">
       <div
@@ -88,16 +124,31 @@ const VideoPlayer = ({ srcVideo, transcript, startBy, onSegmentChange }) => {
             <i className="fa-solid fa-expand "></i>
           )}
         </button>
-        <div className="w-full" ref={div}></div>
+        <div
+          className={clsx("w-full", {
+            "h-full": isFullScreen,
+          })}
+          ref={div}
+        ></div>
         {control && control.isInitialed() && (
           <TypeTranslate
-            className="absolute left-0 bottom-14 w-full px-6 md:py-2 md:text-2xl text-xl text-center"
+            className={clsx(
+              "absolute left-0 bottom-14 w-full px-6 md:py-2 md:text-2xl text-xl text-center",
+              {
+                "before:block before:inset-0 before:absolute before:pointer-events-none before:opacity-20 before:bg-black before:w-full before:h-full":
+                  isFocus,
+              }
+            )}
             key={control.getCurrentSegment().timeStart}
             text={control.getCurrentSegment().text}
             onDone={() => control.next()}
             isFocus={isFocus}
             isFocusSet={isFocusSet}
-            style={{ bottom: `${(isFocus ? heightVo / 2 : heightVo) / 5}px` }}
+            style={{
+              bottom: `${
+                isFocus ? (isFullScreen ? heightVo / 13 : 0) : heightVo / 10
+              }px`,
+            }}
           ></TypeTranslate>
         )}
       </div>

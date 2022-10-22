@@ -25,6 +25,10 @@ export function segment({
 
   function activeMe() {
     currentSegment(index);
+    play();
+  }
+
+  function play() {
     init().then(() => {
       videoCl.play();
     });
@@ -43,25 +47,29 @@ export function segment({
     prev,
     activeMe,
     isActive,
+    play,
   };
 }
 
-export function Video(settings) {
+export function Video(settings = {}) {
   const videoCl = videoControl();
   const emitter = new TinyEmitter();
   let initialed = false;
   const _segments = [];
   const _segmentsIndexing = {};
   let _currentSegment = 0;
-  // const shareFn = {
-  //   videoEl, next, prev,
-  // }
+
   videoCl.emitter.on("video:timeupdate", () => {
     const currentTime = Math.ceil(videoCl.currentTime() * 10) / 10;
     console.log(currentTime, getCurrentSegment().timeEnd);
     if (currentTime >= getCurrentSegment().timeEnd) videoCl.pause();
   });
 
+  const el = videoCl.getVideoEl();
+
+  if (settings.className) {
+    el.classList.add(...settings.className.split(" "));
+  }
   function nextSegment() {
     return currentSegment(currentSegment() + 1);
   }
@@ -120,22 +128,6 @@ export function Video(settings) {
     _segmentsIndexing[data.time.toString()] = _segments.length - 1;
   }
   function init(videoUrl, transcript) {
-    // transcript = Object.values(
-    //     transcript.reduce((acc, item) => {
-    //         const timeNumber = item.time / 1000;
-    //         if (timeNumber in acc) {
-    //             acc[timeNumber].text += " " + item.text;
-    //         } else {
-    //             acc[timeNumber] = {
-    //                 text: item.text,
-    //                 time: timeNumber,
-    //                 timeFormat: item.timeFormat,
-    //             };
-    //         }
-
-    //         return acc;
-    //     }, {})
-    // );
     return new Promise((res, rej) => {
       videoCl.setSrc(videoUrl).then(() => {
         const duration = videoCl.duration();

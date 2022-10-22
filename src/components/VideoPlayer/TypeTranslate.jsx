@@ -119,7 +119,7 @@ const TypeTranslate = ({
         className="absolute inset-0 w-full h-full bg-orange-400 text-transparent opacity-0"
       />
       {arrChar.map((item, index) => (
-        <>
+        <React.Fragment key={index}>
           <Point isActive={isFocus && index === currentPoint}></Point>
           <span
             className={clsx({
@@ -127,11 +127,10 @@ const TypeTranslate = ({
               "text-red-500": arrCharMark[index] === -1,
               "text-sky-400": arrCharMark[index] === 1,
             })}
-            key={index}
           >
             {item}
           </span>
-        </>
+        </React.Fragment>
       ))}
     </div>
   );
@@ -145,7 +144,7 @@ const Point = ({ isActive }) => {
       <span
         className="absolute top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%] point-animate"
         style={{
-          "text-shadow": "none",
+          textShadow: "none",
         }}
       />
     </span>
