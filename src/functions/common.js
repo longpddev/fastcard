@@ -107,8 +107,10 @@ export const pickKey = curry((keys, source) =>
  *
  * @param {string} text
  */
-export const firstCapitalize = (text) =>
-  text[0].toUpperCase() + text.slice(1, text.length);
+export const firstCapitalize = (text) => {
+  if (!text) return text;
+  return text[0].toUpperCase() + text.slice(1, text.length);
+};
 
 export const getFileNameWithExtension = (objectFile) =>
   objectFile.fileName + "." + objectFile.extension;
@@ -244,3 +246,5 @@ export const checklistValidate = {
 export const getTextSelect = () => {
   return window.getSelection().toString();
 };
+
+export const uuid = () => Math.random().toString(32).slice(2);

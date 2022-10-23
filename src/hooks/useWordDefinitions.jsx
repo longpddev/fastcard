@@ -1,7 +1,17 @@
+import { memoizeWith } from "ramda";
 import { useEffect, useState } from "react";
 import { useRef } from "react";
 
 const BASE_URL = "https://api.dictionaryapi.dev/api/v2/entries/en/";
+
+const fetchData = memoizeWith(
+  (str) => str.trim().toLowerCase(),
+  async (word) => {
+    const result = await fetch(BASE_URL + word);
+    if (!result.ok) throw new Error("No Definitions Found");
+    return await result.json();
+  }
+);
 
 export default function useWordDefinitions(word) {
   const [data, dataSet] = useState();
@@ -16,10 +26,7 @@ export default function useWordDefinitions(word) {
         return;
       }
       const session = createSession();
-      const result = await fetch(BASE_URL + word);
-
-      if (!result.ok) throw new Error("No Definitions Found");
-      const json = await result.json();
+      const json = await fetchData(word);
       if (session !== ref.current) return;
       dataSet(json);
       notFoundSet(false);

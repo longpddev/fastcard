@@ -7,9 +7,11 @@ import { Provider } from "react-redux";
 import { store } from "@/store/app";
 import ProgressGlobal from "@components/ProgressGlobal";
 import PopupWordDefinitions from "@components/PopupWordDefinitions";
+import Translation from "@components/Translation";
 const ToastContainer = React.lazy(() =>
   import("@components/Toast/ToastContainer")
 );
+
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>
@@ -19,6 +21,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           <ToastContainer />
         </Suspense>
         <PopupWordDefinitions />
+        <Translation />
         <App />
       </Provider>
     </BrowserRouter>
