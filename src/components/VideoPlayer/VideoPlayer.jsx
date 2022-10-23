@@ -80,11 +80,17 @@ const VideoPlayer = ({ srcVideo, transcript, startBy, onSegmentChange }) => {
 
   useShortcut(
     KEY_NAME.F11,
-    () => {
+    (e) => {
+      e.preventDefault();
       handleFullScreen();
     },
     [isFullScreen]
   );
+
+  useShortcut(SPECIAL_KEY.Ctrl + KEY_NAME.Enter, (e) => {
+    e.preventDefault();
+    isFocusSet(true);
+  });
 
   useEffect(() => {
     const containerEl = containerVideoRef.current;
@@ -108,6 +114,7 @@ const VideoPlayer = ({ srcVideo, transcript, startBy, onSegmentChange }) => {
       );
     };
   }, []);
+
   return (
     <div className="flex flex-wrap">
       <div

@@ -79,8 +79,9 @@ const TypeTranslate = ({
   };
 
   useEffect(() => {
+    if (!isFocus) return;
     ref.current && ref.current.focus();
-  }, []);
+  }, [isFocus]);
 
   return (
     <div
