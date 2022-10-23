@@ -3,13 +3,17 @@ import React, { useState } from "react";
 import useShortcut from "@hooks/useShortcut";
 import PopupWordDefinitionsPopup from "./PopupWordDefinitionsPopup";
 import IconCircle from "../IconCircle";
+import { useLogin } from "@hooks/useLogin";
 
 const PopupWordDefinitions = () => {
   const [open, openSet] = useState(false);
+  const { isLogin } = useLogin();
   useShortcut(SPECIAL_KEY.Ctrl + "s", (e) => {
     e.preventDefault();
     openSet(true);
   });
+
+  if (!isLogin) return null;
   return (
     <>
       {open && <PopupWordDefinitionsPopup onClose={() => openSet(false)} />}
