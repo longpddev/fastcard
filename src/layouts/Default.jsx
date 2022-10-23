@@ -7,7 +7,7 @@ const Default = ({ children }) => {
   return (
     <>
       <Header />
-      <main className="c-container py-10 relative">{children}</main>
+      <main className="c-container pb-10 relative">{children}</main>
       <Footer />
     </>
   );

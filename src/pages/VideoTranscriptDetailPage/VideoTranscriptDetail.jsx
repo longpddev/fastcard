@@ -14,6 +14,8 @@ import { useCallback } from "react";
 import { useDispatch } from "react-redux";
 import HeaderPage from "@components/HeaderPage";
 import { titlePage } from "@/functions/common";
+import Breadcrumb from "@components/Breadcrumb";
+import { VIDEO_LIST_PAGE } from "@pages/constant";
 function useAutoSaveProgress(id) {
   const dispatch = useDispatch();
   return useCallback((newProcess) => {
@@ -36,6 +38,7 @@ const VideoTranscriptDetail = () => {
   const videoData = data;
   return (
     <div>
+      <Breadcrumb paths={[VIDEO_LIST_PAGE]} />
       <HeaderPage title="Learn with video" />
       {videoData && (
         <VideoPlayer

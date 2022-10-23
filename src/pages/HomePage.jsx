@@ -23,7 +23,7 @@ const HomePage = () => {
     return () => clearInterval(timer);
   }, []);
   return (
-    <div>
+    <div className="mt-10">
       <h1 className="text-center text-2xl md:text-4xl md:mb-10 md-6">
         Welcome back!
       </h1>

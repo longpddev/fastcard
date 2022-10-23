@@ -18,6 +18,8 @@ import { parseProgress } from "@/functions/common";
 import When from "../../components/When";
 import ProgressUpload from "@components/ProgressUpload/ProgressUpload";
 import HeaderPage from "@components/HeaderPage";
+import Breadcrumb from "@components/Breadcrumb";
+import { VIDEO_LIST_PAGE } from "@pages/constant";
 
 /**
  * @typedef VideoOb
@@ -123,9 +125,9 @@ const VideoTranscriptCreate = () => {
       });
   };
 
-  console.log("uploading", uploading);
   return (
     <div>
+      <Breadcrumb paths={[VIDEO_LIST_PAGE]} />
       <HeaderPage title="Upload video">
         <button
           onClick={() => isPrevSet(!isPrev)}

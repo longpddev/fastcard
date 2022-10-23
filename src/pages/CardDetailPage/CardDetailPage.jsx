@@ -7,6 +7,8 @@ import TabGroup from "./TabGroup";
 import { always, curry, ifElse, isEmpty, isNil, path } from "ramda";
 import { CARD_TYPE } from "../../constants";
 import { titlePage } from "@/functions/common";
+import Breadcrumb from "@components/Breadcrumb";
+import { CARD_LIST_PAGE } from "@pages/constant";
 const PAGE_TAB = {
   card_group: "card_group",
   question: "question",
@@ -34,48 +36,51 @@ const CardDetailPage = () => {
   const cardExist = (type) => Boolean(cardStepOb[type]);
   const handleSubmit = () => refetch();
   return (
-    <PageTab defaultActive={PAGE_TAB.card_group}>
-      <PageTab.Title tabKey={PAGE_TAB.card_group}>Select Group</PageTab.Title>
-      <PageTab.Title tabKey={PAGE_TAB.question}>Question</PageTab.Title>
-      <PageTab.Title tabKey={PAGE_TAB.answer}>Answer</PageTab.Title>
-      {cardExist(PAGE_TAB.explain) && (
-        <PageTab.Title tabKey={PAGE_TAB.explain}>Explain</PageTab.Title>
-      )}
+    <>
+      <Breadcrumb paths={[CARD_LIST_PAGE]} />
+      <PageTab defaultActive={PAGE_TAB.card_group}>
+        <PageTab.Title tabKey={PAGE_TAB.card_group}>Select Group</PageTab.Title>
+        <PageTab.Title tabKey={PAGE_TAB.question}>Question</PageTab.Title>
+        <PageTab.Title tabKey={PAGE_TAB.answer}>Answer</PageTab.Title>
+        {cardExist(PAGE_TAB.explain) && (
+          <PageTab.Title tabKey={PAGE_TAB.explain}>Explain</PageTab.Title>
+        )}
 
-      <PageTab.Content tabKey={PAGE_TAB.card_group}>
-        <TabGroup
-          cardId={id}
-          cardData={path(["data"])(data)}
-          onSubmit={() => handleSubmit()}
-        />
-      </PageTab.Content>
-      <PageTab.Content tabKey={PAGE_TAB.question}>
-        <TabCardQuestion
-          cardId={id}
-          isLoading={isLoading}
-          cardData={cardStepOb[CARD_TYPE.question]}
-          onSubmit={() => handleSubmit()}
-        />
-      </PageTab.Content>
-      <PageTab.Content tabKey={PAGE_TAB.answer}>
-        <TabCardAnswer
-          cardId={id}
-          isLoading={isLoading}
-          cardData={cardStepOb[CARD_TYPE.answer]}
-          onSubmit={() => handleSubmit()}
-        />
-      </PageTab.Content>
-      {cardExist(PAGE_TAB.explain) && (
-        <PageTab.Content tabKey={PAGE_TAB.explain}>
-          <TabCardExplain
+        <PageTab.Content tabKey={PAGE_TAB.card_group}>
+          <TabGroup
             cardId={id}
-            isLoading={isLoading}
-            cardData={cardStepOb[CARD_TYPE.explain]}
+            cardData={path(["data"])(data)}
             onSubmit={() => handleSubmit()}
           />
         </PageTab.Content>
-      )}
-    </PageTab>
+        <PageTab.Content tabKey={PAGE_TAB.question}>
+          <TabCardQuestion
+            cardId={id}
+            isLoading={isLoading}
+            cardData={cardStepOb[CARD_TYPE.question]}
+            onSubmit={() => handleSubmit()}
+          />
+        </PageTab.Content>
+        <PageTab.Content tabKey={PAGE_TAB.answer}>
+          <TabCardAnswer
+            cardId={id}
+            isLoading={isLoading}
+            cardData={cardStepOb[CARD_TYPE.answer]}
+            onSubmit={() => handleSubmit()}
+          />
+        </PageTab.Content>
+        {cardExist(PAGE_TAB.explain) && (
+          <PageTab.Content tabKey={PAGE_TAB.explain}>
+            <TabCardExplain
+              cardId={id}
+              isLoading={isLoading}
+              cardData={cardStepOb[CARD_TYPE.explain]}
+              onSubmit={() => handleSubmit()}
+            />
+          </PageTab.Content>
+        )}
+      </PageTab>
+    </>
   );
 };
 

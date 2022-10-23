@@ -71,7 +71,7 @@ export function Video(settings = {}) {
     el.classList.add(...settings.className.split(" "));
   }
   function nextSegment() {
-    return currentSegment(currentSegment() + 1);
+    return currentSegment(currentSegment() + 1, true);
   }
 
   function prevSegment() {
@@ -86,11 +86,17 @@ export function Video(settings = {}) {
     getCurrentSegment().activeMe();
   }
 
-  function currentSegment(value) {
+  function currentSegment(value, isLoop = false) {
     if (isNaN(value)) {
       return _currentSegment;
     }
-    if (value >= _segments.length) value = _segments.length - 1;
+    if (value >= _segments.length) {
+      if (isLoop) {
+        value = 0;
+      } else {
+        value = _segments.length - 1;
+      }
+    }
     if (value < 0) value = 0;
     emitter.emit("segmentChange", _segments[value]);
     return (_currentSegment = value);

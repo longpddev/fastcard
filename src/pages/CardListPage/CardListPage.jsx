@@ -1,4 +1,5 @@
 import { titlePage } from "@/functions/common";
+import Breadcrumb from "@components/Breadcrumb";
 import HeaderPage from "@components/HeaderPage";
 import { path } from "ramda";
 import React, { useMemo } from "react";
@@ -15,6 +16,7 @@ const CardListPage = () => {
   );
   return (
     <>
+      <Breadcrumb />
       <HeaderPage title="List card"></HeaderPage>
       <PageTab
         key={groupCardList.length}

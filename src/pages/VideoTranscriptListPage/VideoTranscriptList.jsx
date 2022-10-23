@@ -6,6 +6,7 @@ import VideoTranscriptItem from "./VideoTranscriptItem";
 import When from "../../components/When";
 import { useNavigate } from "react-router-dom";
 import HeaderPage from "@components/HeaderPage";
+import Breadcrumb from "@components/Breadcrumb";
 const VideoTranscriptList = () => {
   const navigate = useNavigate();
   const { isLoading, data, refetch } = useGetVideoListQuery({
@@ -16,6 +17,7 @@ const VideoTranscriptList = () => {
   const handleRequestRefresh = () => refetch();
   return (
     <div>
+      <Breadcrumb />
       <HeaderPage title={"Video transcript"}>
         <button
           onClick={() => navigate("/video/create")}

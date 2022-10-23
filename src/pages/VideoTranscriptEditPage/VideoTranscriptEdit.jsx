@@ -8,6 +8,8 @@ import PageTab from "@components/PageTab/index";
 import VideoTranscriptEditFieldVideo from "./VideoTranscriptEditFieldVideo";
 import { titlePage } from "@/functions/common";
 import HeaderPage from "@components/HeaderPage";
+import Breadcrumb from "@components/Breadcrumb";
+import { VIDEO_LIST_PAGE } from "../constant";
 
 const VideoTranscriptEdit = () => {
   titlePage("Edit video");
@@ -15,6 +17,7 @@ const VideoTranscriptEdit = () => {
   const { data, reload } = useThunk(getVideoTranscriptByIdThunk, videoId);
   return (
     <div>
+      <Breadcrumb paths={[VIDEO_LIST_PAGE]} />
       <HeaderPage title="Edit video" />
       <PageTab defaultActive="content">
         <PageTab.Title tabKey={"content"}>Content</PageTab.Title>
