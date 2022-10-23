@@ -1,9 +1,32 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
+import useShortcut from "../../hooks/useShortcut";
+import { KEY_NAME } from "@/constants/index";
 const OutsideTheApp = ({ children }) => createPortal(children, document.body);
 
+let stackPopup = [];
+
 const PopupLazy = ({ open, setOpen, handleRef, children, maxWidth = 600 }) => {
+  const refId = useRef();
+  useEffect(() => {
+    if (!open) return;
+    const key = (refId.current = {});
+
+    stackPopup.push(key);
+
+    return () => (stackPopup = stackPopup.filter((item) => item !== key));
+  }, [open]);
+
+  useShortcut(KEY_NAME.Escape, (e) => {
+    e.preventDefault();
+    if (
+      stackPopup.length > 0 &&
+      stackPopup[stackPopup.length - 1] === refId.current
+    ) {
+      setOpen(false);
+    }
+  });
   return (
     <OutsideTheApp>
       <AnimatePresence>

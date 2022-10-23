@@ -96,7 +96,7 @@
   }
 
   .button {
-    @apply relative px-6 py-1 border-b-2 inset-0 border-current overflow-hidden transition-all select-none;
+    @apply relative px-6 py-1 border-b-2 inset-0 border-current transition-all select-none;
     box-shadow: 0 0 14px -4px currentColor;
 
     /*&:after {
@@ -405,6 +405,29 @@ body {
   100% {
     opacity: 0;
     transform: scale(1.5);
+  }
+}
+
+.animate-click-button {
+  @apply relative;
+
+  &:before {
+    content: '';
+    @apply absolute inset-0 w-full h-full block pointer-events-none bg-current opacity-0 z-[-1];
+    border-radius: inherit;
+    animation: animate-click-button 300ms;
+  }
+}
+
+@keyframes animate-click-button {
+  from {
+    transform: scale(1);
+    opacity: .5;
+  }
+
+  to {
+    transform: scale(1.5);
+    opacity: 0;
   }
 }
 

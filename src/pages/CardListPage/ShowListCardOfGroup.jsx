@@ -9,7 +9,7 @@ import { maybe } from "../../functions/common";
 import { path } from "ramda";
 import { useState } from "react";
 import Pagination from "../../components/Pagination";
-
+import imagePlaceholder from "@/assets/placeholder-image.png";
 const ITEM_PER_PAGE = 10;
 
 const getTitle = (cardStep) =>
@@ -59,7 +59,7 @@ const ShowListCardOfGroup = ({ groupId }) => {
                 .slice(0, 10)
                 .join(" ")
             }
-            image={getImage(item.cardStep)}
+            image={getImage(item.cardStep) || imagePlaceholder}
             createdAt={item.createdAt}
             className="mb-4"
           />

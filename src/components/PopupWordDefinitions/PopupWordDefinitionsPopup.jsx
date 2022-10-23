@@ -15,11 +15,6 @@ const PopupWordDefinitionsPopup = ({ onClose }) => {
   const [typing, typingSet] = useState(true);
   let { data, isLoading, isNotfound } = useWordDefinitions(typing ? "" : word);
 
-  // const [phoneticSelect, phoneticSelectSet] = useState(0);
-  useShortcut(KEY_NAME.Escape, () => {
-    onClose && onClose();
-  });
-
   useShortcut(SPECIAL_KEY.Ctrl + "s", (e) => {
     e.preventDefault();
     typingSet(true);
@@ -66,10 +61,13 @@ const PopupWordDefinitionsSearchBy = ({ searchBy }) => {
   });
   return (
     <div className="p-4">
+      <h2 className="text-center font-semibold text-2xl mb-4">
+        Word Definitions
+      </h2>
       <input
         type="text"
         className="input text-center"
-        placeholder="Type word you want to Definitions"
+        placeholder="Type word you want to Definition"
         value={word}
         autoFocus={true}
         onChange={(e) => wordSet(e.target.value)}

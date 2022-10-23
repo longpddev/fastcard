@@ -1,6 +1,7 @@
 import { SPECIAL_KEY } from "@/constants/index";
+import ButtonShortCut from "@components/ButtonShortCut";
+import IconCircle from "@components/IconCircle";
 import { useLogin } from "@hooks/useLogin";
-import useShortcut from "@hooks/useShortcut";
 import React from "react";
 import { useState } from "react";
 import TranslationPopup from "./TranslationPopup";
@@ -8,14 +9,24 @@ import TranslationPopup from "./TranslationPopup";
 const TranslationMain = () => {
   const [open, openSet] = useState(false);
   const { isLogin } = useLogin();
-  useShortcut(SPECIAL_KEY.Ctrl + "t", (e) => {
-    e.preventDefault();
-    openSet(true);
-  });
 
   if (!isLogin) return null;
   return (
-    <>{open ? <TranslationPopup onClose={() => openSet(false)} /> : null}</>
+    <>
+      {open ? <TranslationPopup onClose={() => openSet(false)} /> : null}
+      <div className="fixed right-5 bottom-[4.5rem] z-10">
+        <ButtonShortCut
+          shortcut={SPECIAL_KEY.Ctrl + "t"}
+          className="rounded-full"
+          onClick={() => openSet(true)}
+        >
+          <IconCircle
+            className="fa-solid fa-language"
+            wrapClass="active:text-sky-400 overflow-hidden"
+          ></IconCircle>
+        </ButtonShortCut>
+      </div>
+    </>
   );
 };
 

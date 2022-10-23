@@ -1,10 +1,18 @@
 import clsx from "clsx";
 import React from "react";
 import { CARD_LEAN_TYPE } from "../../constants";
-import { GlobalKeys } from "../ShortCutClick";
+import useShortcut from "@hooks/useShortcut";
+import { KEY_NAME, SPECIAL_KEY } from "@/constants";
+import ButtonShortCut from "@components/ButtonShortCut";
 
 export const ButtonControl = ({ isFront, isFrontSet, handleAction }) => {
   const isMobileLayout = window.innerWidth <= 480;
+
+  useShortcut(SPECIAL_KEY.Ctrl + "f", (e) => {
+    e.preventDefault();
+    isFrontSet((prev) => !prev);
+  });
+
   return (
     <div
       className={clsx(
@@ -15,29 +23,18 @@ export const ButtonControl = ({ isFront, isFrontSet, handleAction }) => {
       )}
     >
       {isFront ? (
-        <GlobalKeys
-          handlers={{
-            Enter: () => isFrontSet(false),
-          }}
+        <ButtonShortCut
+          shortcut={SPECIAL_KEY.Ctrl + KEY_NAME.Enter}
+          className="button text-sky-300 text-xl"
+          onClick={() => isFrontSet(false)}
         >
-          <button
-            className="button text-sky-300"
-            onClick={() => isFrontSet(false)}
-          >
-            View results
-          </button>
-        </GlobalKeys>
+          View results
+        </ButtonShortCut>
       ) : (
-        <GlobalKeys
-          handlers={{
-            "SPACE_BAR+r": () => handleAction(CARD_LEAN_TYPE.repeat),
-            "SPACE_BAR+g": () => handleAction(CARD_LEAN_TYPE.good),
-            Enter: () => handleAction(CARD_LEAN_TYPE.good),
-            "SPACE_BAR+h": () => handleAction(CARD_LEAN_TYPE.hard),
-          }}
-        >
-          <button
+        <>
+          <ButtonShortCut
             title="SPACE_BAR+r"
+            shortcut={SPECIAL_KEY.Ctrl + "r"}
             key={CARD_LEAN_TYPE.repeat}
             onClick={() => {
               handleAction(CARD_LEAN_TYPE.repeat);
@@ -45,9 +42,10 @@ export const ButtonControl = ({ isFront, isFrontSet, handleAction }) => {
             className="text-stone-400 text-xl button"
           >
             Repeat
-          </button>
-          <button
+          </ButtonShortCut>
+          <ButtonShortCut
             title="SPACE_BAR+g"
+            shortcut={SPECIAL_KEY.Ctrl + "g"}
             key={CARD_LEAN_TYPE.good}
             onClick={() => {
               handleAction(CARD_LEAN_TYPE.good);
@@ -55,9 +53,10 @@ export const ButtonControl = ({ isFront, isFrontSet, handleAction }) => {
             className="text-green-400 text-xl button"
           >
             Good
-          </button>
-          <button
+          </ButtonShortCut>
+          <ButtonShortCut
             title="SPACE_BAR+h"
+            shortcut={SPECIAL_KEY.Ctrl + "h"}
             key={CARD_LEAN_TYPE.hard}
             onClick={() => {
               handleAction(CARD_LEAN_TYPE.hard);
@@ -65,8 +64,8 @@ export const ButtonControl = ({ isFront, isFrontSet, handleAction }) => {
             className="text-red-400 text-xl button"
           >
             Hard
-          </button>
-        </GlobalKeys>
+          </ButtonShortCut>
+        </>
       )}
     </div>
   );

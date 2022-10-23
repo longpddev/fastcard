@@ -50,6 +50,7 @@ const register = (shortcutName, fn) => {
 };
 export default function useShortcut(shortcutName, fn, arr = []) {
   useEffect(() => {
+    if (!shortcutName) return;
     return register(shortcutName, fn);
   }, [...arr, shortcutName]);
 }

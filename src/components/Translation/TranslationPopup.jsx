@@ -18,10 +18,6 @@ const TranslationPopup = ({ onClose }) => {
     typingSet(true);
   });
 
-  useShortcut(KEY_NAME.Escape, (e) => {
-    e.preventDefault();
-    onClose(true);
-  });
   return (
     <Popup open={true} setOpen={onClose}>
       <When
@@ -59,6 +55,7 @@ const TranslationInput = ({ setText }) => {
 
   return (
     <div className="p-4">
+      <h2 className="text-center font-semibold text-2xl mb-4">Translate</h2>
       <input
         type="text"
         className="text-center input"
