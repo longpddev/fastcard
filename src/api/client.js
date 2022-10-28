@@ -65,7 +65,7 @@ const createMethodXMLHttpRequest = (
         throw new Error("header must is instanceof Headers");
 
       xhr.onload = function () {
-        if (xhr.status == 404 || xhr.status == 406) {
+        if (xhr.status == 404 || xhr.status == 406 || xhr.status === 401) {
           rej(xhr.response);
           return;
         }

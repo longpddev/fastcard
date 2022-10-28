@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 const FormAuth = ({ title, children, onSubmit }) => {
   const navigate = useNavigate();
   return (
-    <div className="absolute inset-0 w-full h-full flex justify-center items-center">
+    <div className="absolute inset-0 w-full h-full flex justify-center items-center px-4">
       <div className="rounded-lg overflow-hidden max-w-[500px] w-full max-h-full block-up p-4 bg-slate-800 ">
         <div className="flex">
           <Link to="#" onClick={() => navigate(-1)} title="go to home page">
