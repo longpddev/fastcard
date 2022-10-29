@@ -248,3 +248,39 @@ export const getTextSelect = () => {
 };
 
 export const uuid = () => Math.random().toString(32).slice(2);
+
+export const parseStringToArr = (str, parseBy = /\[[^\]]*\]/gm) => {
+  let start = 0;
+  const arr = [];
+  str.replace(parseBy, (match, offset, string) => {
+    const end = offset + match.length;
+    if (offset !== start) {
+      arr.push({
+        start,
+        end: offset,
+        isMatch: false,
+      });
+    }
+    arr.push({
+      start: offset,
+      end,
+      isMatch: true,
+    });
+    start = end;
+  });
+
+  if (start < str.length - 1) {
+    arr.push({
+      start: start,
+      end: str.length - 1,
+      isMatch: false,
+    });
+  }
+
+  return arr.map(({ start, end, isMatch }) => {
+    return {
+      text: str.slice(start, end),
+      isMatch,
+    };
+  });
+};

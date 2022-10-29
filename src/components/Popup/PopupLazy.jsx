@@ -54,7 +54,9 @@ const PopupLazy = ({ open, setOpen, handleRef, children, maxWidth = 600 }) => {
                 >
                   <i className="fas fa-xmark text-3xl px-[0.288em]"></i>
                 </button>
-                <div className="max-h-[95vh] overflow-auto">{children}</div>
+                <div className="max-h-[95vh] overflow-hidden overflow-y-auto">
+                  {children}
+                </div>
               </div>
             </div>
           </motion.div>

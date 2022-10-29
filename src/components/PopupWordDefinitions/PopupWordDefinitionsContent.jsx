@@ -3,41 +3,49 @@ import React, { useEffect, useRef, useState } from "react";
 import { clsx } from "clsx";
 import When from "@components/When";
 import FindImageByWords from "@components/FindImageByWords/FindImageByWords";
+import UrbanDefinitions from "./UrbanDefinitions";
 
-const PopupWordDefinitionsContent = ({ data }) => {
+const PopupWordDefinitionsContent = ({ data, onDefineMore, originalText }) => {
   return (
     <>
-      <h2 className="text-center font-semibold text-slate-200 text-2xl my-4">
-        {firstCapitalize(data.word)}
-      </h2>
-
       <div className="p-4">
-        <div className="flex flex-wrap gap-2">
-          <span className="self-center pr-2 text-xl text-slate-600">
-            Phonetic:{" "}
-          </span>
-          {data.phonetics.map((item, i) => (
-            <Phonetic
-              text={item.text}
-              audio={item.audio}
-              key={i}
-              selected={i === 0}
-            />
-          ))}
+        {data ? (
+          <div className="flex flex-wrap gap-2 mb-4">
+            <span className="self-center pr-2 text-xl text-slate-600">
+              Phonetic:{" "}
+            </span>
+            {data.phonetics.map((item, i) => (
+              <Phonetic
+                text={item.text}
+                audio={item.audio}
+                key={i}
+                selected={i === 0}
+              />
+            ))}
+          </div>
+        ) : null}
+
+        <div className="max-h-[150px] overflow-auto mb-4" tabIndex={0}>
+          <FindImageByWords words={originalText} />
         </div>
-        <div className="max-h-[150px] overflow-auto mt-6" tabIndex={0}>
-          <FindImageByWords words={data.word} />
+        <div className="mb-4">
+          <UrbanDefinitions words={originalText} onDefineMore={onDefineMore} />
         </div>
-        <h3 className="text-slate-600 text-xl mt-4">Meanings: </h3>
-        <div className="pl-4 overflow-auto max-h-[70vh]">
-          {data.meanings.map((item, i) => (
-            <Meaning
-              key={i}
-              partOfSpeech={item.partOfSpeech}
-              definitions={item.definitions}
-            />
-          ))}
-        </div>
+
+        {data ? (
+          <>
+            <h3 className="text-slate-600 text-xl mb-4">Meanings: </h3>
+            <div className="pl-4">
+              {data.meanings.map((item, i) => (
+                <Meaning
+                  key={i}
+                  partOfSpeech={item.partOfSpeech}
+                  definitions={item.definitions}
+                />
+              ))}
+            </div>
+          </>
+        ) : null}
       </div>
     </>
   );
@@ -46,35 +54,28 @@ const PopupWordDefinitionsContent = ({ data }) => {
 const Phonetic = ({ text, audio, className, selected }) => {
   const [playing, playingSet] = useState(false);
 
-  const ref = useRef({
-    onLoaded: null,
-    el: null,
-  });
-
-  const assignRef = (el) => {
-    if (el && ref.current.el !== el) {
-      ref.current.el = el;
-      ref.current.onLoaded = new Promise((res, rej) => {
-        el.oncanplay = () => {
-          if (ref.current.el !== el) return;
-          res(el);
-        };
-        el.onerror = () => {
-          if (ref.current.el !== el) return;
-          rej(el);
-        };
+  const audioRef = useRef();
+  if (!audioRef.current) {
+    if (audio) {
+      audioRef.current = new Promise((res, rej) => {
+        const au = new Audio(audio);
+        au.oncanplay = () => res(au);
+        au.onplaying = () => playingSet(true);
+        au.onended = () => playingSet(false);
+        au.onpause = () => playingSet(false);
+        au.onerror = () => rej("not found");
       });
+    } else {
+      audioRef.current = Promise.reject("not found");
     }
-  };
+  }
 
   const handleClick = () => {
-    if (!ref.current.el || playing) return;
-    const el = ref.current;
-    el.onLoaded.then(() => {
-      el.el.play();
-      playingSet(true);
-      el.el.onended = () => playingSet(false);
-    });
+    if (playing) {
+      audioRef.current.then((au) => au.pause());
+    } else {
+      audioRef.current.then((au) => au.play());
+    }
   };
 
   return (
@@ -106,7 +107,6 @@ const Phonetic = ({ text, audio, className, selected }) => {
       </When>
 
       <span>{text || `¯\\_(ツ)_/¯`}</span>
-      {audio && <audio ref={assignRef} src={audio}></audio>}
     </button>
   );
 };

@@ -413,7 +413,7 @@ body {
 
   &:before {
     content: '';
-    @apply absolute inset-0 w-full h-full block pointer-events-none bg-current opacity-0 z-[-1];
+    @apply absolute inset-0 w-full h-full block pointer-events-none bg-current opacity-0 z-[10];
     border-radius: inherit;
     animation: animate-click-button 300ms;
   }
@@ -422,7 +422,7 @@ body {
 @keyframes animate-click-button {
   from {
     transform: scale(1);
-    opacity: .5;
+    opacity: .3;
   }
 
   to {
