@@ -61,7 +61,7 @@ const UrbanDefinitionsItem = ({
   );
 
   return (
-    <div className="min-w-[300px] max-h-[400px] rounded-md border border-orange-400 p-4 pb-2 flex flex-col">
+    <div className="min-w-[300px] rounded-md border border-orange-400 p-4 pb-2 flex flex-col">
       <div>
         <h3 className="text-center text-slate-400 font-semibold text-xl mb-4">
           {firstCapitalize(word)}
