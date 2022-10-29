@@ -5,6 +5,8 @@ import { useState } from "react";
 import { useRef } from "react";
 import { useEffect } from "react";
 
+// option https://deep-translator-api.azurewebsites.net/docs#/default/google_translate_google__post
+
 // https://rapidapi.com/gatzuma/api/deep-translate1
 const SOURCE = "en";
 const RAPIT_GOOGLE_TRANSLATE =

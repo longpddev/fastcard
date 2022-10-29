@@ -2,6 +2,7 @@ import { firstCapitalize } from "@/functions/common";
 import React, { useEffect, useRef, useState } from "react";
 import { clsx } from "clsx";
 import When from "@components/When";
+import FindImageByWords from "@components/FindImageByWords/FindImageByWords";
 
 const PopupWordDefinitionsContent = ({ data }) => {
   return (
@@ -24,8 +25,10 @@ const PopupWordDefinitionsContent = ({ data }) => {
             />
           ))}
         </div>
-
-        <h3 className="text-slate-600 text-xl mt-2">Meanings: </h3>
+        <div className="max-h-[150px] overflow-auto mt-6" tabIndex={0}>
+          <FindImageByWords words={data.word} />
+        </div>
+        <h3 className="text-slate-600 text-xl mt-4">Meanings: </h3>
         <div className="pl-4 overflow-auto max-h-[70vh]">
           {data.meanings.map((item, i) => (
             <Meaning
