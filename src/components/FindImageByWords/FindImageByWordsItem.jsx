@@ -21,6 +21,7 @@ const FindImageByWordsItem = ({ preview, thumb }) => {
             enterSet(true);
           }
         }}
+        onClick={() => enterSet(true)}
         onFocus={() => focusSet(true)}
         onBlur={() => {
           focusSet(false);
