@@ -19,7 +19,7 @@ const FieldVideo = ({
           value={value}
           valueSet={valueSet}
           accept={"video/*"}
-          size={1024 * 1024 * 100}
+          size={1024 * 1024 * 200}
         />
       )}
 
