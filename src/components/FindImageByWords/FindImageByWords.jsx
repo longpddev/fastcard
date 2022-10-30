@@ -9,7 +9,7 @@ const FindImageByWords = ({ words }) => {
       {items.map((item) => (
         <FindImageByWordsItem
           key={item.id}
-          preview={item.assets.preview_1500}
+          preview={item.assets.preview_1000}
           thumb={item.assets.large_thumb}
         />
       ))}
