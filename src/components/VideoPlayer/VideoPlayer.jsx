@@ -171,16 +171,18 @@ const VideoPlayer = ({
           ></TypeTranslate>
         )}
       </div>
-      {control && control.isInitialed() && (
-        <div
-          className="overflow-auto w-full lg:w-[350px] lg:h-full p-4 border border-slate-600"
-          style={{ height: heightVo === undefined ? "" : heightVo }}
-        >
-          {control.getAllSegment().map((segment, index) => (
-            <Segment segment={segment} key={index}></Segment>
-          ))}
-        </div>
-      )}
+      <div
+        className="overflow-auto w-full lg:w-[350px] lg:h-full p-4 border border-slate-600"
+        style={{ height: (heightVo === undefined ? height : heightVo) + "px" }}
+      >
+        {control &&
+          control.isInitialed() &&
+          control
+            .getAllSegment()
+            .map((segment, index) => (
+              <Segment segment={segment} key={index}></Segment>
+            ))}
+      </div>
     </div>
   );
 };

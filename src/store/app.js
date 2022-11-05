@@ -2,6 +2,7 @@ import { configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
 import { run, token, watchThunk } from "../functions/common";
 import authSlice, { getUserInfo } from "../services/auth/authSlice";
 import cardSlice, {
+  getCardLearnTodayByGroupIdThunk,
   getCardLearnTodayThunk,
   getGroupCardThunk,
 } from "../services/card/cardSlice";
@@ -24,7 +25,7 @@ export const store = configureStore({
 run(async () => {
   const tokenData = token.get();
   if (!tokenData) return;
-  const { dispatch } = store;
+  const { dispatch, getState } = store;
 
   await Promise.all([dispatch(getUserInfo()), dispatch(getGroupCardThunk())]);
 

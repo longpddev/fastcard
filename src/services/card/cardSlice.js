@@ -134,38 +134,39 @@ export const updateCardStepThunk = createAsyncThunk(
   }
 );
 
-export const getCardLearnTodayThunk = createAsyncThunk(
-  "card/getCardLearnToday",
-  async (_, { getState }) => {
-    const groupCardIds = getState().card.groupCard.ids;
+export const getCardLearnTodayByGroupIdThunk = createAsyncThunk(
+  "card/getCardLearnTodayByGroupId",
+  async ({ groupId }, { getState }) => {
     const settings = getState().auth.settings;
-    if (groupCardIds.length === 0)
-      throw new Error("Group card doesn't load yet ");
     if (Object.keys(settings).length === 0)
       throw new Error("Setting user doesn't load yet");
-    const result = await Promise.all(
-      groupCardIds.map(async (groupId) => {
-        const card = await clientAuth.GET("/card/learn-today", {
-          params: {
-            limit: settings.maxCardInDay,
-            groupId,
-          },
-        });
+    const card = await clientAuth.GET("/card/learn-today", {
+      params: {
+        limit: settings.maxCardInDay,
+        groupId,
+      },
+    });
 
-        return {
-          groupId,
-          card: {
-            rows: card.data.rows?.sort(() => {
-              const ram = Math.random();
-              if (ram === 0.5) return 0;
-              return ram > 0.5 ? 1 : -1;
-            }),
-            count: card.data.count,
-          },
-        };
-      })
-    );
-    return result;
+    return {
+      groupId,
+      card: {
+        rows: card.data.rows?.sort(() => {
+          const ram = Math.random();
+          if (ram === 0.5) return 0;
+          return ram > 0.5 ? 1 : -1;
+        }),
+        count: card.data.count,
+      },
+    };
+  }
+);
+
+export const getCardLearnTodayThunk = createAsyncThunk(
+  "card/getCardLearnToday",
+  async (_, { getState, dispatch }) => {
+    getState().card.groupCard.ids.forEach((item) => {
+      dispatch(getCardLearnTodayByGroupIdThunk({ groupId: item }));
+    });
   }
 );
 
@@ -231,13 +232,19 @@ export const cardSlice = createSlice({
           {}
         );
       })
-      .addCase(getCardLearnTodayThunk.fulfilled, (state, { payload }) => {
-        state.learnToday.ids = payload.map((item) => item.groupId);
-        state.learnToday.entities = payload.reduce(
-          (acc, item) => (acc[item.groupId] = item) && acc,
-          {}
-        );
-      })
+      .addCase(
+        getCardLearnTodayByGroupIdThunk.fulfilled,
+        (state, { payload }) => {
+          if (state.learnToday.ids.indexOf(payload.groupId) === -1) {
+            state.learnToday.ids = [...state.learnToday.ids, payload.groupId];
+          }
+
+          state.learnToday.entities = {
+            ...state.learnToday.entities,
+            [payload.groupId]: payload,
+          };
+        }
+      )
       .addCase(updateGroupCardThunk.fulfilled, (state, { payload }) => {
         const { id, name } = payload;
         if (state.groupCard.entities[id]) {

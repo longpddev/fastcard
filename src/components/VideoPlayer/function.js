@@ -61,7 +61,7 @@ export function Video(settings = {}) {
 
   videoCl.emitter.on("video:timeupdate", () => {
     const currentTime = Math.ceil(videoCl.currentTime() * 10) / 10;
-    console.log(currentTime, getCurrentSegment().timeEnd);
+    // console.log(currentTime, getCurrentSegment().timeEnd);
     if (currentTime >= getCurrentSegment().timeEnd) videoCl.pause();
   });
 
@@ -214,7 +214,7 @@ function mapEventVideoElementToEmitter(emitter, videoEl) {
 
   listEvent.forEach((name) => {
     videoEl.addEventListener(name, () => {
-      console.log("video:" + name);
+      // console.log("video:" + name);
       emitter.emit("video:" + name, arguments);
     });
   });

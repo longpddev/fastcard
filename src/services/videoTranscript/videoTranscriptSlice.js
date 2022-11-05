@@ -37,7 +37,6 @@ export const getVideoTranscriptByIdThunk = createAsyncThunk(
   "videoTranscript/getVideoTranscriptById",
   async (id) => {
     const result = await clientAuth.GET(`/video/${id}`);
-
     return result.data;
   }
 );
@@ -91,9 +90,12 @@ const videoTranscriptSlice = createSlice({
     },
   },
   extraReducers: (builder) =>
-    builder.addCase(getVideoTranscriptByIdThunk.fulfilled, (state, payload) => {
-      state.metadata.processIndex = payload.metadata?.processIndex || 0;
-    }),
+    builder.addCase(
+      getVideoTranscriptByIdThunk.fulfilled,
+      (state, { payload }) => {
+        state.metadata.processIndex = payload.metadata?.processIndex || 0;
+      }
+    ),
 });
 
 export default videoTranscriptSlice.reducer;

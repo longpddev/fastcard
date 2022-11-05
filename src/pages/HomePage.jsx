@@ -8,13 +8,10 @@ import { getCardLearnTodayThunk } from "../services/card/cardSlice";
 const HomePage = () => {
   titlePage("Home page");
   const dispatch = useDispatch();
-  const groupCardEntities = useSelector((s) => s.card.groupCard.entities);
-  const learnToday = maybe(useSelector((s) => s.card.learnToday))
-    .map((item) => item.ids.map((key) => item.entities[key]))
-    .get();
+  const groupCard = useSelector((s) => s.card.groupCard);
 
   useEffect(() => {
-    // auto update list learn
+    // auto update list
     const timer = setInterval(
       () => dispatch(getCardLearnTodayThunk()),
       1000 * 60
@@ -35,24 +32,38 @@ const HomePage = () => {
           </tr>
         </thead>
         <tbody>
-          {learnToday.map((item) => (
-            <tr key={item.groupId}>
-              <td className="">
-                <Link to={`/learn/${item.groupId}`}>
-                  {path([item.groupId, "name"], groupCardEntities)}
-                </Link>
-              </td>
-              <td className="text-center ">
-                <span className="text-green-400">{item.card.rows.length}</span>
-                &nbsp;
-                <span className="text-gray-400">in</span>&nbsp;
-                <span className="text-sky-400">{item.card.count}</span>
-              </td>
-            </tr>
+          {groupCard.ids.map((id) => (
+            <GroupRow
+              groupId={id}
+              key={id}
+              name={path([id, "name"], groupCard.entities)}
+            />
           ))}
         </tbody>
       </table>
     </div>
+  );
+};
+
+const GroupRow = ({ groupId, name }) => {
+  const result = useSelector((s) => s.card.learnToday.entities[groupId]);
+
+  return (
+    <tr>
+      <td className="">
+        <Link to={`/learn/${groupId}`}>{name}</Link>
+      </td>
+      <td className="text-center ">
+        {result ? (
+          <>
+            <span className="text-green-400">{result.card.rows.length}</span>
+            &nbsp;
+            <span className="text-gray-400">in</span>&nbsp;
+            <span className="text-sky-400">{result.card.count}</span>
+          </>
+        ) : null}
+      </td>
+    </tr>
   );
 };
 

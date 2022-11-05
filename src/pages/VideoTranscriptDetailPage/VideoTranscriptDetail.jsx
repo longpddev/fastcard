@@ -19,8 +19,8 @@ import { VIDEO_LIST_PAGE } from "@pages/constant";
 function useAutoSaveProgress(id) {
   const dispatch = useDispatch();
   return useCallback((newProcess) => {
-    console.log(store.getState());
     const selectorMetadata = () => store.getState().videoTranscript.metadata;
+    console.log([selectorMetadata().processIndex, newProcess]);
     if (selectorMetadata().processIndex !== newProcess) {
       dispatch(setCurrentProcess(newProcess));
       dispatch(
@@ -36,12 +36,12 @@ const VideoTranscriptDetail = () => {
   const { data } = useThunk(getVideoTranscriptByIdThunk, videoId);
   const autoSave = useAutoSaveProgress(videoId);
   const videoData = data;
-  console.log(videoData);
+
   return (
     <div>
       <Breadcrumb paths={[VIDEO_LIST_PAGE]} />
       <HeaderPage title={videoData?.title || "Learn with video"} />
-      {videoData && (
+      {videoData ? (
         <VideoPlayer
           srcVideo={getMedia(videoData.path)}
           width={videoData.width}
@@ -49,7 +49,12 @@ const VideoTranscriptDetail = () => {
           transcript={JSON.parse(videoData.transcript)}
           startBy={videoData.metadata?.processIndex}
           onSegmentChange={(segment) => autoSave(segment.timeStart)}
-        ></VideoPlayer>
+        />
+      ) : (
+        <div
+          className="w-full"
+          style={{ paddingTop: "calc((100% - 350px) * 0.5625)" }}
+        ></div>
       )}
     </div>
   );
