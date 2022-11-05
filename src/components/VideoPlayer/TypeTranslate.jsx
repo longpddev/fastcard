@@ -80,6 +80,56 @@ const TypeTranslate = ({
     ref.current && ref.current.focus();
   }, [isFocus]);
 
+  const renderWords = arrChar
+    // create component by letter
+    .map((item, index) => {
+      return {
+        letter: item,
+        component: (
+          <span key={index} className="relative">
+            <Point isActive={index === currentPoint} />
+            <span
+              className={clsx({
+                "text-slate-300 opacity-50": arrCharMark[index] === 0,
+                "text-red-500": arrCharMark[index] === -1,
+                "text-sky-400": arrCharMark[index] === 1,
+              })}
+            >
+              {item}
+            </span>
+          </span>
+        ),
+      };
+    })
+    // group letter by signal which signal is space
+    .reduce((acc, item) => {
+      if (acc.length === 0) {
+        acc.push([]);
+      }
+
+      const last = acc[acc.length - 1];
+
+      if (item.letter === " ") {
+        acc.push([item], []);
+      } else {
+        last.push(item);
+      }
+
+      return acc;
+    }, [])
+    // use group above to create group component
+    .map((item) => {
+      const word = item.map((l) => l.letter).join("");
+      return (
+        <span
+          className={word.trim() ? "whitespace-nowrap" : ""}
+          word={item.map((l) => l.letter).join("")}
+        >
+          {item.map((c) => c.component)}
+        </span>
+      );
+    });
+
   return (
     <div
       tabIndex={0}
@@ -117,25 +167,7 @@ const TypeTranslate = ({
         }}
         className="absolute inset-0 w-full h-full bg-orange-400 text-transparent opacity-0"
       />
-      {arrChar.map((item, index) => (
-        <span
-          key={index}
-          className={clsx("relative", {
-            "whitespace-nowrap": item !== " ",
-          })}
-        >
-          <Point isActive={isFocus && index === currentPoint}></Point>
-          <span
-            className={clsx({
-              "text-slate-300 opacity-50": arrCharMark[index] === 0,
-              "text-red-500": arrCharMark[index] === -1,
-              "text-sky-400": arrCharMark[index] === 1,
-            })}
-          >
-            {item}
-          </span>
-        </span>
-      ))}
+      <div>{renderWords}</div>
     </div>
   );
 };
@@ -144,7 +176,7 @@ const Point = ({ isActive }) => {
   if (!isActive) return null;
 
   return (
-    <span
+    <i
       className="absolute left-0 top-1/2 translate-x-[-50%] translate-y-[-50%] text-white point-animate"
       style={{
         textShadow: "none",
