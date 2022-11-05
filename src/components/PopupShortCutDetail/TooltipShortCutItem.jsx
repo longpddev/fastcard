@@ -55,8 +55,8 @@ const TooltipShortCutItem = ({
   return (
     <div
       className={clsx(
-        "absolute bg-sky-400 z-1 px-2 whitespace-nowrap py-1 rounded-md ",
-        "before:absolute before:text-sky-400",
+        "absolute bg-sky-800 text-slate-50 z-1 px-2 whitespace-nowrap py-1 rounded-md ",
+        "before:absolute before:text-sky-800",
         {
           "triangle-left": arrow.left,
           "triangle-right": !arrow.left,

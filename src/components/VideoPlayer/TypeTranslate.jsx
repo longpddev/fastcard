@@ -87,7 +87,7 @@ const TypeTranslate = ({
         letter: item,
         component: (
           <span key={index} className="relative">
-            <Point isActive={index === currentPoint} />
+            <Point isActive={index === currentPoint} isSleep={!isFocus} />
             <span
               className={clsx({
                 "text-slate-300 opacity-50": arrCharMark[index] === 0,
@@ -172,12 +172,16 @@ const TypeTranslate = ({
   );
 };
 
-const Point = ({ isActive }) => {
+const Point = ({ isActive, isSleep }) => {
   if (!isActive) return null;
-
   return (
-    <i
-      className="absolute left-0 top-1/2 translate-x-[-50%] translate-y-[-50%] text-white point-animate"
+    <span
+      className={clsx(
+        "absolute left-0 top-1/2 translate-x-[-50%] translate-y-[-50%] text-white point-animate ",
+        {
+          "point-animate-stop": isSleep,
+        }
+      )}
       style={{
         textShadow: "none",
       }}

@@ -373,7 +373,12 @@ body {
   width: 2px;
   height: 1em;
   display: block;
+  background-color: currentColor;
   animation: point_animate 800ms infinite;
+}
+
+.point-animate-stop:before {
+  animation-iteration-count: unset;
 }
 
 @keyframes point_animate {

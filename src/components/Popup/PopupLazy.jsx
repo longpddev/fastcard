@@ -51,20 +51,23 @@ const PopupLazy = ({
                   backgroundColor
                 )}
               >
-                <ButtonShortCut
-                  shortcut={KEY_NAME.Escape}
-                  onClick={() => {
-                    if (
-                      stackPopup.length > 0 &&
-                      stackPopup[stackPopup.length - 1] === refId.current
-                    ) {
-                      setOpen(false);
-                    }
-                  }}
-                  className="inline-flex z-10 absolute top-0 right-0 bg-slate-700 active:bg-slate-600 hover:text-orange-300"
-                >
-                  <i className="fas fa-xmark text-3xl px-[0.288em]"></i>
-                </ButtonShortCut>
+                <div className="inline-flex z-10 absolute top-0 right-0 bg-slate-700 active:bg-slate-600 hover:text-orange-300">
+                  <ButtonShortCut
+                    shortcut={KEY_NAME.Escape}
+                    onClickClassName="text-orange-300"
+                    onClick={() => {
+                      if (
+                        stackPopup.length > 0 &&
+                        stackPopup[stackPopup.length - 1] === refId.current
+                      ) {
+                        setOpen(false);
+                      }
+                    }}
+                    className=""
+                  >
+                    <i className="fas fa-xmark text-3xl px-[0.288em]"></i>
+                  </ButtonShortCut>
+                </div>
                 <div className={"max-h-[95vh] overflow-hidden overflow-y-auto"}>
                   {children}
                 </div>

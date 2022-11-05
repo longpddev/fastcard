@@ -4,6 +4,7 @@ import React, { useLayoutEffect, useMemo, useRef, useState } from "react";
 import OutsideTheApp from "@components/OutsideTheApp";
 import { extractNameShortCut } from "@/functions/common";
 import TooltipShortCut from "./TooltipShortCut";
+import { KEY_NAME } from "@/constants";
 
 function getAllShortCutButton() {
   const els = Array.from(
@@ -36,6 +37,10 @@ const PopupShortCutDetailMain = () => {
   useShortcut(SPECIAL_KEY.Command + "p", (e) => {
     e.preventDefault();
     openSet((prev) => !prev);
+  });
+  useShortcut(KEY_NAME.Escape, (e) => {
+    e.preventDefault();
+    openSet(false);
   });
   const listItem = useMemo(() => getAllShortCutButton(), [open]);
   if (!open) return null;

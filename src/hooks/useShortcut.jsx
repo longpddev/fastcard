@@ -5,7 +5,7 @@
 
 import { SPECIAL_KEY } from "@/constants/index";
 import { extractNameShortCut } from "@/functions/common";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 /** @type {IShortcut[]} */
 let listShortCut = [];
@@ -49,8 +49,15 @@ const register = (shortcutName, fn) => {
   };
 };
 export default function useShortcut(shortcutName, fn, arr = []) {
+  const forward = useRef();
+  forward.current = {
+    fn,
+  };
   useEffect(() => {
     if (!shortcutName) return;
-    return register(shortcutName, fn);
+    const handle = function () {
+      forward.current.fn(...arguments);
+    };
+    return register(shortcutName, handle);
   }, [...arr, shortcutName]);
 }
