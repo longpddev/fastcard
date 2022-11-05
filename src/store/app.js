@@ -26,7 +26,7 @@ run(async () => {
   if (!tokenData) return;
   const { dispatch } = store;
 
-  await dispatch(getUserInfo());
-  await dispatch(getGroupCardThunk());
+  await Promise.all([dispatch(getUserInfo()), dispatch(getGroupCardThunk())]);
+
   await dispatch(getCardLearnTodayThunk());
 });

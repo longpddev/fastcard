@@ -6,7 +6,14 @@ import Segment from "./Segment";
 import TypeTranslate from "./TypeTranslate";
 import { clsx } from "clsx";
 
-const VideoPlayer = ({ srcVideo, transcript, startBy, onSegmentChange }) => {
+const VideoPlayer = ({
+  srcVideo,
+  transcript,
+  startBy,
+  onSegmentChange,
+  width,
+  height,
+}) => {
   const [isFocus, isFocusSet] = useState(false);
   const containerVideoRef = useRef();
   const [_, forceRender] = useState();
@@ -20,6 +27,10 @@ const VideoPlayer = ({ srcVideo, transcript, startBy, onSegmentChange }) => {
     if (!divEl) return;
     const control = (videoControl.current = Video({
       className: "w-full h-full",
+      attr: {
+        width,
+        height,
+      },
     }));
     const video = control.getVideoEl();
     control.init(srcVideo, transcript).then(() => {
@@ -135,6 +146,7 @@ const VideoPlayer = ({ srcVideo, transcript, startBy, onSegmentChange }) => {
           className={clsx("w-full", {
             "h-full": isFullScreen,
           })}
+          style={{ aspectRatio: width / height }}
           ref={div}
         ></div>
         {control && control.isInitialed() && (

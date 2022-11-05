@@ -11,9 +11,9 @@ const Segment = ({ segment }) => {
   return (
     <div
       ref={ref}
-      className={clsx("px-2 py-px mb-4 rounded-sm", {
-        "bg-slate-700": segment.isActive(),
-        "hover:bg-slate-800 cursor-pointer": !segment.isActive(),
+      className={clsx("px-2 py-1 mb-2 rounded-sm", {
+        "bg-slate-800 text-sky-300": segment.isActive(),
+        "hover:bg-slate-700 cursor-pointer": !segment.isActive(),
       })}
       onClick={() => segment.activeMe()}
     >

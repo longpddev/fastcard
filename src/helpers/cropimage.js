@@ -201,8 +201,8 @@ export async function getWidthHeightFileVideo(file) {
     video.onloadeddata = function () {
       res({
         file,
-        width: video.videoHeight,
-        height: video.videoWidth,
+        width: video.videoWidth,
+        height: video.videoHeight,
       });
     };
   });

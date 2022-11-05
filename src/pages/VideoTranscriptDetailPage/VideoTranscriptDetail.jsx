@@ -1,15 +1,15 @@
 import React from "react";
-import VideoPlayer from "../../components/VideoPlayer";
+import VideoPlayer from "@components/VideoPlayer";
 import { useParams } from "react-router-dom";
-import { getMedia } from "../../api/client";
-import { useThunk } from "../../hooks/useThunk";
+import { getMedia } from "@/api/client";
+import { useThunk } from "@hooks/useThunk";
 import {
   getVideoTranscriptByIdThunk,
   setCurrentProcess,
   updateVideoDataThunk,
-} from "../../services/videoTranscript/videoTranscriptSlice";
+} from "@services/videoTranscript/videoTranscriptSlice";
 import { useEffect } from "react";
-import { store } from "../../store/app";
+import { store } from "@/store/app";
 import { useCallback } from "react";
 import { useDispatch } from "react-redux";
 import HeaderPage from "@components/HeaderPage";
@@ -36,13 +36,16 @@ const VideoTranscriptDetail = () => {
   const { data } = useThunk(getVideoTranscriptByIdThunk, videoId);
   const autoSave = useAutoSaveProgress(videoId);
   const videoData = data;
+  console.log(videoData);
   return (
     <div>
       <Breadcrumb paths={[VIDEO_LIST_PAGE]} />
-      <HeaderPage title="Learn with video" />
+      <HeaderPage title={videoData?.title || "Learn with video"} />
       {videoData && (
         <VideoPlayer
           srcVideo={getMedia(videoData.path)}
+          width={videoData.width}
+          height={videoData.height}
           transcript={JSON.parse(videoData.transcript)}
           startBy={videoData.metadata?.processIndex}
           onSegmentChange={(segment) => autoSave(segment.timeStart)}

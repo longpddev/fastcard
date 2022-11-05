@@ -70,6 +70,13 @@ export function Video(settings = {}) {
   if (settings.className) {
     el.classList.add(...settings.className.split(" "));
   }
+
+  if (settings.attr) {
+    for (const [key, value] of Object.entries(settings.attr)) {
+      el.setAttribute(key, value);
+    }
+  }
+
   function nextSegment() {
     return currentSegment(currentSegment() + 1, true);
   }

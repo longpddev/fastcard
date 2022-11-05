@@ -67,16 +67,6 @@ const TypeTranslate = ({
     isProgress.current = true;
     return true;
   };
-  const handleKeydown = (e) => {
-    if (isProgress.current === true) {
-      console.log("you type so fast, we dont have speed to control process");
-      return;
-    }
-
-    e.preventDefault();
-    const key = e.key;
-    handleTyping(key);
-  };
 
   useEffect(() => {
     if (!isFocus) return;
@@ -120,7 +110,12 @@ const TypeTranslate = ({
         className="absolute inset-0 w-full h-full bg-orange-400 text-transparent opacity-0"
       />
       {arrChar.map((item, index) => (
-        <React.Fragment key={index}>
+        <span
+          key={index}
+          className={clsx("relative", {
+            "whitespace-nowrap": item !== " ",
+          })}
+        >
           <Point isActive={isFocus && index === currentPoint}></Point>
           <span
             className={clsx({
@@ -131,7 +126,7 @@ const TypeTranslate = ({
           >
             {item}
           </span>
-        </React.Fragment>
+        </span>
       ))}
     </div>
   );
@@ -141,14 +136,12 @@ const Point = ({ isActive }) => {
   if (!isActive) return null;
 
   return (
-    <span className="relative text-white">
-      <span
-        className="absolute top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%] point-animate"
-        style={{
-          textShadow: "none",
-        }}
-      />
-    </span>
+    <span
+      className="absolute left-0 top-1/2 translate-x-[-50%] translate-y-[-50%] text-white point-animate"
+      style={{
+        textShadow: "none",
+      }}
+    />
   );
 };
 export default TypeTranslate;
