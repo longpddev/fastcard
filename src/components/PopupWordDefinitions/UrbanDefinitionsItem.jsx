@@ -118,7 +118,7 @@ const PlaySource = ({ url }) => {
       })}
       onClick={handlePlay}
     >
-      <i class="fa-regular fa-file-audio"></i>
+      <i classClass="fa-regular fa-file-audio"></i>
     </button>
   );
 };

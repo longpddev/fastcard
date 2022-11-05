@@ -4,6 +4,7 @@
  */
 
 import { SPECIAL_KEY } from "@/constants/index";
+import { extractNameShortCut } from "@/functions/common";
 import { useEffect } from "react";
 
 /** @type {IShortcut[]} */
@@ -11,10 +12,9 @@ let listShortCut = [];
 document.addEventListener("keydown", (e) => {
   listShortCut.forEach((shortcut) => {
     const [name, fn] = shortcut;
-    const [keyName, specialKey] = name.split(";").reverse();
-
+    const { keyName, specialKey } = extractNameShortCut(name);
     if (specialKey) {
-      switch (specialKey + ";") {
+      switch (specialKey) {
         case SPECIAL_KEY.Command:
           if (!e.metaKey) return;
           break;

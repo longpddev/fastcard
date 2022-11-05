@@ -40,9 +40,16 @@ export const KEY_NAME = {
   CapsLock: "CapsLock",
 };
 
-export const SPECIAL_KEY = {
+export const SPECIAL_KEY = /** @type {{
+  Shift: "shift;",
+  Ctrl: "ctrl;",
+  Alt: "alt;",
+  Command: "command;"
+} as const } */ ({
   Shift: "shift;",
   Ctrl: "ctrl;",
   Alt: "alt;",
   Command: "command;",
-};
+});
+
+export const ATTRIBUTE_SHORTCUT_BUTTON = "datashortcutexplain";

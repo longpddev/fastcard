@@ -5,6 +5,7 @@ import { Video } from "./function";
 import Segment from "./Segment";
 import TypeTranslate from "./TypeTranslate";
 import { clsx } from "clsx";
+import ButtonShortCut from "@components/ButtonShortCut";
 
 const VideoPlayer = ({
   srcVideo,
@@ -89,20 +90,6 @@ const VideoPlayer = ({
     videoCl.getCurrentSegment()?.play();
   });
 
-  useShortcut(
-    KEY_NAME.F11,
-    (e) => {
-      e.preventDefault();
-      handleFullScreen();
-    },
-    [isFullScreen]
-  );
-
-  useShortcut(SPECIAL_KEY.Ctrl + KEY_NAME.Enter, (e) => {
-    e.preventDefault();
-    isFocusSet(true);
-  });
-
   useEffect(() => {
     const containerEl = containerVideoRef.current;
 
@@ -132,7 +119,8 @@ const VideoPlayer = ({
         className="relative w-full lg:flex-1 flex items-center"
         ref={containerVideoRef}
       >
-        <button
+        <ButtonShortCut
+          shortcut={SPECIAL_KEY.Command + KEY_NAME.F11}
           className="hover:text-orange-400 p-2 absolute top-0 right-0 z-10"
           onClick={handleFullScreen}
         >
@@ -141,7 +129,7 @@ const VideoPlayer = ({
           ) : (
             <i className="fa-solid fa-expand "></i>
           )}
-        </button>
+        </ButtonShortCut>
         <div
           className={clsx("w-full", {
             "h-full": isFullScreen,
@@ -158,6 +146,7 @@ const VideoPlayer = ({
                   isFocus,
               }
             )}
+            shortcut={SPECIAL_KEY.Ctrl + KEY_NAME.Enter}
             key={control.getCurrentSegment().timeStart}
             text={control.getCurrentSegment().text}
             onDone={() => control.next()}
@@ -172,16 +161,23 @@ const VideoPlayer = ({
         )}
       </div>
       <div
-        className="overflow-auto w-full lg:w-[350px] lg:h-full p-4 border border-slate-600"
-        style={{ height: (heightVo === undefined ? height : heightVo) + "px" }}
+        className=" w-full lg:w-[350px] relative lg:h-full  border border-slate-600"
+        style={{
+          paddingTop:
+            heightVo === undefined
+              ? `calc((100% - 350px) * ${height / width})`
+              : heightVo + "px",
+        }}
       >
-        {control &&
-          control.isInitialed() &&
-          control
-            .getAllSegment()
-            .map((segment, index) => (
-              <Segment segment={segment} key={index}></Segment>
-            ))}
+        <div className="absolute inset-0 w-full h-full overflow-auto p-4">
+          {control &&
+            control.isInitialed() &&
+            control
+              .getAllSegment()
+              .map((segment, index) => (
+                <Segment segment={segment} key={index}></Segment>
+              ))}
+        </div>
       </div>
     </div>
   );

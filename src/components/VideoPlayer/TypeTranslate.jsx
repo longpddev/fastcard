@@ -1,5 +1,7 @@
+import { ATTRIBUTE_SHORTCUT_BUTTON } from "@/constants/index";
 import clsx from "clsx";
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import useShortcut from "@hooks/useShortcut";
 const KEY_IGNORE = {
   Backspace: "Backspace",
   Control: "Control",
@@ -34,6 +36,7 @@ const TypeTranslate = ({
   onDone,
   style,
   isFocus,
+  shortcut,
   isFocusSet,
 }) => {
   const [tmpText, tmpTextSet] = useState("");
@@ -68,6 +71,10 @@ const TypeTranslate = ({
     return true;
   };
 
+  useShortcut(shortcut, (e) => {
+    e.preventDefault();
+    isFocusSet(true);
+  });
   useEffect(() => {
     if (!isFocus) return;
     ref.current && ref.current.focus();
@@ -76,6 +83,7 @@ const TypeTranslate = ({
   return (
     <div
       tabIndex={0}
+      {...{ [ATTRIBUTE_SHORTCUT_BUTTON]: shortcut }}
       className={clsx(
         className,
         "outline-unset text-slate-800 focus-visible:outline-none",

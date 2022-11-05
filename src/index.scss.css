@@ -431,3 +431,27 @@ body {
   }
 }
 
+.triangle-left:before {
+  content: '';
+  display: block;
+  width: 0;
+  height: 0;
+  top: 10px;
+  left: -10px;
+  border-top: 5px solid transparent;
+  border-right: 10px solid currentColor;
+  border-bottom: 5px solid transparent;
+}
+
+.triangle-right:before {
+  content: '';
+  display: block;
+  width: 0;
+  height: 0;
+  top: 10px;
+  right: -10px;
+  border-top: 5px solid transparent;
+  border-left: 10px solid currentColor;
+  border-bottom: 5px solid transparent;
+}
+

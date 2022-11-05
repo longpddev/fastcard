@@ -10,6 +10,7 @@ import PopupWordDefinitions from "@components/PopupWordDefinitions";
 import Translation from "@components/Translation";
 import NavigateSite from "@components/NavigateSite/index";
 import SearchSite from "@components/SearchSite/index";
+import PopupShortCutDetail from "@components/PopupShortCutDetail/PopupShortCutDetail";
 const ToastContainer = React.lazy(() =>
   import("@components/Toast/ToastContainer")
 );
@@ -23,6 +24,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           <ToastContainer />
         </Suspense>
         <PopupWordDefinitions />
+        <PopupShortCutDetail />
         <Translation />
         <NavigateSite />
         <SearchSite />

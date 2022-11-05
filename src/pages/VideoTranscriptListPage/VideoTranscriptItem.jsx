@@ -4,7 +4,7 @@ import { getMedia } from "../../api/client";
 import VideoTranscriptMoreFeature from "./VideoTranscriptMoreFeature";
 const VideoTranscriptItem = ({ videoData, requestRefresh }) => {
   return (
-    <div className="relative group block-up">
+    <div className="relative group block-up bg-slate-800">
       <Link to={`/video/${videoData.id}`}>
         <div className="w-full">
           <div className="pt-[56.25%] relative  overflow-hidden">
@@ -26,7 +26,9 @@ const VideoTranscriptItem = ({ videoData, requestRefresh }) => {
             </div>
           </div>
         </div>
-        <h3 className="py-2 text-center bg-slate-800">{videoData.title}</h3>
+        <h3 className="p-2 font-medium text-lg  text-center ">
+          {videoData.title}
+        </h3>
       </Link>
       <VideoTranscriptMoreFeature
         id={videoData.id}

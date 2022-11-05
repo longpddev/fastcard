@@ -1,6 +1,7 @@
 import { TOKEN_KEY } from "../constants";
 import MD5 from "crypto-js/md5";
 import { curry, isNil } from "ramda";
+import { SPECIAL_KEY } from "@/constants/index";
 export const titlePage = (title) => {
   if (document.title !== title) document.title = title;
 };
@@ -283,4 +284,12 @@ export const parseStringToArr = (str, parseBy = /\[[^\]]*\]/gm) => {
       isMatch,
     };
   });
+};
+
+export const extractNameShortCut = (name) => {
+  const [keyName, specialKey] = name.split(";").reverse();
+  return {
+    keyName,
+    specialKey: specialKey ? specialKey + ";" : undefined,
+  };
 };
