@@ -14,7 +14,7 @@ import { useDispatch } from "react-redux";
 import { progressWatchPromise } from "@components/ProgressGlobal";
 import { pushFastToast } from "@components/Toast";
 import { getWidthHeightFileVideo } from "@/helpers/cropimage";
-import { parseProgress } from "@/functions/common";
+import { parseProgress, sliceFile } from "@/functions/common";
 import When from "../../components/When";
 import ProgressUpload from "@components/ProgressUpload/ProgressUpload";
 import HeaderPage from "@components/HeaderPage";

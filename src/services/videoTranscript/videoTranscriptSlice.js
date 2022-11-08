@@ -1,5 +1,7 @@
+import { sliceFile } from "@/functions/common";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { clientAuth, uploadfile } from "../../api/client";
+
 export const createVideoTranscriptThunk = createAsyncThunk(
   "videoTranscript/createVideoTranscriptThunk",
   async ({
@@ -14,22 +16,71 @@ export const createVideoTranscriptThunk = createAsyncThunk(
     transcript,
     onProgressUpload,
   }) => {
-    return await uploadfile(
-      "/video/upload",
-      {
-        file,
-        name,
-        title,
-        description,
-        thumbnailId,
-        width,
-        height,
-        metadata: JSON.stringify(metadata),
-        transcript,
-      },
-      "POST",
-      { onProgressUpload }
+    let result = "";
+    const sliceFiles = sliceFile(file);
+    const progress = sliceFiles.map((f) => ({ loaded: 0, total: f.size }));
+    let prevTime = new Date().getTime();
+    const handleProgressUpload = () => {
+      if (!onProgressUpload) return;
+      const currentTime = new Date().getTime();
+      if (currentTime <= prevTime + 1000) {
+        return;
+      }
+      prevTime = currentTime;
+
+      onProgressUpload(
+        progress.reduce((acc, i) => (acc += i.loaded), 0),
+        progress.reduce((acc, i) => (acc += i.total), 0)
+      );
+    };
+    const {
+      data: { tokenUpload },
+    } = await clientAuth.GET("/video/upload-multiple/init");
+    result = await Promise.all(
+      sliceFiles.map((f, index) =>
+        uploadfile(
+          "/video/upload-multiple/file",
+          {
+            file: f,
+            index,
+            size: f.size,
+            totalFile: sliceFiles.length,
+            tokenUpload,
+          },
+          "POST",
+          {
+            onProgressUpload: function (loaded, total) {
+              progress[index].loaded = loaded;
+              progress[index].total = total;
+              handleProgressUpload();
+            },
+          }
+        )
+      )
     );
+
+    result = await clientAuth.POST("/video/upload-multiple/merge", {
+      body: {
+        tokenUpload,
+      },
+    });
+    result = await clientAuth.POST("/video/upload", {
+      body: {
+        data: {
+          title,
+          name,
+          description,
+          thumbnailId,
+          width,
+          height,
+          metadata: JSON.stringify(metadata),
+          transcript,
+        },
+        tokenUpload,
+        extension: "mp4",
+      },
+    });
+    return result;
   }
 );
 

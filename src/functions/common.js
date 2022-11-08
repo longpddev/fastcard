@@ -202,6 +202,7 @@ export const formatByteUnit = (size) => {
 export function parseProgress(cb) {
   let prevLoaded = 0,
     prevTime = new Date().getTime();
+
   return (loaded, total) => {
     const currentTime = new Date().getTime();
     const diff = loaded - prevLoaded;
@@ -292,4 +293,32 @@ export const extractNameShortCut = (name) => {
     keyName,
     specialKey: specialKey ? specialKey + ";" : undefined,
   };
+};
+
+/**
+ *
+ * @param { File } file
+ * @param { number } size default 10mb
+ * @param { File[] }
+ */
+export const sliceFile = (file, size = 10241440) => {
+  let totalSize = file.size;
+  let current = 0;
+  const type = file.type;
+  const fileName = file.name;
+  const files = [];
+  while (current < totalSize) {
+    files.push(
+      new File(
+        [file.slice(current, Math.min(current + size, totalSize))],
+        fileName,
+        {
+          type,
+        }
+      )
+    );
+    current += size;
+  }
+
+  return files;
 };
