@@ -118,10 +118,11 @@ const TypeTranslate = ({
       return acc;
     }, [])
     // use group above to create group component
-    .map((item) => {
+    .map((item, key) => {
       const word = item.map((l) => l.letter).join("");
       return (
         <span
+          key={key}
           className={word.trim() ? "whitespace-nowrap" : ""}
           word={item.map((l) => l.letter).join("")}
         >
