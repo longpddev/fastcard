@@ -10,7 +10,7 @@ import Breadcrumb from "@components/Breadcrumb";
 const VideoTranscriptList = () => {
   const navigate = useNavigate();
   const { isLoading, data, refetch } = useGetVideoListQuery({
-    limit: 10,
+    limit: 30,
     pageIndex: 1,
   });
   const listVideo = data?.data;

@@ -5,8 +5,8 @@ import { useNavigate } from "react-router-dom";
 import MoreFeature from "@components/MoreFeature";
 import { progressWatchPromise } from "@components/ProgressGlobal";
 import { pushFastToast, pushToast } from "@components/Toast/core";
-import { watchThunk } from "../../functions/common";
-import { deleteVideoTranscriptThunk } from "../../services/videoTranscript/videoTranscriptSlice";
+import { watchThunk } from "@/functions/common";
+import { deleteVideoTranscriptThunk } from "@services/videoTranscript/videoTranscriptSlice";
 const VideoTranscriptMoreFeature = ({ id, className = "", requestRefresh }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
