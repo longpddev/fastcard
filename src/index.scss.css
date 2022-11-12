@@ -460,3 +460,7 @@ body {
   border-bottom: 5px solid transparent;
 }
 
+.focus-visible {
+  @apply outline outline-sky-400;
+}
+

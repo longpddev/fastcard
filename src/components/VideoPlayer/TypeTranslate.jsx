@@ -2,6 +2,7 @@ import { ATTRIBUTE_SHORTCUT_BUTTON } from "@/constants/index";
 import clsx from "clsx";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import useShortcut from "@hooks/useShortcut";
+import { getSet } from "@/functions/common";
 const KEY_IGNORE = {
   Backspace: "Backspace",
   Control: "Control",
@@ -30,6 +31,27 @@ const KEY_IGNORE = {
   CapsLock: "CapsLock",
 };
 
+/**
+ * HIGHLIGHT_ERROR: highlight the letter when user typed wrong
+ * RETYPING_ERROR: retyping the word if user typed wrong
+ */
+export const TYPE_TRANSLATE_MODE = Object.freeze({
+  HIGHLIGHT_ERROR: "HIGHLIGHT_ERROR",
+  RETYPING_ERROR: "RETYPING_ERROR",
+});
+/**
+ * @param {{
+ *   className: string,
+ *   text: string,
+ *   onDone: () => void,
+ *   style: Record<string, string>,
+ *   isFocus: boolean,
+ *   shortcut: string,
+ *   isFocusSet: boolean,
+ *   mode: TYPE_TRANSLATE_MODE[keyof TYPE_TRANSLATE_MODE]
+ * }} param0
+ * @returns
+ */
 const TypeTranslate = ({
   className,
   text,
@@ -38,36 +60,72 @@ const TypeTranslate = ({
   isFocus,
   shortcut,
   isFocusSet,
+  mode = TYPE_TRANSLATE_MODE.RETYPING_ERROR,
 }) => {
-  const [tmpText, tmpTextSet] = useState("");
-  const isProgress = useRef(false);
-  isProgress.current = false;
-  const ref = useRef();
-  const [currentPoint, currentPointSet] = useState(0);
-  const arrChar = useMemo(() => {
-    return text.split("");
-  }, [text]);
+  // [[ 'a', 'b', 'c' ], [ 'a', 'b', 'c' ]]
+  const words = useMemo(
+    () => text.split(" ").map((item) => item.split("")),
+    [text]
+  );
+  const masksOfWords = useMemo(
+    () => words.map((word) => word.map(() => 0)),
+    [words]
+  );
+  const [pointOfWord, pointOfWordSet] = useState(0);
+  const [pointOfLetterInWord, pointOfLetterInWordSet] = useState(0);
 
-  const arrCharMark = useMemo(() => {
-    return arrChar.map(() => 0);
-  }, [arrChar]);
+  const [tmpText, tmpTextSet] = useState("");
+
+  const ref = useRef();
+
+  const wordsClone = structuredClone(words);
+  const masksOfWordsClone = structuredClone(masksOfWords);
+
+  const currentWord = () => wordsClone[pointOfWord];
+  const currentLetter = () => wordsClone[pointOfWord][pointOfLetterInWord];
+  const currentMaskWord = () => masksOfWordsClone[pointOfWord];
+
+  const isNextLetterInWord = () =>
+    currentWord().length >= pointOfLetterInWord + 1;
+  const isNextWord = () => words.length > pointOfWord + 1;
+  const remarkMaskWord = () =>
+    (masksOfWords[pointOfWord] = currentMaskWord().map(() => 0));
+  const retypeWord = () => {
+    pointOfLetterInWordSet(0);
+    remarkMaskWord();
+  };
+  const markLetter = (type) => {
+    if (masksOfWords[pointOfWord][pointOfLetterInWord] === 0) {
+      masksOfWords[pointOfWord][pointOfLetterInWord] = type;
+    }
+  };
+  const isSpace = () => !isNextLetterInWord() && isNextWord();
   const handleTyping = (char) => {
-    const currentKey = arrChar[currentPoint];
-    const isNextable = arrChar.length > currentPoint + 1;
     if (char in KEY_IGNORE) return false;
-    if (char !== currentKey) {
-      arrCharMark[currentPoint] === 0 && (arrCharMark[currentPoint] = -1);
+
+    if (isSpace()) {
+      if (char !== " ") return false;
+    } else if (char !== currentLetter()) {
+      switch (mode) {
+        case TYPE_TRANSLATE_MODE.HIGHLIGHT_ERROR:
+          markLetter(-1);
+
+          return false;
+        case TYPE_TRANSLATE_MODE.RETYPING_ERROR:
+          retypeWord();
+          return false;
+      }
+    }
+    markLetter(1);
+    if (isSpace()) {
+      pointOfWordSet(pointOfWord + 1);
+      pointOfLetterInWordSet(0);
+    } else if (isNextLetterInWord()) {
+      pointOfLetterInWordSet(pointOfLetterInWord + 1);
+    } else {
       return false;
     }
-    if (isNextable) {
-      arrCharMark[currentPoint] === 0 && (arrCharMark[currentPoint] = 1);
-      currentPointSet((prev) => prev + 1);
-    } else {
-      onDone();
-      tmpTextSet("");
-    }
 
-    isProgress.current = true;
     return true;
   };
 
@@ -80,56 +138,47 @@ const TypeTranslate = ({
     ref.current && ref.current.focus();
   }, [isFocus]);
 
-  const renderWords = arrChar
-    // create component by letter
-    .map((item, index) => {
-      return {
-        letter: item,
-        component: (
-          <span key={index} className="relative">
-            <Point isActive={index === currentPoint} isSleep={!isFocus} />
-            <span
-              className={clsx({
-                "text-slate-300 opacity-50": arrCharMark[index] === 0,
-                "text-red-500": arrCharMark[index] === -1,
-                "text-sky-400": arrCharMark[index] === 1,
-              })}
-            >
-              {item}
+  useEffect(() => {
+    if (!isNextWord() && !isNextLetterInWord()) {
+      onDone();
+      tmpTextSet("");
+    }
+  }, [pointOfWord, pointOfLetterInWord]);
+  const renderWords = words
+    .map((word, i_word) => (
+      <React.Fragment key={i_word + 1}>
+        <span className="whitespace-nowrap">
+          {word.map((letter, i_letter) => (
+            <span key={(i_word + 1) * (i_letter + 1)} className="relative">
+              <Point
+                isActive={
+                  i_word === pointOfWord && i_letter === pointOfLetterInWord
+                }
+                isSleep={!isFocus}
+              />
+              <span
+                className={clsx({
+                  "text-slate-300 opacity-50":
+                    masksOfWords[i_word][i_letter] === 0,
+                  "text-red-500": masksOfWords[i_word][i_letter] === -1,
+                  "text-sky-400": masksOfWords[i_word][i_letter] === 1,
+                })}
+              >
+                {letter}
+              </span>
             </span>
-          </span>
-        ),
-      };
-    })
-    // group letter by signal which signal is space
-    .reduce((acc, item) => {
-      if (acc.length === 0) {
-        acc.push([]);
-      }
-
-      const last = acc[acc.length - 1];
-
-      if (item.letter === " ") {
-        acc.push([item], []);
-      } else {
-        last.push(item);
-      }
-
-      return acc;
-    }, [])
-    // use group above to create group component
-    .map((item, key) => {
-      const word = item.map((l) => l.letter).join("");
-      return (
-        <span
-          key={key}
-          className={word.trim() ? "whitespace-nowrap" : ""}
-          word={item.map((l) => l.letter).join("")}
-        >
-          {item.map((c) => c.component)}
+          ))}
         </span>
-      );
-    });
+        <span className="relative">
+          <Point
+            isActive={i_word === pointOfWord && isSpace()}
+            isSleep={!isFocus}
+          />
+          &nbsp;
+        </span>
+      </React.Fragment>
+    ))
+    .flat();
 
   return (
     <div
@@ -152,7 +201,6 @@ const TypeTranslate = ({
       <input
         type="text"
         ref={ref}
-        // onKeyDown={handleKeydown}
         onFocus={isFocusSet.bind(undefined, true)}
         onBlur={isFocusSet.bind(undefined, false)}
         value={tmpText}

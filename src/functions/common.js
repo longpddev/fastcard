@@ -1,7 +1,7 @@
 import { TOKEN_KEY } from "../constants";
 import MD5 from "crypto-js/md5";
 import { curry, isNil } from "ramda";
-import { SPECIAL_KEY } from "@/constants/index";
+import { KEY_NAME, SPECIAL_KEY } from "@/constants/index";
 export const titlePage = (title) => {
   if (document.title !== title) document.title = title;
 };
@@ -321,4 +321,20 @@ export const sliceFile = (file, size = 10241440) => {
   }
 
   return files;
+};
+/**
+ * @param { () => never | never} getValue
+ * @param { undefined | string | number } key
+ * @returns
+ */
+export const getSet = (getValue, key) => (val) => {
+  const getValueResult = typeof getValue === "function" ? getValue() : getValue;
+
+  if (val !== undefined) {
+    return key !== undefined
+      ? (getValueResult[key] = val)
+      : (getValueResult = val);
+  } else {
+    return getValueResult;
+  }
 };
