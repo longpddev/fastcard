@@ -94,7 +94,7 @@ const Phonetic = ({ text, audio, className, selected }) => {
     >
       <When if={audio}>
         <span
-          className={clsx("absolute inset-0 w-full h-full block bg-black ", {
+          className={clsx("absolute inset-0 w-full h-full block bg-black", {
             "opacity-20": playing,
             "group-hover:opacity-20 opacity-0": !playing,
           })}
@@ -102,7 +102,7 @@ const Phonetic = ({ text, audio, className, selected }) => {
         {playing ? (
           <i className="fas fa-pause opacity-70"></i>
         ) : (
-          <i className="fas fa-play opacity-0 group-hover:opacity-70 transition-all"></i>
+          <i className="fas fa-play opacity-0 group-hover:opacity-70 "></i>
         )}
       </When>
 
