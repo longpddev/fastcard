@@ -143,7 +143,8 @@ const TypeTranslate = ({
     showPlaceholderSet(true);
   });
 
-  useKeyupShortcut(SPECIAL_KEY.Shift + KEY_NAME.Enter, (e) => {
+  useKeyupShortcut(KEY_NAME.Enter, (e) => {
+    if (!showPlaceholder) return;
     e.preventDefault();
     showPlaceholderSet(false);
   });
