@@ -464,3 +464,7 @@ body {
   @apply outline outline-sky-400;
 }
 
+.unset-text-shadow {
+  text-shadow: 0 0 transparent!important;
+}
+

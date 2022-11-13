@@ -1,8 +1,10 @@
 import { ATTRIBUTE_SHORTCUT_BUTTON } from "@/constants/index";
 import clsx from "clsx";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import useShortcut from "@hooks/useShortcut";
+import useShortcut, { useKeyupShortcut } from "@hooks/useShortcut";
 import { getSet } from "@/functions/common";
+import { SPECIAL_KEY } from "@/constants";
+import { KEY_NAME } from "@/constants";
 const KEY_IGNORE = {
   Backspace: "Backspace",
   Control: "Control",
@@ -61,12 +63,14 @@ const TypeTranslate = ({
   shortcut,
   isFocusSet,
   mode = TYPE_TRANSLATE_MODE.RETYPING_ERROR,
+  alwayShowPlaceholder = false,
 }) => {
   // [[ 'a', 'b', 'c' ], [ 'a', 'b', 'c' ]]
   const words = useMemo(
     () => text.split(" ").map((item) => item.split("")),
     [text]
   );
+  const [showPlaceholder, showPlaceholderSet] = useState(false);
   const masksOfWords = useMemo(
     () => words.map((word) => word.map(() => 0)),
     [words]
@@ -133,6 +137,16 @@ const TypeTranslate = ({
     e.preventDefault();
     isFocusSet(true);
   });
+
+  useShortcut(SPECIAL_KEY.Shift + KEY_NAME.Enter, (e) => {
+    e.preventDefault();
+    showPlaceholderSet(true);
+  });
+
+  useKeyupShortcut(SPECIAL_KEY.Shift + KEY_NAME.Enter, (e) => {
+    e.preventDefault();
+    showPlaceholderSet(false);
+  });
   useEffect(() => {
     if (!isFocus) return;
     ref.current && ref.current.focus();
@@ -157,9 +171,12 @@ const TypeTranslate = ({
                 isSleep={!isFocus}
               />
               <span
-                className={clsx({
-                  "text-slate-300 opacity-50":
-                    masksOfWords[i_word][i_letter] === 0,
+                className={clsx(``, {
+                  [`${
+                    !isFocus || alwayShowPlaceholder || showPlaceholder
+                      ? "opacity-50 text-slate-300"
+                      : "bg-slate-300 text-slate-300 unset-text-shadow opacity-30"
+                  }`]: masksOfWords[i_word][i_letter] === 0,
                   "text-red-500": masksOfWords[i_word][i_letter] === -1,
                   "text-sky-400": masksOfWords[i_word][i_letter] === 1,
                 })}
