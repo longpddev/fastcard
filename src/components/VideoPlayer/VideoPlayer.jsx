@@ -3,7 +3,7 @@ import useShortcut from "@hooks/useShortcut";
 import React, { useEffect, useRef, useState } from "react";
 import { Video } from "./function";
 import Segment from "./Segment";
-import TypeTranslate from "./TypeTranslate";
+import TypeTranslate, { TYPE_TRANSLATE_MODE } from "./TypeTranslate";
 import { clsx } from "clsx";
 import ButtonShortCut from "@components/ButtonShortCut";
 
@@ -16,6 +16,7 @@ const VideoPlayer = ({
   height,
 }) => {
   const [isFocus, isFocusSet] = useState(false);
+  const [easyMode, easyModeSet] = useState(false);
   const containerVideoRef = useRef();
   const [_, forceRender] = useState();
   const [heightVo, heightVoSet] = useState();
@@ -114,11 +115,8 @@ const VideoPlayer = ({
   }, []);
 
   return (
-    <div className="flex flex-wrap">
-      <div
-        className="relative w-full lg:flex-1 flex items-center"
-        ref={containerVideoRef}
-      >
+    <div className="flex flex-wrap" ref={containerVideoRef}>
+      <div className="relative w-full lg:flex-1 flex items-center">
         <ButtonShortCut
           shortcut={SPECIAL_KEY.Command + KEY_NAME.F11}
           className="hover:text-orange-400 p-2 absolute top-0 right-0 z-10"
@@ -130,10 +128,22 @@ const VideoPlayer = ({
             <i className="fa-solid fa-expand "></i>
           )}
         </ButtonShortCut>
+        <div className="absolute top-1 right-10 z-10  ">
+          <ButtonShortCut
+            shortcut={SPECIAL_KEY.Ctrl + "m"}
+            onClick={() => easyModeSet(!easyMode)}
+            className=" w-6 h-6 bg-slate-200 rounded-full icon-center-button relative"
+          >
+            {easyMode ? (
+              <i class="fa-solid fa-e text-green-400"></i>
+            ) : (
+              <i class="fa-solid fa-h text-red-400"></i>
+            )}
+          </ButtonShortCut>
+        </div>
+
         <div
-          className={clsx("w-full", {
-            "h-full": isFullScreen,
-          })}
+          className={clsx("w-full")}
           style={{ aspectRatio: width / height }}
           ref={div}
         ></div>
@@ -152,12 +162,13 @@ const VideoPlayer = ({
             onDone={() => control.next()}
             isFocus={isFocus}
             isFocusSet={isFocusSet}
+            alwayShowPlaceholder={easyMode}
             style={{
               bottom: `${
                 isFocus ? (isFullScreen ? heightVo / 13 : 0) : heightVo / 10
               }px`,
             }}
-          ></TypeTranslate>
+          />
         )}
       </div>
       <div
