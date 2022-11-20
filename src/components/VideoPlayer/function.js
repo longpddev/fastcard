@@ -1,5 +1,62 @@
 import { TinyEmitter } from "tiny-emitter";
 
+/**
+ *  @typedef {{
+ *    currentTime: () => number;
+ *    setSrc: (src: any) => Promise<any>;
+ *    destroy: () => void;
+ *    goto: (time: any) => Promise<void>;
+ *    duration: () => number;
+ *    pause: () => Promise<void>;
+ *    play: () => Promise<void>;
+ *    getVideoEl: () => HTMLVideoElement;
+ *    emitter: any;
+ *    control: (show: any) => void;
+ * }} IVideoControl
+ *
+ *  @typedef {{
+ *    destroy: () => void,
+ *    init: (videoUrl: any, transcript: any) => Promise<any>,
+ *    getCurrentSegment: () => ISegment,
+ *    isInitialed: () => boolean,
+ *    getVideoEl: () => HTMLVideoElement,
+ *    prevSegment: () => any,
+ *    getAllSegment: () => Array<any>
+ *    on: (event: any, callback: any): () => any
+ *    videoCl: IVideoControl
+ *    next: () => void
+ *    prev: () => void
+ *    setSegmentByTime: () => void
+ * }} IVideo
+ *
+ * @typedef {{
+ *  text: string,
+ *  timeStart: number,
+ *  timeEnd: number,
+ *  timeFormat: string,
+ *  init: Promise<void>,
+ *  next: () => void,
+ *  prev: () => void,
+ *  activeMe: () => void,
+ *  isActive: () => boolean,
+ *  play: () => Promise<void>,
+ * }} ISegment
+ */
+
+/**
+ * @param {{
+ *   text: string,
+ *   timeFormat: string,
+ *   timeStart: number,
+ *   timeEnd: number,
+ *   videoCl: IVideoControl,
+ *   nextSegment: () => void,
+ *   prevSegment: () => void,
+ *   index: number,
+ *   currentSegment: (index: undefined | number) => number,
+ * }} param0
+ * @returns { ISegment }
+ */
 export function segment({
   text,
   timeFormat,
@@ -28,10 +85,9 @@ export function segment({
     play();
   }
 
-  function play() {
-    init().then(() => {
-      videoCl.play();
-    });
+  async function play() {
+    await init();
+    videoCl.play();
   }
 
   function isActive() {
@@ -50,12 +106,20 @@ export function segment({
     play,
   };
 }
-
+/**
+ *
+ * @param {*} settings
+ * @returns { IVideo }
+ */
 export function Video(settings = {}) {
   const videoCl = videoControl();
   const emitter = new TinyEmitter();
   let initialed = false;
+
+  /** @type{ ISegment[] } */
   const _segments = [];
+
+  /** @type{{ [key: number ] : ISegment}} */
   const _segmentsIndexing = {};
   let _currentSegment = 0;
 
@@ -115,6 +179,9 @@ export function Video(settings = {}) {
     return () => emitter.off(event, callback);
   }
 
+  /**
+   * @returns { ISegment }
+   */
   function getCurrentSegment() {
     return _segments[currentSegment()];
   }
@@ -177,6 +244,11 @@ export function Video(settings = {}) {
       const currentSegment = getCurrentSegment();
       currentSegment.activeMe();
     },
+    prev: () => {
+      prevSegment();
+      const currentSegment = getCurrentSegment();
+      currentSegment.activeMe();
+    },
     setSegmentByTime,
     prevSegment,
   };
@@ -219,7 +291,9 @@ function mapEventVideoElementToEmitter(emitter, videoEl) {
     });
   });
 }
-
+/**
+ * @returns {IVideoControl}
+ */
 export function videoControl() {
   let videoEl = createElementVideo();
   const emitter = new TinyEmitter();

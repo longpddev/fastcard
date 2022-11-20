@@ -361,9 +361,11 @@ export function matchShortCut(event, shortCutName) {
       case SPECIAL_KEY.Shift:
         if (!event.shiftKey) return false;
         break;
-      default:
-        return false;
     }
+  } else {
+    if (event.metaKey) return false;
+    if (event.altKey) return false;
+    if (event.ctrlKey) return false;
   }
 
   if (keyName !== event.key) return false;

@@ -3,6 +3,7 @@ import {
   SHORTCUT_VIDEO_PLAYER_CHANGE_MODE,
   SHORTCUT_VIDEO_PLAYER_FULLSCREEN,
   SHORTCUT_VIDEO_PLAYER_REPEAT,
+  SHORTCUT_VIDEO_PLAYER_NEXT,
 } from "@/constants";
 import useShortcut from "@hooks/useShortcut";
 import React, { useEffect, useRef, useState } from "react";
@@ -11,6 +12,7 @@ import Segment from "./Segment";
 import TypeTranslate from "./TypeTranslate";
 import { clsx } from "clsx";
 import ButtonShortCut from "@components/ButtonShortCut";
+import { SHORTCUT_VIDEO_PLAYER_PREV } from "../../constants/index";
 
 const VideoPlayer = ({
   srcVideo,
@@ -25,7 +27,10 @@ const VideoPlayer = ({
   const containerVideoRef = useRef();
   const [_, forceRender] = useState();
   const [heightVo, heightVoSet] = useState();
-  const videoControl = useRef();
+  const videoControl =
+    /** @type { { current:  import("./function").IVideo | undefined }} */ (
+      useRef()
+    );
   const [isFullScreen, isFullScreenSet] = useState(false);
   const div = useRef();
   useEffect(() => {
@@ -93,6 +98,18 @@ const VideoPlayer = ({
     const videoCl = videoControl.current;
     if (!videoCl || !videoCl.isInitialed()) return;
     videoCl.getCurrentSegment()?.play();
+  });
+
+  useShortcut(SHORTCUT_VIDEO_PLAYER_NEXT, () => {
+    const videoCl = videoControl.current;
+    if (!videoCl || !videoCl.isInitialed()) return;
+    videoCl.next();
+  });
+
+  useShortcut(SHORTCUT_VIDEO_PLAYER_PREV, () => {
+    const videoCl = videoControl.current;
+    if (!videoCl || !videoCl.isInitialed()) return;
+    videoCl.prev();
   });
 
   useEffect(() => {
