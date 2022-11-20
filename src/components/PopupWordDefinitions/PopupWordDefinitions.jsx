@@ -1,6 +1,5 @@
-import { KEY_NAME, SPECIAL_KEY } from "@/constants/index";
+import { SPECIAL_KEY } from "@/constants/index";
 import React, { useState } from "react";
-import useShortcut from "@hooks/useShortcut";
 import PopupWordDefinitionsPopup from "./PopupWordDefinitionsPopup";
 import IconCircle from "../IconCircle";
 import { useLogin } from "@hooks/useLogin";

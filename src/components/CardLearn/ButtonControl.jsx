@@ -2,14 +2,19 @@ import clsx from "clsx";
 import React from "react";
 import { CARD_LEAN_TYPE } from "../../constants";
 import useShortcut from "@hooks/useShortcut";
-import { KEY_NAME, SPECIAL_KEY } from "@/constants";
+import {
+  SHORTCUT_CARD_ACTION_GOOD,
+  SHORTCUT_CARD_ACTION_HARD,
+  SHORTCUT_CARD_ACTION_REPEAT,
+  SHORTCUT_CARD_FLIP,
+  SHORTCUT_CARD_VIEW_RESULT,
+} from "@/constants";
 import ButtonShortCut from "@components/ButtonShortCut";
 
 export const ButtonControl = ({ isFront, isFrontSet, handleAction }) => {
   const isMobileLayout = window.innerWidth <= 480;
 
-  useShortcut(SPECIAL_KEY.Ctrl + "f", (e) => {
-    e.preventDefault();
+  useShortcut(SHORTCUT_CARD_FLIP, () => {
     isFrontSet((prev) => !prev);
   });
 
@@ -24,7 +29,7 @@ export const ButtonControl = ({ isFront, isFrontSet, handleAction }) => {
     >
       {isFront ? (
         <ButtonShortCut
-          shortcut={SPECIAL_KEY.Ctrl + KEY_NAME.Enter}
+          shortcut={SHORTCUT_CARD_VIEW_RESULT}
           className="button text-sky-300 text-xl"
           onClick={() => isFrontSet(false)}
         >
@@ -33,8 +38,7 @@ export const ButtonControl = ({ isFront, isFrontSet, handleAction }) => {
       ) : (
         <>
           <ButtonShortCut
-            title="SPACE_BAR+r"
-            shortcut={SPECIAL_KEY.Ctrl + "r"}
+            shortcut={SHORTCUT_CARD_ACTION_REPEAT}
             key={CARD_LEAN_TYPE.repeat}
             onClick={() => {
               handleAction(CARD_LEAN_TYPE.repeat);
@@ -44,8 +48,7 @@ export const ButtonControl = ({ isFront, isFrontSet, handleAction }) => {
             Repeat
           </ButtonShortCut>
           <ButtonShortCut
-            title="SPACE_BAR+g"
-            shortcut={SPECIAL_KEY.Ctrl + "g"}
+            shortcut={SHORTCUT_CARD_ACTION_GOOD}
             key={CARD_LEAN_TYPE.good}
             onClick={() => {
               handleAction(CARD_LEAN_TYPE.good);
@@ -55,8 +58,7 @@ export const ButtonControl = ({ isFront, isFrontSet, handleAction }) => {
             Good
           </ButtonShortCut>
           <ButtonShortCut
-            title="SPACE_BAR+h"
-            shortcut={SPECIAL_KEY.Ctrl + "h"}
+            shortcut={SHORTCUT_CARD_ACTION_HARD}
             key={CARD_LEAN_TYPE.hard}
             onClick={() => {
               handleAction(CARD_LEAN_TYPE.hard);

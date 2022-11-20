@@ -1,4 +1,9 @@
-import { KEY_NAME, SPECIAL_KEY } from "@/constants/index";
+import {
+  SHORTCUT_ACCEPT,
+  SHORTCUT_TOGGLE_WORD_DEFINITION,
+  SHORTCUT_WORD_DEFINITION_BACK,
+  SHORTCUT_WORD_DEFINITION_NEXT,
+} from "@/constants/index";
 import { firstCapitalize, getTextSelect } from "@/functions/common";
 import ButtonShortCut from "@components/ButtonShortCut";
 import LoadingIcon from "@components/LoadingIcon";
@@ -34,8 +39,13 @@ const PopupWordDefinitionsPopup = ({ onClose, words = "" }) => {
     stackPointSet(newList.length - 1);
   };
 
-  useShortcut(SPECIAL_KEY.Ctrl + "s", (e) => {
-    e.preventDefault();
+  // can forward to input => help use can change the word want to search
+  // and help user can close with this shortcut
+  // working like toggle feature
+  useShortcut(SHORTCUT_TOGGLE_WORD_DEFINITION, () => {
+    if (typing) {
+      onClose();
+    }
     typingSet(true);
   });
 
@@ -69,7 +79,7 @@ const PopupWordDefinitionsPopup = ({ onClose, words = "" }) => {
               {stackPoint !== 0 ? (
                 <div className=" absolute top-0 left-0 flex">
                   <ButtonShortCut
-                    shortcut={SPECIAL_KEY.Command + KEY_NAME.ArrowLeft}
+                    shortcut={SHORTCUT_WORD_DEFINITION_BACK}
                     onClick={handleNavigateStack(-1)}
                     className="icon-center-button relative w-10 h-8"
                   >
@@ -82,7 +92,7 @@ const PopupWordDefinitionsPopup = ({ onClose, words = "" }) => {
               {stackPoint !== stack.length - 1 ? (
                 <div className="absolute top-0 right-0 flex">
                   <ButtonShortCut
-                    shortcut={SPECIAL_KEY.Command + KEY_NAME.ArrowRight}
+                    shortcut={SHORTCUT_WORD_DEFINITION_NEXT}
                     onClick={handleNavigateStack(1)}
                     className="icon-center-button relative w-10 h-8"
                   >
@@ -116,10 +126,7 @@ const PopupWordDefinitionsSearchBy = ({ searchBy }) => {
   const [word, wordSet] = useState(() => getTextSelect());
   const bypass = useRef();
   bypass.current = word;
-  useShortcut(KEY_NAME.Enter, (e) => {
-    e.preventDefault();
-    searchBy && searchBy(bypass.current);
-  });
+  useShortcut(SHORTCUT_ACCEPT, () => searchBy && searchBy(bypass.current));
   return (
     <div className="p-4">
       <h2 className="text-center font-semibold text-2xl mb-4">

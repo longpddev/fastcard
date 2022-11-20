@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import useShortcut from "../../hooks/useShortcut";
 import { KEY_NAME } from "@/constants/index";
 import { clsx } from "clsx";
 import OutsideTheApp from "@components/OutsideTheApp";
@@ -11,10 +10,8 @@ let stackPopup = [];
 const PopupLazy = ({
   open,
   setOpen,
-  handleRef,
   children,
   maxWidth = 600,
-  isFullScreen = false,
   backgroundColor = "bg-slate-800",
 }) => {
   const refId = useRef();

@@ -338,3 +338,35 @@ export const getSet = (getValue, key) => (val) => {
     return getValueResult;
   }
 };
+
+/**
+ *
+ * @param { Event } event
+ * @param { string } shortCutName
+ * @returns { boolean }
+ */
+export function matchShortCut(event, shortCutName) {
+  const { keyName, specialKey } = extractNameShortCut(shortCutName);
+  if (specialKey) {
+    switch (specialKey) {
+      case SPECIAL_KEY.Command:
+        if (!event.metaKey) return false;
+        break;
+      case SPECIAL_KEY.Alt:
+        if (!event.altKey) return false;
+        break;
+      case SPECIAL_KEY.Ctrl:
+        if (!event.ctrlKey) return false;
+        break;
+      case SPECIAL_KEY.Shift:
+        if (!event.shiftKey) return false;
+        break;
+      default:
+        return false;
+    }
+  }
+
+  if (keyName !== event.key) return false;
+
+  return true;
+}

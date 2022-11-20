@@ -1,4 +1,4 @@
-import { KEY_NAME, SPECIAL_KEY } from "@/constants/index";
+import { SHORTCUT_ACCEPT, SHORTCUT_TOGGLE_TRANSLATE } from "@/constants/index";
 import Popup from "@components/Popup";
 import React from "react";
 import When from "@components/When";
@@ -7,16 +7,17 @@ import LoadingIcon from "@components/LoadingIcon";
 import TranslationContent from "./TranslationContent";
 import { useState } from "react";
 import useShortcut from "@hooks/useShortcut";
+import { matchShortCut } from "@/functions/common";
 
 const TranslationPopup = ({ onClose }) => {
   const [typing, typingSet] = useState(true);
   const [textTranslate, textTranslateSet] = useState("");
   const { data, error, isLoading } = useRapitGoogleTranslate(textTranslate);
 
-  useShortcut(SPECIAL_KEY.Ctrl + "t", (e) => {
-    e.preventDefault();
-    typingSet(true);
-  });
+  useShortcut(SHORTCUT_TOGGLE_TRANSLATE, () => typingSet(true));
+
+  // toggle popup open and close using one shortcut
+  useShortcut(SHORTCUT_TOGGLE_TRANSLATE, () => typing && onClose());
 
   return (
     <Popup open={true} setOpen={onClose}>
@@ -61,7 +62,7 @@ const TranslationInput = ({ setText }) => {
         className="text-center input"
         autoFocus={true}
         onKeyDown={(e) => {
-          if (e.key === KEY_NAME.Enter && value.trim().length > 0)
+          if (matchShortCut(e, SHORTCUT_ACCEPT) && value.trim().length > 0)
             setText && setText(value);
         }}
         placeholder="Type what you want to translate"

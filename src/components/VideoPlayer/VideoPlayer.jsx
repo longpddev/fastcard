@@ -1,9 +1,14 @@
-import { KEY_NAME, SPECIAL_KEY } from "@/constants/index";
+import {
+  SHORTCUT_VIDEO_PLAYER_TRANSCRIPT_FOCUS,
+  SHORTCUT_VIDEO_PLAYER_CHANGE_MODE,
+  SHORTCUT_VIDEO_PLAYER_FULLSCREEN,
+  SHORTCUT_VIDEO_PLAYER_REPEAT,
+} from "@/constants";
 import useShortcut from "@hooks/useShortcut";
 import React, { useEffect, useRef, useState } from "react";
 import { Video } from "./function";
 import Segment from "./Segment";
-import TypeTranslate, { TYPE_TRANSLATE_MODE } from "./TypeTranslate";
+import TypeTranslate from "./TypeTranslate";
 import { clsx } from "clsx";
 import ButtonShortCut from "@components/ButtonShortCut";
 
@@ -84,10 +89,9 @@ const VideoPlayer = ({
     videoCl.videoCl.control(!isFocus);
   }, [isFocus, control && control.isInitialed()]);
 
-  useShortcut(SPECIAL_KEY.Ctrl + "r", (e) => {
+  useShortcut(SHORTCUT_VIDEO_PLAYER_REPEAT, () => {
     const videoCl = videoControl.current;
     if (!videoCl || !videoCl.isInitialed()) return;
-    e.preventDefault();
     videoCl.getCurrentSegment()?.play();
   });
 
@@ -118,7 +122,7 @@ const VideoPlayer = ({
     <div className="flex flex-wrap" ref={containerVideoRef}>
       <div className="relative w-full lg:flex-1 flex items-center">
         <ButtonShortCut
-          shortcut={SPECIAL_KEY.Command + KEY_NAME.F11}
+          shortcut={SHORTCUT_VIDEO_PLAYER_FULLSCREEN}
           className="hover:text-orange-400 p-2 absolute top-0 right-0 z-10"
           onClick={handleFullScreen}
         >
@@ -130,14 +134,14 @@ const VideoPlayer = ({
         </ButtonShortCut>
         <div className="absolute top-1 right-10 z-10  ">
           <ButtonShortCut
-            shortcut={SPECIAL_KEY.Ctrl + "m"}
+            shortcut={SHORTCUT_VIDEO_PLAYER_CHANGE_MODE}
             onClick={() => easyModeSet(!easyMode)}
             className=" w-6 h-6 bg-slate-200 rounded-full icon-center-button relative"
           >
             {easyMode ? (
-              <i class="fa-solid fa-e text-green-400"></i>
+              <i className="fa-solid fa-e text-green-400"></i>
             ) : (
-              <i class="fa-solid fa-h text-red-400"></i>
+              <i className="fa-solid fa-h text-red-400"></i>
             )}
           </ButtonShortCut>
         </div>
@@ -156,7 +160,7 @@ const VideoPlayer = ({
                   isFocus,
               }
             )}
-            shortcut={SPECIAL_KEY.Ctrl + KEY_NAME.Enter}
+            shortcut={SHORTCUT_VIDEO_PLAYER_TRANSCRIPT_FOCUS}
             key={control.getCurrentSegment().timeStart}
             text={control.getCurrentSegment().text}
             onDone={() => control.next()}

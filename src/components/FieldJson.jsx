@@ -5,7 +5,7 @@ import Markdown from "@components/Markdown";
 import { pushFastToast } from "@components/Toast";
 import IconCircle from "@components/IconCircle";
 import useShortcut from "@hooks/useShortcut";
-import { SPECIAL_KEY } from "@/constants";
+import { SHORTCUT_RE_UNDO, SHORTCUT_UNDO } from "@/constants";
 
 function parseTranscript(value) {
   let parsed;
@@ -198,8 +198,8 @@ const Prev = ({ parse, parseSet }) => {
     });
   };
 
-  useShortcut(SPECIAL_KEY.Ctrl + "z", () => command.current.goto(-1));
-  useShortcut(SPECIAL_KEY.Ctrl + "u", () => command.current.goto(1));
+  useShortcut(SHORTCUT_UNDO, () => command.current.goto(-1));
+  useShortcut(SHORTCUT_RE_UNDO, () => command.current.goto(1));
   return (
     <div className="overflow-auto max-h-[300px] border-slate-400 border pr-4">
       <table className="w-full table-border-full">

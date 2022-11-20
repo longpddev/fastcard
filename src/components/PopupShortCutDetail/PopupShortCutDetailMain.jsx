@@ -1,14 +1,18 @@
-import { ATTRIBUTE_SHORTCUT_BUTTON, SPECIAL_KEY } from "@/constants/index";
+import {
+  ATTRIBUTE_SHORTCUT_BUTTON,
+  SHORTCUT_ESCAPE,
+  SHORTCUT_TOGGLE_GUILD_SHORTCUT,
+} from "@/constants/index";
 import useShortcut from "@hooks/useShortcut";
-import React, { useLayoutEffect, useMemo, useRef, useState } from "react";
+import React, { useMemo, useState } from "react";
 import OutsideTheApp from "@components/OutsideTheApp";
 import { extractNameShortCut } from "@/functions/common";
 import TooltipShortCut from "./TooltipShortCut";
-import { KEY_NAME } from "@/constants";
 
 function getAllShortCutButton() {
+  const rootElement = document.fullscreenElement || document.body;
   const els = Array.from(
-    document.querySelectorAll(`[${ATTRIBUTE_SHORTCUT_BUTTON}]`)
+    rootElement.querySelectorAll(`[${ATTRIBUTE_SHORTCUT_BUTTON}]`)
   );
   const rectEls = els.map((el) => {
     const attr = el.getAttribute(ATTRIBUTE_SHORTCUT_BUTTON);
@@ -27,21 +31,15 @@ function getAllShortCutButton() {
       specialKey,
     };
   });
-  console.log(rectEls);
+
   return rectEls;
 }
 
 const PopupShortCutDetailMain = () => {
   const [open, openSet] = useState(false);
   const [active, activeSet] = useState(-1);
-  useShortcut(SPECIAL_KEY.Command + "p", (e) => {
-    e.preventDefault();
-    openSet((prev) => !prev);
-  });
-  useShortcut(KEY_NAME.Escape, (e) => {
-    e.preventDefault();
-    openSet(false);
-  });
+  useShortcut(SHORTCUT_TOGGLE_GUILD_SHORTCUT, () => openSet((prev) => !prev));
+  useShortcut(SHORTCUT_ESCAPE, () => openSet(false));
   const listItem = useMemo(() => getAllShortCutButton(), [open]);
   if (!open) return null;
 

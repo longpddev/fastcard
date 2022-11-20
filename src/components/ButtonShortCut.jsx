@@ -18,11 +18,11 @@ const ButtonShortCut = ({
     if (el) {
       el.classList.add("animate-click-button", onClickClassName || undefined);
     }
-    setTimeout(() => onClick(), 100);
+
+    onClick();
   };
 
-  useShortcut(shortcut, (e) => {
-    e.preventDefault();
+  useShortcut(shortcut, () => {
     handleClick.current();
   });
 

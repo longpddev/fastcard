@@ -1,10 +1,11 @@
-import { ATTRIBUTE_SHORTCUT_BUTTON } from "@/constants/index";
+import {
+  ATTRIBUTE_SHORTCUT_BUTTON,
+  SHORTCUT_ACCEPT,
+  SHORTCUT_TYPING_TRANSLATE_TOGGLE_PLACEHOLDER,
+} from "@/constants/index";
 import clsx from "clsx";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import useShortcut, { useKeyupShortcut } from "@hooks/useShortcut";
-import { getSet } from "@/functions/common";
-import { SPECIAL_KEY } from "@/constants";
-import { KEY_NAME } from "@/constants";
 const KEY_IGNORE = {
   Backspace: "Backspace",
   Control: "Control",
@@ -133,19 +134,14 @@ const TypeTranslate = ({
     return true;
   };
 
-  useShortcut(shortcut, (e) => {
-    e.preventDefault();
-    isFocusSet(true);
-  });
+  useShortcut(shortcut, () => isFocusSet(true));
 
-  useShortcut(SPECIAL_KEY.Shift + KEY_NAME.Enter, (e) => {
-    e.preventDefault();
-    showPlaceholderSet(true);
-  });
+  useShortcut(SHORTCUT_TYPING_TRANSLATE_TOGGLE_PLACEHOLDER, () =>
+    showPlaceholderSet(true)
+  );
 
-  useKeyupShortcut(KEY_NAME.Enter, (e) => {
+  useKeyupShortcut(SHORTCUT_ACCEPT, () => {
     if (!showPlaceholder) return;
-    e.preventDefault();
     showPlaceholderSet(false);
   });
   useEffect(() => {

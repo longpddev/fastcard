@@ -3,8 +3,7 @@
  * @typedef {[ShortcutName, (e: KeyboardEvent) => void;]} IShortcut
  */
 
-import { SPECIAL_KEY } from "@/constants/index";
-import { extractNameShortCut } from "@/functions/common";
+import { matchShortCut } from "@/functions/common";
 import { useEffect, useRef } from "react";
 
 /**
@@ -14,29 +13,12 @@ import { useEffect, useRef } from "react";
  */
 function initHandle(shortcuts, event) {
   shortcuts.get.forEach((shortcut) => {
-    const [name, fn] = shortcut;
-    const { keyName, specialKey } = extractNameShortCut(name);
-    if (specialKey) {
-      switch (specialKey) {
-        case SPECIAL_KEY.Command:
-          if (!event.metaKey) return;
-          break;
-        case SPECIAL_KEY.Alt:
-          if (!event.altKey) return;
-          break;
-        case SPECIAL_KEY.Ctrl:
-          if (!event.ctrlKey) return;
-          break;
-        case SPECIAL_KEY.Shift:
-          if (!event.shiftKey) return;
-          break;
-        default:
-          return;
-      }
+    const [shortCutName, fn, preventDefault] = shortcut;
+    if (!matchShortCut(event, shortCutName)) return;
+
+    if (preventDefault) {
+      event.preventDefault();
     }
-
-    if (keyName !== event.key) return;
-
     fn(event);
   });
 }
@@ -46,10 +28,11 @@ function initHandle(shortcuts, event) {
  * @param { string } shortcutName
  * @param {(e: KeyboardEvent) => void} fn
  * @param {{get: IShortcut[]}} list
+ * @param { boolean } preventDefault
  * @returns { () => void } unregister
  */
-const register = (shortcutName, fn, list) => {
-  const arr = [shortcutName, fn];
+const register = (shortcutName, fn, list, preventDefault) => {
+  const arr = [shortcutName, fn, preventDefault];
   list.get.push(arr);
 
   return () => {
@@ -74,7 +57,7 @@ document.addEventListener("keyup", (e) => {
   initHandle(listKeyupShortCut, e);
 });
 
-export default function useShortcut(shortcutName, fn, arr = []) {
+export default function useShortcut(shortcutName, fn, preventDefault = true) {
   const forward = useRef();
   forward.current = {
     fn,
@@ -84,11 +67,11 @@ export default function useShortcut(shortcutName, fn, arr = []) {
     const handle = function () {
       forward.current.fn(...arguments);
     };
-    return register(shortcutName, handle, listKeydownShortCut);
-  }, [...arr, shortcutName]);
+    return register(shortcutName, handle, listKeydownShortCut, preventDefault);
+  }, [shortcutName]);
 }
 
-export function useKeyupShortcut(shortcutName, fn, arr = []) {
+export function useKeyupShortcut(shortcutName, fn, preventDefault = true) {
   const forward = useRef();
   forward.current = {
     fn,
@@ -98,6 +81,6 @@ export function useKeyupShortcut(shortcutName, fn, arr = []) {
     const handle = function () {
       forward.current.fn(...arguments);
     };
-    return register(shortcutName, handle, listKeyupShortCut);
-  }, [...arr, shortcutName]);
+    return register(shortcutName, handle, listKeyupShortCut, preventDefault);
+  }, [shortcutName]);
 }

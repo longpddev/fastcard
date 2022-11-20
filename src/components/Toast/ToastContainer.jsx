@@ -1,7 +1,7 @@
+import OutsideTheApp from "@components/OutsideTheApp";
 import clsx from "clsx";
 import { AnimatePresence } from "framer-motion";
 import React from "react";
-import { createPortal } from "react-dom";
 import { useSubscribeToast } from "./core";
 import ToastElement from "./ToastElement";
 function reverse(arr) {
@@ -11,7 +11,6 @@ function reverse(arr) {
   }
   return result;
 }
-const OutsideTheApp = ({ children }) => createPortal(children, document.body);
 const ToastContainer = () => {
   const { toast, removeToast } = useSubscribeToast();
   return (
