@@ -1,8 +1,11 @@
-import React, { useLayoutEffect } from "react";
+import React, { useMemo, useRef } from "react";
 import { useEffect } from "react";
 import { useState } from "react";
 import Markdown from "@components/Markdown";
 import { pushFastToast } from "@components/Toast";
+import IconCircle from "@components/IconCircle";
+import useShortcut from "@hooks/useShortcut";
+import { SPECIAL_KEY } from "@/constants";
 
 function parseTranscript(value) {
   let parsed;
@@ -74,14 +77,14 @@ const FieldJson = ({ value, valueSet }) => {
                 innerValueSet(result);
                 isPrevSet(!isPrev);
               }}
-              className="px-2 py-1 w-8 h-8 rounded-md bg-slate-800 relative mr-2 hover:text-green-400 icon-center-button"
+              className="px-2 py-1 w-8 h-8 rounded-md bg-slate-900 bg-opacity-80 relative mr-2 hover:text-green-400 icon-center-button"
               title="Apply"
             >
               <i className="fa-solid fa-check text-xl"></i>
             </button>
           )}
           <button
-            className="px-2 py-1 w-8 h-8 rounded-md bg-slate-800 relative hover:text-orange-400 icon-center-button"
+            className="px-2 py-1 w-8 h-8 rounded-md bg-slate-900 bg-opacity-80 relative hover:text-orange-400 icon-center-button"
             title="Preview"
             onClick={() => {
               if (!isPrev) {
@@ -129,12 +132,76 @@ Exp:
 };
 
 const Prev = ({ parse, parseSet }) => {
+  const command = useRef();
+
+  if (!command.current) {
+    command.current = (() => {
+      let list = [];
+      let point = -1;
+      const isExist = (pt) => {
+        if (pt > list.length - 1) return false;
+        if (pt < 0) return false;
+        return true;
+      };
+      const goto = (nextOrPrev) => {
+        const newPoint = point + nextOrPrev;
+        if (list.length === 0) return;
+
+        if (nextOrPrev < 0) {
+          if (!isExist(point)) return;
+          const { undo } = list[point];
+          undo();
+        }
+
+        if (nextOrPrev > 0) {
+          if (!isExist(newPoint)) return;
+          const { execute } = list[newPoint];
+          execute();
+        }
+
+        point = newPoint;
+      };
+      const add = ({ undo, execute }) => {
+        list = list.filter((_, index) => index <= point);
+        list.push({ undo, execute });
+        execute();
+        point++;
+      };
+      return {
+        goto,
+        list,
+        add,
+      };
+    })();
+  }
   const handleTranscriptChange = (val, index) => {
-    parse[index].text = val;
-    parseSet([...parse]);
+    command.current.add({
+      undo: () => {
+        parseSet(parse);
+      },
+      execute: () => {
+        const parseClone = structuredClone(parse);
+        parseClone[index].text = val;
+        parseSet(parseClone);
+      },
+    });
   };
+
+  const handleDelete = (index) => {
+    command.current.add({
+      undo: () => {
+        parseSet(parse);
+      },
+      execute: () => {
+        parseSet(parse.filter((_, i) => i !== index));
+      },
+    });
+  };
+
+  useShortcut(SPECIAL_KEY.Ctrl + "z", () => command.current.goto(-1));
+  useShortcut(SPECIAL_KEY.Ctrl + "u", () => command.current.goto(1));
   return (
-    <div className="overflow-auto max-h-[300px]">
+    <div className="overflow-auto max-h-[300px] border-slate-400 border pr-4">
       <table className="w-full table-border-full">
         <tbody>
           {parse.map((item, index) => (
@@ -146,6 +213,15 @@ const Prev = ({ parse, parseSet }) => {
                   valueSet={(val) => handleTranscriptChange(val, index)}
                 />
               </td>
+              <td>
+                <button onClick={() => handleDelete(index)}>
+                  <IconCircle
+                    wrapClass="text-[12px] hover:text-red-400"
+                    className="fas fa-trash-can"
+                    size="md"
+                  />
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>
@@ -156,21 +232,33 @@ const Prev = ({ parse, parseSet }) => {
 
 const Editable = ({ value, valueSet }) => {
   const [isEdit, isEditSet] = useState(false);
+  const [_, rerender] = useState({});
+  const data = useRef();
+  useMemo(() => {
+    data.current = value;
+  }, [value]);
+  const handleDone = () => {
+    valueSet(data.current);
+    isEditSet(false);
+  };
   const handleKeydown = (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      isEditSet(false);
+      handleDone();
     }
   };
   return isEdit ? (
     <input
       type="text"
       className="input p-0 rounded-none"
-      value={value}
+      value={data.current}
       autoFocus={true}
-      onBlur={() => isEditSet(false)}
+      onBlur={() => handleDone()}
       onKeyDown={handleKeydown}
-      onChange={(e) => valueSet(e.target.value)}
+      onChange={(e) => {
+        data.current = e.target.value;
+        rerender({});
+      }}
     />
   ) : (
     <button onClick={() => isEditSet(true)}>{value}</button>
