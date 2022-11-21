@@ -2,40 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@import "./assets/font_awesome/css/all.min.css";
-
-@font-face {
-  font-family: 'Roboto';
-  font-style: normal;
-  font-weight: 300;
-  font-display: swap;
-  src: url("./assets/fonts/roboto/Roboto-Light.ttf");
-}
-
-@font-face {
-  font-family: 'Roboto';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url("./assets/fonts/roboto/Roboto-Regular.ttf");
-}
-
-@font-face {
-  font-family: 'Roboto';
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-  src: url("./assets/fonts/roboto/Roboto-Medium.ttf");
-}
-
-@font-face {
-  font-family: 'Roboto';
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url("./assets/fonts/roboto/Roboto-Bold.ttf");
-}
-
 @layer base {
   th,
   td {

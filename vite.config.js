@@ -5,7 +5,7 @@ import path from "path";
 const pwaOptions = {
   mode: "development",
   base: "/",
-  includeAssets: ["favicon.ico"],
+  includeAssets: ["favicon.ico", 'fonts/**/*'],
   manifest: {
     name: "Card app",
     short_name: "Card app",
@@ -35,31 +35,11 @@ const pwaOptions = {
     type: "module",
     navigateFallback: "index.html",
   },
+  registerType: "autoUpdate",
 };
 
-const replaceOptions = { __DATE__: new Date().toISOString() };
-const claims = process.env.CLAIMS === "true";
-const reload = process.env.RELOAD_SW === "true";
-const selfDestroying = process.env.SW_DESTROY === "true";
-
-if (process.env.SW === "true") {
-  pwaOptions.srcDir = "src";
-  pwaOptions.filename = claims ? "claims-sw.ts" : "prompt-sw.ts";
-  pwaOptions.strategies = "injectManifest";
-  pwaOptions.manifest.name = "PWA Inject Manifest";
-  pwaOptions.manifest.short_name = "PWA Inject";
-}
-
-pwaOptions.registerType = "autoUpdate";
-
-if (reload) {
-  // @ts-expect-error just ignore
-  replaceOptions.__RELOAD_SW__ = "true";
-}
-
-if (selfDestroying) pwaOptions.selfDestroying = selfDestroying;
 // https://vitejs.dev/config/
-export default defineConfig(({ command, mode }) => {
+export default defineConfig(({ mode }) => {
   // Load env file based on `mode` in the current working directory.
   // Set the third parameter to '' to load all env regardless of the `VITE_` prefix.
   const env = loadEnv(mode, process.cwd(), "");
