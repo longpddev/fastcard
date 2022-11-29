@@ -79,9 +79,9 @@ const UrbanDefinitionsItem = ({
       </div>
       <div className="flex mt-auto text-slate-600">
         <small className="mr-auto">{written}</small>
-        {sound_urls.map((url, i) => (
-          <PlaySource url={url} key={i} />
-        ))}
+        {sound_urls
+          ? sound_urls.map((url, i) => <PlaySource url={url} key={i} />)
+          : null}
 
         <a href={permalink} target="_blank" className="ml-2">
           <i className="fas fa-link"></i>

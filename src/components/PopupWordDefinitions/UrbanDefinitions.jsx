@@ -20,6 +20,8 @@ const UrbanDefinitions = ({ words, onDefineMore, limit = 7 }) => {
     () => data?.filter((_, i) => i + 1 <= limit) || [],
     [data]
   );
+
+  console.log(data);
   useEffect(() => {
     const el = /** @type { HTMLDivElement | undefined } */ (ref.current);
     if (!el) return;

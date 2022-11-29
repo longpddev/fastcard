@@ -5,7 +5,7 @@ import path from "path";
 const pwaOptions = {
   mode: "development",
   base: "/",
-  includeAssets: ["favicon.ico", 'fonts/**/*'],
+  includeAssets: ["favicon.ico", "fonts/**/*"],
   manifest: {
     name: "Card app",
     short_name: "Card app",
