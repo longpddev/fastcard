@@ -62,7 +62,7 @@ const PopupLazy = ({
                     }}
                     className=""
                   >
-                    <i className="fas fa-xmark text-3xl px-[0.288em]"></i>
+                    <i className="fas fa-xmark text-3xl py-[0.1em] px-[0.288em]"></i>
                   </ButtonShortCut>
                 </div>
                 <div className={"max-h-[95vh] overflow-hidden overflow-y-auto"}>
