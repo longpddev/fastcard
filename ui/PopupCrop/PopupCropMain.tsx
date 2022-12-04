@@ -2,30 +2,39 @@
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import getCroppedImg from '../../helpers/cropimage';
-import Cropper from 'react-easy-crop';
+import Cropper, { Area } from 'react-easy-crop';
+import { IBlobImage, ICroppedImage, IReactProps } from '@/interfaces/common';
 
-const PopupCropMain = ({ url, cropHeight, setCroppedImage, setOpen }) => {
-  const ref = useRef();
+const PopupCropMain: IReactProps<{
+  url: string;
+  cropHeight: number;
+  setOpen: (s: boolean) => void;
+  setCroppedImage: (v: IBlobImage) => void;
+}> = ({ url, cropHeight, setCroppedImage, setOpen }) => {
+  const ref = useRef<HTMLDivElement>(null);
   const resizeCropRef = useRef(false);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [rotation, setRotation] = useState(0);
   const [flip, setFlip] = useState({ horizontal: false, vertical: false });
   const [zoom, setZoom] = useState(1);
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
   const closePopup = () => {
     resizeCropRef.current = false;
     setOpen && setOpen(false);
   };
-  const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
-    let minToZoom = Math.min(croppedArea.height, croppedArea.width);
-    minToZoom = parseInt(minToZoom * 1000) / 1000;
+  const onCropComplete = useCallback(
+    (croppedArea: Area, croppedAreaPixels: Area) => {
+      let minToZoom = Math.min(croppedArea.height, croppedArea.width);
+      minToZoom = Math.round(minToZoom * 1000) / 1000;
 
-    if (resizeCropRef.current === false && minToZoom !== 100) {
-      resizeCropRef.current = true;
-      setZoom(minToZoom / 100);
-    }
-    setCroppedAreaPixels(croppedAreaPixels);
-  }, []);
+      if (resizeCropRef.current === false && minToZoom !== 100) {
+        resizeCropRef.current = true;
+        setZoom(minToZoom / 100);
+      }
+      setCroppedAreaPixels(croppedAreaPixels);
+    },
+    [],
+  );
 
   const getCroppedImage = useCallback(async () => {
     if (!croppedAreaPixels) {
@@ -45,7 +54,7 @@ const PopupCropMain = ({ url, cropHeight, setCroppedImage, setOpen }) => {
   useEffect(() => {
     const container = ref.current;
     if (!container) return;
-    const handleWheel = (event) => {
+    const handleWheel = (event: WheelEvent) => {
       setZoom((prev) => {
         return (prev += event.deltaY * 0.0001);
       });
@@ -67,7 +76,7 @@ const PopupCropMain = ({ url, cropHeight, setCroppedImage, setOpen }) => {
         className="relative"
         style={{ minHeight: `${cropHeight}px` }}
         onWheel={(e) => {
-          scale += event.deltaY * -0.01;
+          // scale += event.deltaY * -0.01;
         }}
       >
         <Cropper
@@ -95,7 +104,9 @@ const PopupCropMain = ({ url, cropHeight, setCroppedImage, setOpen }) => {
             onChange={(e) => setZoom(parseInt(e.target.value) / 100)}
             max={300}
           />
-          <span className="text-sm font-semibold">{parseInt(zoom * 100)}%</span>
+          <span className="text-sm font-semibold">
+            {Math.round(zoom * 100)}%
+          </span>
         </div>
 
         <button

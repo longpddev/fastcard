@@ -1,4 +1,9 @@
-import { isCurrentOrigin, isValidUrl, token } from '../functions/common';
+import {
+  isCurrentOrigin,
+  isValidUrl,
+  splitParamsEndpoint,
+  token,
+} from '../functions/common';
 
 type IRequestMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 type IRequestBody =
@@ -14,24 +19,41 @@ type IRequestOptions = {
 interface IEndPoint {
   endPoint: string;
   body: IRequestBody;
-  params: Record<string, string> | undefined;
+  params: Record<string, string | number> | undefined;
+  paramsEndPoint: Record<string, string | number> | undefined;
   response: any;
 }
 
 interface IEndPointUploadFile extends IEndPoint {
-  body: Record<string, string>;
+  body: Record<string, string | number | Blob>;
 }
 
 export interface IEndPointCreator<
   EndPoint extends string,
   Body extends IRequestBody | undefined,
-  Params extends Record<string, string> | undefined,
+  Params extends Record<string, string | number> | undefined,
+  ParamsEndPoint extends Record<string, string | number> | undefined,
   Response extends any,
 > extends IEndPoint {
   endPoint: EndPoint;
   body: Body;
   params: Params;
   response: Response;
+  paramsEndPoint: ParamsEndPoint;
+}
+
+export interface IEndPointUploadCreator<
+  EndPoint extends string,
+  Body extends Record<string, string | number | Blob>,
+  Params extends Record<string, string | number> | undefined,
+  ParamsEndPoint extends Record<string, string | number> | undefined,
+  Response extends any,
+> extends IEndPointUploadFile {
+  endPoint: EndPoint;
+  body: Body;
+  params: Params;
+  response: Response;
+  paramsEndPoint: ParamsEndPoint;
 }
 
 type Pickey<
@@ -39,26 +61,46 @@ type Pickey<
   Key extends string,
 > = Object[Key];
 
+type Infer<T extends unknown, V extends unknown> = T extends undefined ? V : T;
+
+type MergeOptions<
+  T extends unknown,
+  TV extends unknown,
+  H extends unknown,
+  HV extends unknown,
+  DF = null,
+> = T extends undefined
+  ? H extends undefined
+    ? DF
+    : Infer<HV, H>
+  : H extends undefined
+  ? Infer<TV, T>
+  : Infer<TV, T> & Infer<HV, H>;
+
 type IEndPointFetch = <T extends IEndPoint>(
   endPoint: Pickey<T, 'endPoint'>,
   // options: {
   //   body: Pickey<T, 'body'>;
   //   params: Pickey<T, 'params'>;
   // },
-  options: Pickey<T, 'body'> extends undefined
-    ? Pickey<T, 'params'> extends undefined
-      ? {}
-      : {
-          params: Pickey<T, 'params'>;
-        }
-    : Pickey<T, 'params'> extends undefined
-    ? {
-        body: Pickey<T, 'body'>;
-      }
-    : {
+  options: MergeOptions<
+    Pickey<T, 'body'>,
+    {
+      body: Pickey<T, 'body'>;
+    },
+    MergeOptions<
+      Pickey<T, 'params'>,
+      {
         params: Pickey<T, 'params'>;
-        body: Pickey<T, 'body'>;
       },
+      Pickey<T, 'paramsEndPoint'>,
+      {
+        paramsEndPoint: Pickey<T, 'paramsEndPoint'>;
+      },
+      undefined
+    >,
+    undefined
+  >,
 ) => Promise<Pickey<T, 'response'>>;
 
 type IRequestEvents = {
@@ -212,16 +254,20 @@ const createMethodAuth = <T extends unknown>(
 export const uploadfile = <T extends IEndPointUploadFile>(
   point: Pickey<T, 'endPoint'>,
   data: Pickey<T, 'body'>,
+  paramsEndPoint: Pickey<T, 'paramsEndPoint'>,
   method: IRequestMethod = 'POST',
   events = {},
 ): Promise<Pickey<T, 'response'>> => {
   const formData = new FormData();
 
   for (let [name, value] of Object.entries(data)) {
+    if (typeof value === 'number') {
+      value = value.toString();
+    }
     formData.append(name, value);
   }
   return createMethodXMLHttpRequest(
-    point,
+    splitParamsEndpoint(point, paramsEndPoint),
     method,
     formData,
     new Headers({
@@ -231,10 +277,15 @@ export const uploadfile = <T extends IEndPointUploadFile>(
   );
 };
 
-const paramToString = (params: Record<string, string> | undefined) => {
+const paramToString = (params: Record<string, string | number> | undefined) => {
   if (!params) return '';
 
-  return '?' + new URLSearchParams(params).toString();
+  const urlSearch = new URLSearchParams();
+
+  for (const [key, value] of Object.entries(params)) {
+    urlSearch.append(key, value.toString());
+  }
+  return '?' + urlSearch.toString();
 };
 
 const client: {
@@ -245,7 +296,15 @@ const client: {
 } = {
   GET: (point, options) =>
     createMethodXMLHttpRequest(
-      point + paramToString('params' in options ? options.params : undefined),
+      splitParamsEndpoint(
+        point,
+        options && 'paramsEndPoint' in options
+          ? options.paramsEndPoint
+          : undefined,
+      ) +
+        paramToString(
+          options && 'params' in options ? options.params : undefined,
+        ),
       'GET',
       undefined,
       undefined,
@@ -253,23 +312,47 @@ const client: {
     ),
   POST: (point, options) =>
     createMethodXMLHttpRequest(
-      point + paramToString('params' in options ? options.params : undefined),
+      splitParamsEndpoint(
+        point,
+        options && 'paramsEndPoint' in options
+          ? options.paramsEndPoint
+          : undefined,
+      ) +
+        paramToString(
+          options && 'params' in options ? options.params : undefined,
+        ),
       'POST',
-      'body' in options ? options.body : undefined,
+      options && 'body' in options ? options.body : undefined,
       undefined,
       {},
     ),
   PUT: (point, options) =>
     createMethodXMLHttpRequest(
-      point + paramToString('params' in options ? options.params : undefined),
+      splitParamsEndpoint(
+        point,
+        options && 'paramsEndPoint' in options
+          ? options.paramsEndPoint
+          : undefined,
+      ) +
+        paramToString(
+          options && 'params' in options ? options.params : undefined,
+        ),
       'PUT',
-      'body' in options ? options.body : undefined,
+      options && 'body' in options ? options.body : undefined,
       undefined,
       {},
     ),
   DELETE: (point, options) =>
     createMethodXMLHttpRequest(
-      point + paramToString('params' in options ? options.params : undefined),
+      splitParamsEndpoint(
+        point,
+        options && 'paramsEndPoint' in options
+          ? options.paramsEndPoint
+          : undefined,
+      ) +
+        paramToString(
+          options && 'params' in options ? options.params : undefined,
+        ),
       'DELETE',
       undefined,
       undefined,
@@ -285,24 +368,56 @@ export const clientAuth: {
 } = {
   GET: (point, options) =>
     createMethodAuth(
-      point + paramToString('params' in options ? options.params : undefined),
+      splitParamsEndpoint(
+        point,
+        options && 'paramsEndPoint' in options
+          ? options.paramsEndPoint
+          : undefined,
+      ) +
+        paramToString(
+          options && 'params' in options ? options.params : undefined,
+        ),
       'GET',
     ),
   POST: (point, options) =>
     createMethodAuth(
-      point + paramToString('params' in options ? options.params : undefined),
+      splitParamsEndpoint(
+        point,
+        options && 'paramsEndPoint' in options
+          ? options.paramsEndPoint
+          : undefined,
+      ) +
+        paramToString(
+          options && 'params' in options ? options.params : undefined,
+        ),
       'POST',
-      'body' in options ? options.body : undefined,
+      options && 'body' in options ? options.body : undefined,
     ),
   PUT: (point, options) =>
     createMethodAuth(
-      point + paramToString('params' in options ? options.params : undefined),
+      splitParamsEndpoint(
+        point,
+        options && 'paramsEndPoint' in options
+          ? options.paramsEndPoint
+          : undefined,
+      ) +
+        paramToString(
+          options && 'params' in options ? options.params : undefined,
+        ),
       'PUT',
-      'body' in options ? options.body : undefined,
+      options && 'body' in options ? options.body : undefined,
     ),
   DELETE: (point, options) =>
     createMethodAuth(
-      point + paramToString('params' in options ? options.params : undefined),
+      splitParamsEndpoint(
+        point,
+        options && 'paramsEndPoint' in options
+          ? options.paramsEndPoint
+          : undefined,
+      ) +
+        paramToString(
+          options && 'params' in options ? options.params : undefined,
+        ),
       'DELETE',
     ),
 };
@@ -310,7 +425,7 @@ export const clientAuth: {
 export default client;
 
 export const getMedia = (url: string) => {
-  if (!url) return;
+  if (!url) throw new Error('url is require');
   if (isValidUrl(url)) {
     return url;
   } else {

@@ -1,8 +1,14 @@
 'use client';
 
 import React, { useId } from 'react';
+import { IReactProps } from '@/interfaces/common';
 
-const SelectField = ({ label, value, options, onChange, ...props }) => {
+const SelectField: IReactProps<{
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  options: Array<[string, string]>;
+}> = ({ label, value, options, onChange, ...props }) => {
   const id = useId();
   return (
     <>

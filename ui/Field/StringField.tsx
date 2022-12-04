@@ -1,8 +1,13 @@
 'use client';
 
 import React, { useId } from 'react';
+import { IReactProps } from '@/interfaces/common';
 
-const StringField = ({ label, value, onChange, ...props }) => {
+const StringField: IReactProps<{
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+}> = ({ label, value, onChange, ...props }) => {
   const id = useId();
   return (
     <>

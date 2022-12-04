@@ -2,8 +2,12 @@
 
 import clsx from 'clsx';
 import React, { useMemo } from 'react';
+import { IBlobImage, IReactProps } from '@/interfaces/common';
 
-const ShowCroppedImage = ({ fileImage, className, onReset, ...props }) => {
+const ShowCroppedImage: IReactProps<{
+  fileImage: IBlobImage;
+  onReset: () => void;
+}> = ({ fileImage, className, onReset, ...props }) => {
   const src = useMemo(
     () => URL.createObjectURL(fileImage.file),
     [fileImage.file],
@@ -21,6 +25,7 @@ const ShowCroppedImage = ({ fileImage, className, onReset, ...props }) => {
           />
         </a>
         <button
+          title="reset"
           className="z-1 absolute top-0 right-0 inline-flex p-2"
           onClick={() => onReset()}
         >

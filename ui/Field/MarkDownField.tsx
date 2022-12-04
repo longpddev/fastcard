@@ -2,7 +2,12 @@
 
 import React, { useId } from 'react';
 import MarkDown from '../Markdown';
-const MarkDownField = ({ label, value, onChange, ...props }) => {
+import { IReactProps } from '@/interfaces/common';
+const MarkDownField: IReactProps<{
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+}> = ({ label, value, onChange, ...props }) => {
   const id = useId();
   return (
     <>
@@ -11,8 +16,8 @@ const MarkDownField = ({ label, value, onChange, ...props }) => {
       </label>
       <div className="mt-1 flex flex-wrap">
         <textarea
-          cols="30"
-          rows="10"
+          cols={30}
+          rows={10}
           className="input w-full md:w-1/2"
           value={value}
           onChange={(e) => onChange(e.target.value)}

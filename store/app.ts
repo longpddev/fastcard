@@ -25,7 +25,7 @@ export const store = configureStore({
 
 export type RootState = ReturnType<typeof store.getState>;
 export type StoreDispatch = ReturnType<typeof store.dispatch>;
-
+export type AppDispatch = typeof store.dispatch;
 // fetch data init when user has login before
 run(async () => {
   const tokenData = token.get();

@@ -3,10 +3,13 @@
 import React from 'react';
 import { useState } from 'react';
 import { getImageBase64 } from '@/functions/common';
+import { IReactProps } from '@/interfaces/common';
 
-const GetImageFromInternet = ({ setUrl, onSuccess }) => {
+const GetImageFromInternet: IReactProps<{
+  setUrl: (v: string) => void;
+}> = ({ setUrl }) => {
   const [typing, setTyping] = useState('');
-  const handlePasteImage = (e) => {
+  const handlePasteImage = (e: React.ClipboardEvent<HTMLInputElement>) => {
     const items = e.clipboardData.items;
     if (!items) return;
     const blob = items[0].getAsFile();
@@ -32,7 +35,7 @@ const GetImageFromInternet = ({ setUrl, onSuccess }) => {
             fragment.innerHTML = meta;
             const image = fragment.getElementsByTagName('img')[0];
             if (!image || !image.getAttribute('src')) return;
-            getImageBase64(image.getAttribute('src')).then((url) => {
+            getImageBase64(image.src).then((url) => {
               console.log(url);
               setUrl(url);
             });
@@ -40,6 +43,7 @@ const GetImageFromInternet = ({ setUrl, onSuccess }) => {
           onChange={(e) => setTyping(e.target.value.trim())}
         />
         <button
+          title="init image"
           className="ml-2 text-lg hover:text-green-400"
           onClick={() =>
             typing.length > 3 &&

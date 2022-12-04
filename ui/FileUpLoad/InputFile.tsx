@@ -8,12 +8,20 @@ import { useMemo } from 'react';
 import useActivated from '../../hooks/useActivated';
 import clsx from 'clsx';
 import { useEffect } from 'react';
-import { getFile, getName, invoke, validate } from './functions';
+import { getFile, getName, validate } from './functions';
 import GetImageFromInternet from './GetImageFromInternet';
 import PopupCrop from '../PopupCrop';
 import { pushToast } from '../Toast';
 import { getImageBase64 } from '@/functions/common';
-const InputFile = ({
+import { IReactProps, ICroppedImage } from '@/interfaces/common';
+const InputFile: IReactProps<{
+  maxSize?: number;
+  type?: RegExp;
+  onChange?: (f: File) => void;
+  imageUrl: string;
+  setCroppedImage: (v: ICroppedImage) => void;
+  onError?: (f: File, e: string) => void;
+}> = ({
   maxSize = 1024 * 1024 * 2,
   type = /^image\/.+$/,
   onChange,
@@ -21,19 +29,21 @@ const InputFile = ({
   onError,
   setCroppedImage,
 }) => {
-  const file = useRef();
-  const [_, rerender] = useState();
+  const file = useRef<HTMLInputElement>(null);
+  const [_, rerender] = useState({});
   const [open, setOpen] = useState(false);
   const { isActivated, onActive } = useActivated();
   const [url, setUrl] = useState('');
 
   const fileValidate = useMemo(
-    () => validate(maxSize, type)(file.current),
-    [getFile(file.current)],
+    () => file.current && validate(maxSize, type)(file.current),
+    [file.current && getFile(file.current)],
   );
 
   useEffect(() => {
     if (!isActivated()) return;
+    if (!file.current) return;
+
     if (fileValidate) {
       pushToast.warning(fileValidate);
       return;
@@ -55,10 +65,12 @@ const InputFile = ({
   }, [imageUrl]);
 
   useEffect(() => {
+    if (!file.current) return;
+    if (!fileValidate) return;
     const fileObject = getFile(file.current);
     if (onChange) onChange(fileObject);
     if (onError) onError(fileObject, fileValidate);
-  }, [getFile(file.current)]);
+  }, [file.current && getFile(file.current)]);
 
   return (
     <>
@@ -75,7 +87,11 @@ const InputFile = ({
         <input
           ref={file}
           type="file"
-          onChange={invoke((e) => rerender({}), onActive)}
+          onChange={() => {
+            rerender({});
+            onActive();
+          }}
+          title="chose file"
           className="input absolute inset-0 block h-full  w-full cursor-pointer bg-transparent opacity-0"
         />
 
@@ -94,6 +110,7 @@ const InputFile = ({
       <PopupCrop
         open={open}
         setCroppedImage={(result) => {
+          if (!file.current) return;
           const fileOb = getFile(file.current);
           setCroppedImage({
             ...result,

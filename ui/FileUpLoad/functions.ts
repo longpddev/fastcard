@@ -1,36 +1,31 @@
 'use client';
 
-import {
-  compose,
-  prop,
-  isNil,
-  isEmpty,
-  unless,
-  equals,
-  cond,
-  always,
-} from 'ramda';
+import { compose, prop, isNil, unless, equals, cond, always } from 'ramda';
 
-export const invoke = (...callbackList) => {
-  return (...agru) =>
-    Array.from(callbackList).map((callback) => callback.apply(undefined, agru));
+// export const invoke = (...callbackList) => {
+//   return (...agru) =>
+//     Array.from(callbackList).map((callback) => callback.apply(undefined, agru));
+// };
+
+export const getFile = (ob: HTMLInputElement) => {
+  if (!ob.files) throw new Error('file not found');
+  return ob.files[0];
 };
-
-export const getFile = (ob) => ob?.files?.[0];
 export const getName = compose(prop('name'), getFile);
 export const getSize = compose(prop('size'), getFile);
 export const getType = compose(prop('type'), getFile);
 
-const typeAllow = (type) => compose((fileType) => type.test(fileType), getType);
+const typeAllow = (type: RegExp) =>
+  compose((fileType: string) => type.test(fileType), getType);
 
-export const sizeAllow = (maxSize) =>
+export const sizeAllow = (maxSize: number) =>
   compose((sizeFile) => sizeFile < maxSize, getSize);
 export const getSrcFile = compose(
   unless(isNil, (file) => URL.createObjectURL(file)),
   getFile,
 );
 
-export const validate = (maxSize, type) =>
+export const validate = (maxSize: number, type: RegExp) =>
   cond([
     [
       compose((value) => !Boolean(value), getFile),

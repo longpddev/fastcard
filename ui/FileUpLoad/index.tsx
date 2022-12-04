@@ -5,21 +5,17 @@ import { useState } from 'react';
 
 import InputFile from './InputFile';
 import ShowCroppedImage from './ShowCroppedImage';
-
-const FileUpLoad = ({
-  croppedImage,
-  imageUrl,
-  setImageUrl,
-  setCroppedImage,
-}) => {
+import { IBlobImage, ICroppedImage, IReactProps } from '@/interfaces/common';
+const FileUpLoad: IReactProps<{
+  croppedImage: ICroppedImage;
+  imageUrl: string;
+  setImageUrl: (v: string | undefined) => void;
+  setCroppedImage: (v: ICroppedImage | null) => void;
+}> = ({ croppedImage, imageUrl, setImageUrl, setCroppedImage }) => {
   return (
     <>
       {!croppedImage && (
-        <InputFile
-          imageUrl={imageUrl}
-          croppedImage={croppedImage}
-          setCroppedImage={setCroppedImage}
-        />
+        <InputFile imageUrl={imageUrl} setCroppedImage={setCroppedImage} />
       )}
 
       {croppedImage && (

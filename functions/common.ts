@@ -87,7 +87,7 @@ export function isImage64(url: string) {
   return /^data:image\/(jpeg|png|jpg)(;base64,).*/.test(url);
 }
 
-export function getImageBase64(url: string) {
+export function getImageBase64(url: string): Promise<string> {
   if (!isImage64(url)) return Promise.resolve(url);
 
   return new Promise((res, rej) => {
@@ -421,4 +421,30 @@ export function matchShortCut(event: KeyboardEvent, shortCutName: string) {
   if (keyName !== event.key) return false;
 
   return true;
+}
+
+/**
+ * splitParamsEndpoint depend REGEX_URL_PARAM, because of that we can't move REGEX_URL_PARAM to constant file.
+ * Why?, because when REGEX_URL_PARAM change the function splitParamsEndpoint is not work correct
+ */
+export const REGEX_URL_PARAM = /:[a-zA-Z0-9]*/g;
+
+export function splitParamsEndpoint(
+  endPoint: string,
+  params: Record<string, string | number> | undefined,
+) {
+  // Because we match global then result will be array or null.
+  const match = endPoint.match(REGEX_URL_PARAM) as Array<string> | null;
+
+  const _params = params || {};
+  if (!match) return endPoint;
+
+  match.map((item) => {
+    const param = item.replace(':', '');
+    if (!(param in _params))
+      throw Error(`endPoint: ${endPoint} missed param ${param}`);
+    endPoint = endPoint.replace(item, _params[param].toString());
+  });
+
+  return endPoint;
 }

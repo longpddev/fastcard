@@ -5,8 +5,13 @@ import React, { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import IconCircle from '../IconCircle';
 import FastAdd from './FastAdd';
-const FastCreateOrSelectGroup = ({ value, onChange, className }) => {
-  const groupCard = useSelector((s) => s.card.groupCard);
+import { RootState } from 'store/app';
+import { IReactProps } from '../../interfaces/common';
+const FastCreateOrSelectGroup: IReactProps<{
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+}> = ({ value, onChange, className }) => {
+  const groupCard = useSelector((s: RootState) => s.card.groupCard);
   const groupCardList = useMemo(
     () => groupCard.ids.map((id) => groupCard.entities[id]),
     [groupCard],
@@ -22,8 +27,13 @@ const FastCreateOrSelectGroup = ({ value, onChange, className }) => {
         >
           Select group:
         </label>
-        <select className="input" value={value} onChange={onChange}>
-          {!groupCardList.length > 0 && (
+        <select
+          className="input"
+          value={value}
+          onChange={onChange}
+          title="select"
+        >
+          {groupCardList.length === 0 && (
             <option value="" disabled>
               group doesn't found
             </option>
@@ -42,7 +52,11 @@ const FastCreateOrSelectGroup = ({ value, onChange, className }) => {
             </>
           )}
         </select>
-        <button className="ml-4" onClick={() => showMoreSet(!showMore)}>
+        <button
+          className="ml-4"
+          onClick={() => showMoreSet(!showMore)}
+          title="add group"
+        >
           <IconCircle
             size="md"
             className={clsx('fas fa-ellipsis-vertical transition-all', {

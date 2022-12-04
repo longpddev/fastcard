@@ -17,7 +17,7 @@ import CardAnswer from './CardAnswer';
 import useUserSettings from '@/hooks/useUserSettings';
 import { ButtonControl } from './ButtonControl';
 import { IReactProps } from '@/interfaces/common';
-import { RootState } from 'store/app';
+import { AppDispatch, RootState } from 'store/app';
 
 const animateOption = {
   slide: {
@@ -37,17 +37,16 @@ const CardLearn: IReactProps<{
   groupId: number;
 }> = ({ groupId }) => {
   const [isFront, isFrontSet] = useState(true);
-  const process = useSelector<RootState>((s) =>
-    groupId in s.card.process ? s.card.process[groupId] : s.card.process,
-  );
+  const process = useSelector((s: RootState) => s.card.process[groupId]);
   const settings = useUserSettings();
-  const dispatch = useDispatch();
-  const card = path([groupId, 'card', 'rows', process])(
-    useSelector((s) => s.card.learnToday.entities),
+  const dispatch = useDispatch<AppDispatch>();
+  const cardLearnEntities = useSelector(
+    (s: RootState) => s.card.learnToday.entities,
   );
+  const card = cardLearnEntities[groupId]?.card.rows[process];
 
-  const handleAction = (type) => {
-    const update = (isHard) => () =>
+  const handleAction = (type: string) => {
+    const update = (isHard: boolean) => () =>
       dispatch(updateCardLearnedThunk({ cardId: card.id, isHard, groupId }))
         .then(watchThunk)
         .then(() => {
@@ -65,7 +64,7 @@ const CardLearn: IReactProps<{
       [CARD_LEAN_TYPE.hard]: update(true),
     };
 
-    return caseOb[type]();
+    return caseOb[type as keyof typeof caseOb]();
   };
 
   if (card.backCard.image) {
@@ -121,7 +120,12 @@ const CardLearn: IReactProps<{
   );
 };
 
-const CardCreator = ({ type, ...props }) => {
+const CardCreator: IReactProps<{
+  type: string;
+  image: string;
+  width: number;
+  height: number;
+}> = ({ type, ...props }) => {
   if (!(type in CARD_TYPE)) throw new Error('type do not exist');
 
   switch (type) {
@@ -132,5 +136,7 @@ const CardCreator = ({ type, ...props }) => {
     case CARD_TYPE.explain:
       return <CardExplain {...props} />;
   }
+
+  return null;
 };
 export default CardLearn;

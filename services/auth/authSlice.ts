@@ -51,7 +51,7 @@ export const signupThunk = createAsyncThunk(
 export const getUserInfo = createAsyncThunk('auth/get_user_info', async () => {
   const result = await clientAuth.GET<IEndPointAuthUserInfo>(
     '/auth/user-info',
-    {},
+    null,
   );
   const tokenData = token.get();
   if (!tokenData) throw new Error("token doesn't exits");

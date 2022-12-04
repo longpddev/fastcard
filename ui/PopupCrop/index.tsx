@@ -7,8 +7,9 @@ import { isCurrentOrigin, isValidUrl } from '@/functions/common';
 import Popup from '../Popup';
 import { pushToast } from '../Toast';
 import PopupCropMain from './PopupCropMain';
+import { IBlobImage, IReactProps } from '@/interfaces/common';
 
-const getSourceUrl = async (url) => {
+const getSourceUrl = async (url: string) => {
   if (isCurrentOrigin(url)) {
     return url;
   } else {
@@ -22,8 +23,13 @@ const getSourceUrl = async (url) => {
   }
 };
 
-const PopupCrop = ({ url, open, setOpen, ...props }) => {
-  const [urlCurrentOrigin, setUrlCurrentOrigin] = useState();
+const PopupCrop: IReactProps<{
+  url: string;
+  open: boolean;
+  setCroppedImage: (v: IBlobImage) => void;
+  setOpen: (s: boolean) => void;
+}> = ({ url, open, setOpen, ...props }) => {
+  const [urlCurrentOrigin, setUrlCurrentOrigin] = useState<string>('');
   useMemo(() => {
     if (!url) return;
     if (!isValidUrl(url)) {

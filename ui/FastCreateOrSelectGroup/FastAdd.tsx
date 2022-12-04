@@ -10,12 +10,16 @@ import {
 } from '../../services/card/cardSlice';
 import { progressDone, progressStart } from '../ProgressGlobal/ProgressGlobal';
 import { pushToast } from '../Toast/core';
-const FastAdd = ({ onClose, ...props }) => {
-  const inputRef = useRef();
+import { AppDispatch } from 'store/app';
+import { IReactProps } from '../../interfaces/common';
+const FastAdd: IReactProps<{
+  onClose?: () => void;
+}> = ({ onClose, ...props }) => {
+  const inputRef = useRef<HTMLInputElement>(null);
   const [value, valueSet] = useState('');
   const checkGroupNameExist = useSelector(selectorGroupNameExist);
 
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const handleAdd = () => {
     const val = value.trim();
     if (val.length === 0) {
@@ -43,12 +47,15 @@ const FastAdd = ({ onClose, ...props }) => {
       .finally(progressDone);
   };
   const shake = () => {
-    inputRef.current.classList.add('shake-animate');
+    const element = inputRef.current;
+    if (!element) return;
+    element.classList.add('shake-animate');
   };
 
   useEffect(() => {
     const element = inputRef.current;
-    const handle = (e) => {
+    if (!element) return;
+    const handle = () => {
       element.classList.remove('shake-animate');
     };
     element.addEventListener('animationend', handle);
@@ -58,7 +65,7 @@ const FastAdd = ({ onClose, ...props }) => {
     };
   }, []);
 
-  const handleKeyDown = (e) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       handleAdd();
     }

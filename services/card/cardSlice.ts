@@ -1,6 +1,23 @@
 'use client';
 
 import {
+  Card,
+  ICardStep,
+  IEndPointCardChangeGroup,
+  IEndPointCardCreate,
+  IEndPointCardDelete,
+  IEndPointCardLearnedUpdate,
+  IEndPointCardLearnToday,
+  IEndPointCardNoExplainCreate,
+  IEndPointCardStepUpdate,
+  IEndPointGroupCardCreate,
+  IEndPointGroupCardDelete,
+  IEndPointGroupCardGet,
+  IEndPointGroupCardUpdate,
+  IEndPointImageUpdate,
+  IEndPointImageUpload,
+} from '@/api/fast_card_client_api';
+import {
   createAsyncThunk,
   createSelector,
   createSlice,
@@ -8,10 +25,32 @@ import {
 import { clientAuth, uploadfile } from '../../api/client';
 import { CARD_TYPE } from '../../constants';
 import { run } from '../../functions/common';
+import { RootState } from 'store/app';
+import { ICardGroupResponse } from '../../api/fast_card_client_api';
 
+export type ICardImageFile = {
+  file: File;
+  width: number;
+  height: number;
+};
+
+export type ICardCreate = {
+  fileImage: ICardImageFile;
+  detail: string;
+};
 export const createCardThunk = createAsyncThunk(
   'card/createCard',
-  async ({ groupId, question, answer, explain }) => {
+  async ({
+    groupId,
+    question,
+    answer,
+    explain,
+  }: {
+    groupId: number;
+    question: ICardCreate;
+    answer: ICardCreate;
+    explain?: ICardCreate;
+  }) => {
     const [questionImage, answerImage, explainImage] = await Promise.all(
       run(() => {
         const result = [
@@ -23,70 +62,107 @@ export const createCardThunk = createAsyncThunk(
       }),
     );
 
-    const result = await clientAuth.POST(
-      explain ? '/card' : '/card/noexplain',
-      {
-        body: run(() => {
-          const result = {
-            info: {
-              cardGroupId: groupId,
-            },
-            cardQuestion: {
-              imageId: questionImage ? questionImage.id : null,
-              content: question.detail,
-              type: CARD_TYPE.question,
-              cardGroupId: groupId,
-            },
-            cardAnswer: {
-              imageId: answerImage ? answerImage.id : null,
-              content: answer.detail,
-              type: CARD_TYPE.answer,
-              cardGroupId: groupId,
-            },
-          };
+    if (!explain) {
+      const bodyCardNoExplain = {
+        info: {
+          cardGroupId: groupId,
+        },
+        cardQuestion: {
+          imageId: questionImage ? questionImage.id : null,
+          content: question.detail,
+          type: CARD_TYPE.question,
+          cardGroupId: groupId,
+        },
+        cardAnswer: {
+          imageId: answerImage ? answerImage.id : null,
+          content: answer.detail,
+          type: CARD_TYPE.answer,
+          cardGroupId: groupId,
+        },
+      };
+      const result = await clientAuth.POST<IEndPointCardNoExplainCreate>(
+        '/card/noexplain',
+        {
+          body: bodyCardNoExplain,
+        },
+      );
 
-          explain &&
-            (result.cardExplain = {
-              imageId: explainImage ? explainImage.id : null,
-              content: explain.detail,
-              type: CARD_TYPE.explain,
-              cardGroupId: groupId,
-            });
+      return result;
+    } else {
+      const bodyCard = {
+        info: {
+          cardGroupId: groupId,
+        },
+        cardQuestion: {
+          imageId: questionImage ? questionImage.id : null,
+          content: question.detail,
+          type: CARD_TYPE.question,
+          cardGroupId: groupId,
+        },
+        cardAnswer: {
+          imageId: answerImage ? answerImage.id : null,
+          content: answer.detail,
+          type: CARD_TYPE.answer,
+          cardGroupId: groupId,
+        },
+        cardExplain: {
+          imageId: explainImage ? explainImage.id : null,
+          content: explain.detail,
+          type: CARD_TYPE.explain,
+          cardGroupId: groupId,
+        },
+      };
+      const result = await clientAuth.POST<IEndPointCardCreate>('/card', {
+        body: bodyCard,
+      });
 
-          return result;
-        }),
-      },
-    );
-    return result;
+      return result;
+    }
   },
 );
 
-export const uploadImageAndGetData = async (file) => {
+export const uploadImageAndGetData = async (file: ICardImageFile) => {
   if (!file) return file;
-  const result = await uploadfile('/image/upload', file);
+  const result = await uploadfile<IEndPointImageUpload>(
+    '/image/upload',
+    file,
+    undefined,
+  );
   return result.data;
 };
 
-export const updateImageAndGetData = async (id, file) => {
-  const result = await uploadfile(`/image/${id}`, file);
+export const updateImageAndGetData = async (
+  id: number,
+  file: ICardImageFile,
+) => {
+  const result = await uploadfile<IEndPointImageUpdate>(`/image/:id`, file, {
+    id,
+  });
   return result.data;
 };
 
 export const deleteCardThunk = createAsyncThunk(
   'card/deleteCard',
-  async ({ id }) => {
-    return await clientAuth.DELETE(`/card/${id}`);
+  async ({ id }: { id: number }) => {
+    return await clientAuth.DELETE<IEndPointCardDelete>(`/card/:id`, {
+      paramsEndPoint: {
+        id: id,
+      },
+    });
   },
 );
 
 export const createGroupCardThunk = createAsyncThunk(
   'card/createGroupCard',
-  async ({ name }, { dispatch }) => {
-    const result = await clientAuth.POST('/group-card', {
-      body: {
-        name: name,
+  async ({ name }: { name: string }, { dispatch }) => {
+    const result = await clientAuth.POST<IEndPointGroupCardCreate>(
+      '/group-card',
+      {
+        body: {
+          name: name,
+        },
       },
-    });
+    );
 
     await dispatch(getGroupCardThunk());
     await dispatch(getCardLearnTodayThunk());
@@ -97,19 +173,28 @@ export const createGroupCardThunk = createAsyncThunk(
 
 export const changeGroupOfCardThunk = createAsyncThunk(
   'card/changeGroupOfCard',
-  async ({ id, groupId }) => {
-    return await clientAuth.PUT(`/card/${id}/changeGroup`, {
-      body: { groupId },
-    });
+  async ({ id, groupId }: { id: number; groupId: number }) => {
+    return await clientAuth.PUT<IEndPointCardChangeGroup>(
+      `/card/:id/changeGroup`,
+      {
+        body: { groupId },
+        paramsEndPoint: {
+          id,
+        },
+      },
+    );
   },
 );
 
 export const updateGroupCardThunk = createAsyncThunk(
   'card/updateGroupCard',
-  async ({ id, name }) => {
-    await clientAuth.PUT(`/group-card/${id}`, {
+  async ({ id, name }: { id: number; name: string }) => {
+    await clientAuth.PUT<IEndPointGroupCardUpdate>(`/group-card/:id`, {
       body: {
         name: name,
+      },
+      paramsEndPoint: {
+        id,
       },
     });
 
@@ -122,8 +207,12 @@ export const updateGroupCardThunk = createAsyncThunk(
 
 export const deleteGroupCardThunk = createAsyncThunk(
   'card/deleteGroupCard',
-  async ({ id }, { dispatch }) => {
-    await clientAuth.DELETE(`/group-card/${id}`);
+  async ({ id }: { id: number }, { dispatch }) => {
+    await clientAuth.DELETE<IEndPointGroupCardDelete>(`/group-card/:id`, {
+      paramsEndPoint: {
+        id,
+      },
+    });
     await dispatch(getGroupCardThunk());
     return { id };
   },
@@ -131,25 +220,40 @@ export const deleteGroupCardThunk = createAsyncThunk(
 
 export const updateCardStepThunk = createAsyncThunk(
   'card/updateCardStep',
-  async ({ id, data }) => {
-    return await clientAuth.PUT(`/card/step/${id}`, { body: data });
+  async ({ id, data }: { id: number; data: ICardStep }) => {
+    return await clientAuth.PUT<IEndPointCardStepUpdate>(`/card/step/:id`, {
+      body: data,
+      paramsEndPoint: {
+        id,
+      },
+    });
   },
 );
 
+type ICardLearnedTodayResponse = {
+  groupId: number;
+  card: {
+    rows: Card[];
+    count: number;
+  };
+};
 export const getCardLearnTodayByGroupIdThunk = createAsyncThunk(
   'card/getCardLearnTodayByGroupId',
-  async ({ groupId }, { getState }) => {
-    const settings = getState().auth.settings;
+  async ({ groupId }: { groupId: number }, { getState }) => {
+    const settings = (getState() as RootState).auth.settings;
     if (Object.keys(settings).length === 0)
       throw new Error("Setting user doesn't load yet");
-    const card = await clientAuth.GET('/card/learn-today', {
-      params: {
-        limit: settings.maxCardInDay,
-        groupId,
+    const card = await clientAuth.GET<IEndPointCardLearnToday>(
+      '/card/learn-today',
+      {
+        params: {
+          limit: settings.maxCardInDay,
+          groupId,
+        },
       },
-    });
+    );
 
-    return {
+    const result: ICardLearnedTodayResponse = {
       groupId,
       card: {
         rows: card.data.rows?.sort(() => {
@@ -160,13 +264,15 @@ export const getCardLearnTodayByGroupIdThunk = createAsyncThunk(
         count: card.data.count,
       },
     };
+
+    return result;
   },
 );
 
 export const getCardLearnTodayThunk = createAsyncThunk(
   'card/getCardLearnToday',
   async (_, { getState, dispatch }) => {
-    getState().card.groupCard.ids.forEach((item) => {
+    (getState() as RootState).card.groupCard.ids.forEach((item) => {
       dispatch(getCardLearnTodayByGroupIdThunk({ groupId: item }));
     });
   },
@@ -175,14 +281,23 @@ export const getCardLearnTodayThunk = createAsyncThunk(
 export const getGroupCardThunk = createAsyncThunk(
   'card/getGroupCard',
   async () => {
-    return (await clientAuth.GET('/group-card')).data;
+    return (await clientAuth.GET<IEndPointGroupCardGet>('/group-card', null))
+      .data;
   },
 );
 
 export const updateCardLearnedThunk = createAsyncThunk(
   'card/updateCardLearned',
-  async ({ cardId, isHard, groupId }) => {
-    await clientAuth.POST('/card/learned', {
+  async ({
+    cardId,
+    isHard,
+    groupId,
+  }: {
+    cardId: number;
+    isHard: boolean;
+    groupId: number;
+  }) => {
+    await clientAuth.POST<IEndPointCardLearnedUpdate>('/card/learned', {
       body: {
         cardId,
         isHard,
@@ -195,16 +310,21 @@ export const updateCardLearnedThunk = createAsyncThunk(
   },
 );
 
-interface IProcessCard {
-  [key: number]: number;
-}
+type IProcessCard = Record<number, number>;
 const initialState = () => {
   const process: IProcessCard = {};
-  const learnToday = {
+  const learnToday: {
+    ids: Array<number>;
+    entities: Record<number, ICardLearnedTodayResponse>;
+  } = {
     ids: [],
     entities: {},
   };
-  const groupCard = {
+  const groupCard: {
+    count: number;
+    ids: Array<number>;
+    entities: Record<number, ICardGroupResponse>;
+  } = {
     count: 0,
     ids: [],
     entities: {},
@@ -223,7 +343,7 @@ export const cardSlice = createSlice({
     initProcess: (state, { payload }: { payload: { groupId: number } }) => {
       state.process[payload.groupId] = 0;
     },
-    nextProcess: (state, { payload }) => {
+    nextProcess: (state, { payload }: { payload: { groupId: number } }) => {
       const max =
         state.learnToday.entities[payload.groupId].card.rows.length - 1;
       state.process[payload.groupId] += 1;
@@ -241,7 +361,7 @@ export const cardSlice = createSlice({
         state.groupCard.ids = payload.rows.map((item) => item.id);
         state.groupCard.entities = payload.rows.reduce(
           (acc, item) => (acc[item.id] = item) && acc,
-          {},
+          {} as Record<number, ICardGroupResponse>,
         );
       })
       .addCase(
@@ -277,8 +397,8 @@ export const cardSlice = createSlice({
 });
 
 export const selectorGroupNameExist = createSelector(
-  (state) => state.card.groupCard.entities,
-  (entities) => (groupName) =>
+  (state: RootState) => state.card.groupCard.entities,
+  (entities) => (groupName: string) =>
     Object.values(entities).some(
       (group) => group.name.toLowerCase() === groupName.toLowerCase(),
     ),

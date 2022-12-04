@@ -1,8 +1,13 @@
 'use client';
 
 import React, { useId } from 'react';
+import { IReactProps } from '@/interfaces/common';
 
-const NumberField = ({ label, value, onChange, ...props }) => {
+const NumberField: IReactProps<{
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+}> = ({ label, value, onChange, ...props }) => {
   const id = useId();
   return (
     <>
@@ -12,7 +17,7 @@ const NumberField = ({ label, value, onChange, ...props }) => {
         id={id}
         className="input mt-1"
         value={value.toString()}
-        onChange={(e) => onChange(parseInt(e.target.value))}
+        onChange={(e) => onChange && onChange(e.target.value)}
         {...props}
       />
     </>

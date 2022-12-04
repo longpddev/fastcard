@@ -12,4 +12,9 @@ export interface IBlobImage {
   height: number;
 }
 
+export interface ICroppedImage extends IBlobImage {
+  fileName: string;
+  extension: 'png';
+}
+
 export type Valueof<T> = T[keyof T];
