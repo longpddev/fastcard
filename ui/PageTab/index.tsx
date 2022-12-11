@@ -1,9 +1,21 @@
 'use client';
 
+import { IReactChainComponentProps, IReactProps } from '@/interfaces/common';
 import React, { Children, useCallback, useRef } from 'react';
 import Content from './Content';
 import { Provider } from './context';
 import Title from './Title';
+
+export interface IPageTabProps {
+  children: Array<JSX.Element> | JSX.Element;
+  defaultActive: string;
+  typeStep: boolean;
+  onNext: (cur: string, next: string) => boolean;
+  beforeNext: (tabKey: string) => boolean | undefined;
+  onPrev: (prev: string) => boolean;
+  onSubmit: () => void;
+  controlRef: { current: any };
+}
 
 /**
  *
@@ -11,7 +23,14 @@ import Title from './Title';
  * @param {function} onPrev event prev step end return false to stop step
  * @returns
  */
-const PageTab = ({
+const PageTab: IReactChainComponentProps<
+  IPageTabProps,
+  HTMLElement,
+  {
+    Title: typeof Title;
+    Content: typeof Content;
+  }
+> = ({
   children,
   defaultActive,
   typeStep,
@@ -22,8 +41,8 @@ const PageTab = ({
   controlRef,
 }) => {
   const handleRef = useRef({});
-  const TitleChildren = [];
-  const ContentChildren = [];
+  const TitleChildren: Array<JSX.Element> = [];
+  const ContentChildren: Array<JSX.Element> = [];
 
   // hard try to prevent change referent of function handle
   handleRef.current = {

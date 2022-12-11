@@ -3,8 +3,13 @@
 import { firstCapitalize } from '@/functions/common';
 import React from 'react';
 import FindImageByWords from '@/ui/FindImageByWords/index';
+import { IReactProps } from '@/interfaces/common';
+import { IFetchDataResponse } from '@/hooks/useRapitGoogleTranslate';
 
-const TranslationContent = ({ data, originText }) => {
+const TranslationContent: IReactProps<{
+  originText: string;
+  data: IFetchDataResponse;
+}> = ({ data, originText }) => {
   return (
     <div className="p-4">
       <h2 className=" px-4 text-center text-2xl font-medium text-sky-400">

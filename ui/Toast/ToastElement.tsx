@@ -5,11 +5,15 @@ import { motion } from 'framer-motion';
 import React, { useCallback, useEffect, useRef } from 'react';
 import { animate } from '@/functions/common';
 import Markdown from '../Markdown';
-import { COUNT_DOWN, TYPE } from './core';
+import { COUNT_DOWN, IItemSubscribe, IItemToast, TYPE } from './core';
+import { IReactProps } from '@/interfaces/common';
 
-const ToastElement = ({ toast, removeToast }) => {
+const ToastElement: IReactProps<{
+  toast: IItemToast;
+  removeToast: (v: IItemToast) => void;
+}> = ({ toast, removeToast }) => {
   const remove = useCallback(() => removeToast(toast), []);
-  const progressRef = useRef();
+  const progressRef = useRef<HTMLDivElement>(null);
   const count_down = useRef(COUNT_DOWN);
   if (toast.count_down) count_down.current = toast.count_down;
 
@@ -94,6 +98,7 @@ const ToastElement = ({ toast, removeToast }) => {
 
       <button
         onClick={remove}
+        title="remove toast"
         className={clsx(
           'absolute top-0 right-0 flex  p-1 text-sm opacity-50 hover:opacity-100',
           {

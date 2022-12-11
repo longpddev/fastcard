@@ -4,14 +4,19 @@ import { SHORTCUT_ACCEPT, SHORTCUT_TOGGLE_TRANSLATE } from '@/constants/index';
 import Popup from '@/ui/Popup';
 import React from 'react';
 import When from '@/ui/When';
-import useRapitGoogleTranslate from '@/hooks/useRapitGoogleTranslate';
+import useRapitGoogleTranslate, {
+  IFetchDataResponse,
+} from '@/hooks/useRapitGoogleTranslate';
 import LoadingIcon from '@/ui/LoadingIcon';
 import TranslationContent from './TranslationContent';
 import { useState } from 'react';
 import useShortcut from '@/hooks/useShortcut';
 import { matchShortCut } from '@/functions/common';
+import { IReactProps } from '@/interfaces/common';
 
-const TranslationPopup = ({ onClose }) => {
+const TranslationPopup: IReactProps<{
+  onClose: () => void;
+}> = ({ onClose }) => {
   const [typing, typingSet] = useState(true);
   const [textTranslate, textTranslateSet] = useState('');
   const { data, error, isLoading } = useRapitGoogleTranslate(textTranslate);
@@ -26,9 +31,11 @@ const TranslationPopup = ({ onClose }) => {
       <When
         if={typing}
         component={TranslationInput}
-        setText={(text) => {
-          typingSet(false);
-          textTranslateSet(text);
+        props={{
+          setText: (text) => {
+            typingSet(false);
+            textTranslateSet(text);
+          },
         }}
       />
       <When if={!typing && error}>
@@ -41,10 +48,10 @@ const TranslationPopup = ({ onClose }) => {
           <LoadingIcon className="animate-spin text-2xl"></LoadingIcon>
         </div>
       </When>
-      <When if={!typing && data}>
+      <When if={!typing && Boolean(data)}>
         {() => (
           <TranslationContent
-            data={data}
+            data={data as IFetchDataResponse}
             originText={textTranslate}
           ></TranslationContent>
         )}
@@ -53,7 +60,9 @@ const TranslationPopup = ({ onClose }) => {
   );
 };
 
-const TranslationInput = ({ setText }) => {
+const TranslationInput: IReactProps<{
+  setText: (s: string) => void;
+}> = ({ setText }) => {
   const [value, valueSet] = useState('');
 
   return (

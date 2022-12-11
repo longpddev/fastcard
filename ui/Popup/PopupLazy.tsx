@@ -6,24 +6,32 @@ import { KEY_NAME } from '@/constants/index';
 import { clsx } from 'clsx';
 import OutsideTheApp from '@/ui/OutsideTheApp';
 import ButtonShortCut from '@/ui/ButtonShortCut';
+import { IReactProps } from '@/interfaces/common';
 
-let stackPopup = [];
+let stackPopup: Array<{}> = [];
 
-const PopupLazy = ({
+const PopupLazy: IReactProps<{
+  open: boolean;
+  setOpen: (s: boolean) => void;
+  maxWidth?: number;
+  backgroundColor?: string;
+}> = ({
   open,
   setOpen,
   children,
   maxWidth = 600,
   backgroundColor = 'bg-slate-800',
 }) => {
-  const refId = useRef();
+  const refId = useRef({});
   useEffect(() => {
     if (!open) return;
     const key = (refId.current = {});
 
     stackPopup.push(key);
 
-    return () => (stackPopup = stackPopup.filter((item) => item !== key));
+    return () => {
+      stackPopup = stackPopup.filter((item) => item !== key);
+    };
   }, [open]);
 
   return (

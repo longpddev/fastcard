@@ -1,64 +1,66 @@
 'use client';
 
-import { TinyEmitter } from 'tiny-emitter';
+import Emitter from 'helpers/emitter';
 
-/**
- *  @typedef {{
- *    currentTime: () => number;
- *    setSrc: (src: any) => Promise<any>;
- *    destroy: () => void;
- *    goto: (time: any) => Promise<void>;
- *    duration: () => number;
- *    pause: () => Promise<void>;
- *    play: () => Promise<void>;
- *    getVideoEl: () => HTMLVideoElement;
- *    emitter: any;
- *    control: (show: any) => void;
- * }} IVideoControl
- *
- *  @typedef {{
- *    destroy: () => void,
- *    init: (videoUrl: any, transcript: any) => Promise<any>,
- *    getCurrentSegment: () => ISegment,
- *    isInitialed: () => boolean,
- *    getVideoEl: () => HTMLVideoElement,
- *    prevSegment: () => any,
- *    getAllSegment: () => Array<any>
- *    on: (event: any, callback: any): () => any
- *    videoCl: IVideoControl
- *    next: () => void
- *    prev: () => void
- *    setSegmentByTime: () => void
- * }} IVideo
- *
- * @typedef {{
- *  text: string,
- *  timeStart: number,
- *  timeEnd: number,
- *  timeFormat: string,
- *  init: Promise<void>,
- *  next: () => void,
- *  prev: () => void,
- *  activeMe: () => void,
- *  isActive: () => boolean,
- *  play: () => Promise<void>,
- * }} ISegment
- */
+export interface IVideoPlayerControl {
+  currentTime: () => number;
+  setSrc: (src: any) => Promise<any>;
+  destroy: () => void;
+  goto: (time: any) => Promise<void>;
+  duration: () => number;
+  pause: () => Promise<void>;
+  play: () => Promise<void>;
+  getVideoEl: () => HTMLVideoElement;
+  emitter: any;
+  control: (show: any) => void;
+}
 
-/**
- * @param {{
- *   text: string,
- *   timeFormat: string,
- *   timeStart: number,
- *   timeEnd: number,
- *   videoCl: IVideoControl,
- *   nextSegment: () => void,
- *   prevSegment: () => void,
- *   index: number,
- *   currentSegment: (index: undefined | number) => number,
- * }} param0
- * @returns { ISegment }
- */
+export interface IVideoPlayer {
+  destroy: () => void;
+  init: (videoUrl: any, transcript: any) => Promise<any>;
+  getCurrentSegment: () => ISegment;
+  isInitialed: () => boolean;
+  getVideoEl: () => HTMLVideoElement;
+  prevSegment: () => any;
+  getAllSegment: () => Array<any>;
+  on: (event: any, callback: (v: unknown) => void) => any;
+  videoCl: IVideoPlayerControl;
+  next: () => void;
+  prev: () => void;
+  setSegmentByTime: (v: number) => void;
+}
+
+export interface ISegment {
+  text: string;
+  timeStart: number;
+  timeEnd: number;
+  timeFormat: string;
+  init: () => Promise<void>;
+  next: () => void;
+  prev: () => void;
+  activeMe: () => void;
+  isActive: () => boolean;
+  play: () => Promise<void>;
+}
+
+export interface ITranscript {
+  text: string;
+  timeFormat: string;
+  time: number;
+  timeEnd: number;
+}
+export interface ISegmentParams {
+  text: string;
+  timeFormat: string;
+  timeStart: number;
+  timeEnd: number;
+  videoCl: IVideoPlayerControl;
+  nextSegment: () => void;
+  prevSegment: () => void;
+  index: number;
+  currentSegment: (index?: number) => number;
+}
+
 export function segment({
   text,
   timeFormat,
@@ -69,7 +71,7 @@ export function segment({
   prevSegment,
   index,
   currentSegment,
-}) {
+}: ISegmentParams): ISegment {
   async function init() {
     await videoCl.goto(timeStart);
   }
@@ -108,21 +110,25 @@ export function segment({
     play,
   };
 }
+
+export interface IVideoPlayerSettings {
+  className?: string;
+  attr?: Record<string, string>;
+}
 /**
  *
  * @param {*} settings
- * @returns { IVideo }
+ * @returns { IVideoPlayer }
  */
-export function Video(settings = {}) {
+export function Video(settings: IVideoPlayerSettings = {}): IVideoPlayer {
   const videoCl = videoControl();
-  const emitter = new TinyEmitter();
+  const emitter = new Emitter();
   let initialed = false;
 
   /** @type{ ISegment[] } */
-  const _segments = [];
+  const _segments: Array<ISegment> = [];
 
-  /** @type{{ [key: number ] : ISegment}} */
-  const _segmentsIndexing = {};
+  const _segmentsIndexing: Record<string, number> = {};
   let _currentSegment = 0;
 
   videoCl.emitter.on('video:timeupdate', () => {
@@ -151,7 +157,7 @@ export function Video(settings = {}) {
     return currentSegment(currentSegment() - 1);
   }
 
-  function setSegmentByTime(time) {
+  function setSegmentByTime(time: number) {
     if (!(time in _segmentsIndexing))
       throw new Error(`Time: ${time} do not exist!`);
     const index = _segmentsIndexing[time];
@@ -159,8 +165,8 @@ export function Video(settings = {}) {
     getCurrentSegment().activeMe();
   }
 
-  function currentSegment(value, isLoop = false) {
-    if (isNaN(value)) {
+  function currentSegment(value?: number, isLoop = false) {
+    if (!value || isNaN(value)) {
       return _currentSegment;
     }
     if (value >= _segments.length) {
@@ -175,7 +181,7 @@ export function Video(settings = {}) {
     return (_currentSegment = value);
   }
 
-  function on(event, callback) {
+  function on(event: string, callback: (v: unknown) => void) {
     emitter.on(event, callback);
 
     return () => emitter.off(event, callback);
@@ -192,7 +198,7 @@ export function Video(settings = {}) {
     return [..._segments];
   }
 
-  function addSegment(data, index) {
+  function addSegment(data: ITranscript, index: number) {
     _segments.push(
       segment({
         text: data.text,
@@ -209,7 +215,7 @@ export function Video(settings = {}) {
 
     _segmentsIndexing[data.time.toString()] = _segments.length - 1;
   }
-  function init(videoUrl, transcript) {
+  function init(videoUrl: string, transcript: Array<ITranscript>) {
     return new Promise((res, rej) => {
       videoCl.setSrc(videoUrl).then(() => {
         const duration = videoCl.duration();
@@ -231,7 +237,7 @@ export function Video(settings = {}) {
     videoCl.destroy();
     Object.keys(emitter.e).forEach((name) => emitter.off(name));
   }
-  window.videoCl = videoCl;
+
   return {
     destroy,
     init,
@@ -262,7 +268,10 @@ function createElementVideo() {
   return videoEl;
 }
 
-function mapEventVideoElementToEmitter(emitter, videoEl) {
+function mapEventVideoElementToEmitter(
+  emitter: Emitter,
+  videoEl: HTMLVideoElement,
+) {
   const listEvent = [
     'loadeddata',
     'canplay',
@@ -287,27 +296,27 @@ function mapEventVideoElementToEmitter(emitter, videoEl) {
   ];
 
   listEvent.forEach((name) => {
-    videoEl.addEventListener(name, () => {
+    videoEl.addEventListener(name, function () {
       // console.log("video:" + name);
       emitter.emit('video:' + name, arguments);
     });
   });
 }
 /**
- * @returns {IVideoControl}
+ * @returns {IVideoPlayerControl}
  */
 export function videoControl() {
   let videoEl = createElementVideo();
-  const emitter = new TinyEmitter();
+  const emitter = new Emitter();
 
   mapEventVideoElementToEmitter(emitter, videoEl);
 
-  function setSrc(src) {
-    return new Promise((res, rej) => {
+  function setSrc(src: string) {
+    return new Promise<boolean>((res, rej) => {
       videoEl.src = src;
 
       emitter.once('video:loadeddata', () => {
-        res();
+        res(true);
       });
     });
   }
@@ -317,7 +326,7 @@ export function videoControl() {
     Object.keys(emitter.e).forEach((name) => emitter.off(name));
   }
 
-  async function goto(time) {
+  async function goto(time: number) {
     videoEl.currentTime = time;
   }
 
@@ -337,7 +346,7 @@ export function videoControl() {
     return videoEl;
   }
 
-  function control(show) {
+  function control(show: boolean) {
     if (show) {
       videoEl.setAttribute('controls', '');
     } else {

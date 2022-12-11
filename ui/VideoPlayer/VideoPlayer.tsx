@@ -9,30 +9,30 @@ import {
 } from '@/constants/index';
 import useShortcut from '@/hooks/useShortcut';
 import React, { useEffect, useRef, useState } from 'react';
-import { Video } from './function';
+import { ITranscript, Video, ISegment, IVideoPlayer } from './function';
 import Segment from './Segment';
 import TypeTranslate from './TypeTranslate';
 import { clsx } from 'clsx';
 import ButtonShortCut from '@/ui/ButtonShortCut';
 import { SHORTCUT_VIDEO_PLAYER_PREV } from '@/constants/index';
+import { IReactProps } from '@/interfaces/common';
 
-const VideoPlayer = ({
-  srcVideo,
-  transcript,
-  startBy,
-  onSegmentChange,
-  width,
-  height,
-}) => {
+const VideoPlayer: IReactProps<{
+  srcVideo: string;
+  transcript: ITranscript;
+  startBy: number;
+  onSegmentChange: (s: ISegment) => void;
+  width: number;
+  height: number;
+}> = ({ srcVideo, transcript, startBy, onSegmentChange, width, height }) => {
   const [isFocus, isFocusSet] = useState(false);
   const [easyMode, easyModeSet] = useState(false);
-  const containerVideoRef = useRef();
-  const [_, forceRender] = useState();
-  const [heightVo, heightVoSet] = useState();
-  const videoControl =
-    /** @type { { current:  import("./function").IVideo | undefined }} */ useRef();
+  const containerVideoRef = useRef<HTMLDivElement>(null);
+  const [_, forceRender] = useState({});
+  const [heightVo, heightVoSet] = useState<number | null>(null);
+  const videoControl = useRef({} as IVideoPlayer);
   const [isFullScreen, isFullScreenSet] = useState(false);
-  const div = useRef();
+  const div = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const divEl = div.current;
 
@@ -40,8 +40,8 @@ const VideoPlayer = ({
     const control = (videoControl.current = Video({
       className: 'w-full h-full',
       attr: {
-        width,
-        height,
+        width: width.toString(),
+        height: height.toString(),
       },
     }));
     const video = control.getVideoEl();
@@ -59,7 +59,7 @@ const VideoPlayer = ({
 
     control.on('segmentChange', (segment) => {
       forceRender({});
-      onSegmentChange && onSegmentChange(segment);
+      onSegmentChange && onSegmentChange(segment as ISegment);
     });
 
     const observer = new ResizeObserver((entries) => {
@@ -72,7 +72,7 @@ const VideoPlayer = ({
     observer.observe(video);
     return () => {
       control.destroy();
-      observer.disconnect(video);
+      observer.disconnect();
     };
   }, [srcVideo, transcript]);
 
@@ -117,7 +117,7 @@ const VideoPlayer = ({
 
     if (!containerEl) return;
 
-    const handleFullScreenChange = (e) => {
+    const handleFullScreenChange = () => {
       if (document.fullscreenElement) {
         isFullScreenSet(true);
       } else {
@@ -184,11 +184,19 @@ const VideoPlayer = ({
             isFocus={isFocus}
             isFocusSet={isFocusSet}
             alwayShowPlaceholder={easyMode}
-            style={{
-              bottom: `${
-                isFocus ? (isFullScreen ? heightVo / 13 : 0) : heightVo / 10
-              }px`,
-            }}
+            style={
+              heightVo
+                ? {
+                    bottom: `${
+                      isFocus
+                        ? isFullScreen
+                          ? heightVo / 13
+                          : 0
+                        : heightVo / 10
+                    }px`,
+                  }
+                : {}
+            }
           />
         )}
       </div>

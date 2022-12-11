@@ -1,9 +1,21 @@
 'use client';
 
+import { IReactProps } from '@/interfaces/common';
 import clsx from 'clsx';
 import { useEffect, useMemo, useRef } from 'react';
-const defaultChecklist = [];
-export const InputValidate = ({
+type ICheckList = Array<any>;
+const defaultChecklist: ICheckList = [];
+type IInputValidateProps = {
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  plug: any;
+  value: string;
+  name: string;
+  checkList: ICheckList;
+  inputClass: string;
+  label: string;
+};
+
+export const InputValidate: IReactProps<IInputValidateProps> = ({
   onChange,
   plug,
   value,
@@ -15,7 +27,7 @@ export const InputValidate = ({
   ...props
 }) => {
   const message = useRef('');
-  const checkValid = (value) => {
+  const checkValid = (value: string) => {
     if (
       checkList.length > 0 &&
       checkList.every((validateFc) => {
@@ -31,7 +43,7 @@ export const InputValidate = ({
       message.current = '';
     }
   };
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange && onChange(e);
   };
   useMemo(() => {
@@ -51,10 +63,12 @@ export const InputValidate = ({
           'first-active': plug.isActivated(),
         })}
         name={name}
-        invalid={
+        data-invalid={
           plug.isActivated() && Boolean(message.current) ? '' : undefined
         }
-        valid={plug.isActivated() && !Boolean(message.current) ? '' : undefined}
+        data-valid={
+          plug.isActivated() && !Boolean(message.current) ? '' : undefined
+        }
         onChange={handleChange}
         {...props}
       />

@@ -11,15 +11,22 @@ import { pushToast } from '../Toast';
 import Submenu from './Submenu';
 import Link from 'next/link';
 import Image from 'next/image';
-const Header = memo(() => {
-  // const { isLogin } = useLogin();
-  const dispatch = useDispatch();
-  // const navigate = useNavigate();
+import { useRouter } from 'next/navigation';
+export type MenuLink = {
+  path: string;
+  label: string;
+  icon: string;
+  props?: {
+    onClick: () => void;
+  };
+};
 
-  useEffect(() => {
-    console.count('header create');
-  }, []);
-  const menu = [
+const Header = () => {
+  const { isLogin } = useLogin();
+  const dispatch = useDispatch();
+  const navigate = useRouter();
+
+  const menu: Array<MenuLink> = [
     {
       path: '/create-card',
       label: 'Create Card',
@@ -47,7 +54,6 @@ const Header = memo(() => {
       icon: 'fa-solid fa-arrow-right-from-bracket',
       props: {
         onClick: () => {
-          // dispatch(logout());
           pushToast.success('Logout success');
         },
       },
@@ -72,28 +78,28 @@ const Header = memo(() => {
           // force init element for submenu auto close
           key={Math.random().toString(32).slice(2, 7)}
         >
-          {/* {isLogin ? (
+          {isLogin ? (
             <>
               <IconCircle
                 className="fas fa-user-gear relative left-[2px] "
                 wrapClass="block-up"
               ></IconCircle>
               <Submenu
-                className="absolute right-0 group-hover:opacity-100 top-[85%] opacity-0 transition-all invisible group-hover:visible group-hover:top-full"
+                className="invisible absolute right-0 top-[85%] opacity-0 transition-all group-hover:visible group-hover:top-full group-hover:opacity-100"
                 list={menu}
               />
             </>
           ) : (
             <IconCircle
-              onClick={() => navigate("/login")}
+              onClick={() => navigate.push('/login')}
               className="fa-solid fa-arrow-right-to-bracket relative left-[2px] "
               wrapClass="block-up"
             ></IconCircle>
-          )} */}
+          )}
         </div>
       </div>
     </header>
   );
-});
+};
 
 export default Header;

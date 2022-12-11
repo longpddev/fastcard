@@ -1,9 +1,14 @@
 'use client';
 
+import { IReactProps } from '@/interfaces/common';
 import clsx from 'clsx';
 import React from 'react';
 
-const Pagination = ({ onChange, max, current }) => {
+const Pagination: IReactProps<{
+  onChange: (v: number) => void;
+  max: number;
+  current: number;
+}> = ({ onChange, max, current }) => {
   return (
     <div className="flex flex-wrap justify-center gap-2">
       {Array(max)

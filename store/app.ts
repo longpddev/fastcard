@@ -3,10 +3,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { run, token, watchThunk } from '@/functions/common';
 import authSlice, { getUserInfo } from '@/services/auth/authSlice';
-import cardSlice, {
-  getCardLearnTodayThunk,
-  getGroupCardThunk,
-} from '@/services/card/cardSlice';
+import cardSlice, { getCardLearnTodayThunk } from '@/services/card/cardSlice';
 import { queryApi } from '@/services/queryApi';
 import videoTranscriptSlice from '@/services/videoTranscript/videoTranscriptSlice';
 
@@ -27,12 +24,12 @@ export type RootState = ReturnType<typeof store.getState>;
 export type StoreDispatch = ReturnType<typeof store.dispatch>;
 export type AppDispatch = typeof store.dispatch;
 // fetch data init when user has login before
-run(async () => {
-  const tokenData = token.get();
-  if (!tokenData) return;
-  const { dispatch, getState } = store;
+// run(async () => {
+//   const tokenData = token.get();
+//   if (!tokenData) return;
+//   const { dispatch, getState } = store;
 
-  await Promise.all([dispatch(getUserInfo()), dispatch(getGroupCardThunk())]);
+//   await Promise.all([dispatch(getUserInfo()), dispatch(getGroupCardThunk())]);
 
-  await dispatch(getCardLearnTodayThunk());
-});
+//   await dispatch(getCardLearnTodayThunk());
+// });

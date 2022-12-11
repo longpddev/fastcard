@@ -5,12 +5,13 @@ import { memoizeWith } from 'ramda';
 import { useEffect } from 'react';
 import { useRef } from 'react';
 import { useState } from 'react';
-interface IShutterstockImage {
+export interface IShutterstockImage {
   height: number;
   url: string;
   width: number;
+  description?: string;
 }
-interface IShutterstockAsset {
+export interface IShutterstockAsset {
   preview: IShutterstockImage;
   small_thumb: IShutterstockImage;
   large_thumb: IShutterstockImage;
@@ -19,11 +20,11 @@ interface IShutterstockAsset {
   preview_1500: IShutterstockImage;
 }
 
-interface IShutterstockResponse {
+export interface IShutterstockResponse {
   data: Array<{
     id: string;
     aspect: number;
-    assets: Array<IShutterstockAsset>;
+    assets: IShutterstockAsset;
     contributor: {
       id: string;
     };

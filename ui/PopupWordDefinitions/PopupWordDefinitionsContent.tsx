@@ -6,8 +6,18 @@ import { clsx } from 'clsx';
 import When from '@/ui/When';
 import FindImageByWords from '@/ui/FindImageByWords/FindImageByWords';
 import UrbanDefinitions from './UrbanDefinitions';
+import { IReactProps } from '@/interfaces/common';
+import {
+  IDictionaryapiResponse,
+  IDictionaryapiPartOfSpeech,
+  IDictionaryapiDefinition,
+} from '../../hooks/useWordDefinitions';
 
-const PopupWordDefinitionsContent = ({ data, onDefineMore, originalText }) => {
+const PopupWordDefinitionsContent: IReactProps<{
+  data: IDictionaryapiResponse;
+  onDefineMore: (t: string) => void;
+  originalText: string;
+}> = ({ data, onDefineMore, originalText }) => {
   return (
     <>
       <div className="p-4">
@@ -53,13 +63,17 @@ const PopupWordDefinitionsContent = ({ data, onDefineMore, originalText }) => {
   );
 };
 
-const Phonetic = ({ text, audio, className, selected }) => {
+const Phonetic: IReactProps<{
+  text: string | undefined;
+  audio: string | null;
+  selected: boolean;
+}> = ({ text, audio, className, selected }) => {
   const [playing, playingSet] = useState(false);
 
-  const audioRef = useRef();
+  const audioRef = useRef<Promise<HTMLAudioElement>>();
   if (!audioRef.current) {
     if (audio) {
-      audioRef.current = new Promise((res, rej) => {
+      audioRef.current = new Promise<HTMLAudioElement>((res, rej) => {
         const au = new Audio(audio);
         au.oncanplay = () => res(au);
         au.onplaying = () => playingSet(true);
@@ -74,9 +88,9 @@ const Phonetic = ({ text, audio, className, selected }) => {
 
   const handleClick = () => {
     if (playing) {
-      audioRef.current.then((au) => au.pause());
+      audioRef.current?.then((au) => au.pause());
     } else {
-      audioRef.current.then((au) => au.play());
+      audioRef.current?.then((au) => au.play());
     }
   };
 
@@ -94,7 +108,7 @@ const Phonetic = ({ text, audio, className, selected }) => {
         className,
       )}
     >
-      <When if={audio}>
+      <When if={Boolean(audio)}>
         <span
           className={clsx('absolute inset-0 block h-full w-full bg-black', {
             'opacity-20': playing,
@@ -113,7 +127,10 @@ const Phonetic = ({ text, audio, className, selected }) => {
   );
 };
 
-const Meaning = ({ partOfSpeech, definitions }) => {
+const Meaning: IReactProps<{
+  partOfSpeech: IDictionaryapiPartOfSpeech;
+  definitions: Array<IDictionaryapiDefinition>;
+}> = ({ partOfSpeech, definitions }) => {
   return (
     <>
       <h3 className="text-semibold text-lg text-sky-400">

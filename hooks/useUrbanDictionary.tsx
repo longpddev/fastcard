@@ -8,15 +8,32 @@ import { useEffect } from 'react';
 
 const URL_URBAN = 'https://api.urbandictionary.com/v0';
 
-const fetchData = memoizeWith(
+export interface IUrbanData {
+  definition: string;
+  permalink: string;
+  thumbs_up: number;
+  sound_urls: Array<string>;
+  author: string;
+  word: string;
+  defid: number;
+  current_vote: string;
+  written_on: string;
+  example: string;
+  thumbs_down: number;
+}
+
+export interface IUrbanDataResponse {
+  list: Array<IUrbanData>;
+}
+const fetchData = memoizeWith<(s: string) => Promise<IUrbanDataResponse>>(
   (str) => str.trim().toLowerCase(),
   async (words) => {
     let result = await fetch(URL_URBAN + `/define?term=${encodeURI(words)}`);
     if (!result.ok) throw new Error('fetch fail');
 
-    result = await result.json();
+    const resultJson = await result.json();
 
-    return result;
+    return resultJson as IUrbanDataResponse;
   },
 );
 /**
@@ -24,10 +41,10 @@ const fetchData = memoizeWith(
  * @param {string} words
  * @returns
  */
-export default function useUrbanDictionary(words) {
-  const [data, dataSet] = useState(null);
+export default function useUrbanDictionary(words: string) {
+  const [data, dataSet] = useState<Array<IUrbanData> | null>(null);
   const [error, errorSet] = useState(false);
-  const session = useRef();
+  const session = useRef('');
 
   const getData = async () => {
     if (!words) return;

@@ -3,18 +3,19 @@
 import { useState } from 'react';
 import Popup from '@/ui/Popup';
 import { KEY_NAME } from '@/constants/index';
+import { IReactProps } from '@/interfaces/common';
+import { IShutterstockImage } from '@/hooks/useFindImageByWords';
 
-/**
- * @typedef {{ width: number, height: number, url: string, description: string} } Image
- * @param {{ preview: Image, thumb: Image}} param0
- */
-const FindImageByWordsItem = ({ preview, thumb }) => {
+const FindImageByWordsItem: IReactProps<{
+  preview: IShutterstockImage;
+  thumb: IShutterstockImage;
+}> = ({ preview, thumb }) => {
   const [focus, focusSet] = useState(false);
   const [enter, enterSet] = useState(false);
   return (
     <div className="flex items-center justify-center bg-slate-800 ">
       <div
-        className="group relative cursor-pointer rounded-sm  border-2 border-transparent focus:border-sky-400 focus:outline-none"
+        className="focus:b`order-sky-400 group relative cursor-pointer  rounded-sm border-2 border-transparent focus:outline-none"
         tabIndex={0}
         onKeyDown={(e) => {
           if (e.key === KEY_NAME.Enter) {
@@ -35,8 +36,8 @@ const FindImageByWordsItem = ({ preview, thumb }) => {
           src={thumb.url}
           width={thumb.width || ''}
           height={thumb.height || ''}
-          alt={thumb.description}
-          title={thumb.description}
+          alt={thumb.description || ''}
+          title={thumb.description || ''}
         />
       </div>
       <Popup open={enter} setOpen={(status) => enterSet(status)}>
@@ -44,8 +45,8 @@ const FindImageByWordsItem = ({ preview, thumb }) => {
           src={preview.url}
           width={preview.width}
           height={preview.height}
-          alt={preview.description}
-          title={preview.description}
+          alt={preview.description || ''}
+          title={preview.description || ''}
         />
       </Popup>
     </div>

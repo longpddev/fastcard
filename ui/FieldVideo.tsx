@@ -5,15 +5,16 @@ import { useEffect } from 'react';
 import { useRef } from 'react';
 import { pushToast } from '@/ui/Toast';
 import { formatByteUnit } from '@/functions/common';
+import { IReactProps } from '@/interfaces/common';
 
-const FieldVideo = ({
-  value,
-  valueSet,
-  thumbnail,
-  thumbnailSet,
-  hasValue,
-  urlDemo,
-}) => {
+const FieldVideo: IReactProps<{
+  value: Array<File>;
+  valueSet: (v: Array<File>) => void;
+  thumbnail: string;
+  thumbnailSet: (v: string) => void;
+  hasValue: boolean;
+  urlDemo: string;
+}> = ({ value, valueSet, thumbnail, thumbnailSet, hasValue, urlDemo }) => {
   return (
     <div>
       {!hasValue && (
@@ -42,10 +43,15 @@ const FieldVideo = ({
   );
 };
 
-const PreviewVideo = ({ src, onRemove, thumbnail, thumbnailSet }) => {
+const PreviewVideo: IReactProps<{
+  src: string;
+  onRemove: () => void;
+  thumbnail: string;
+  thumbnailSet: (v: string) => void;
+}> = ({ src, onRemove, thumbnail, thumbnailSet }) => {
   const [loaded, loadedSet] = useState(false);
-  const ref = useRef();
-  async function getThumbnailVideo(videoEl) {
+  const ref = useRef<HTMLVideoElement>(null);
+  async function getThumbnailVideo(videoEl: HTMLVideoElement) {
     const canvas = document.createElement('canvas');
     const { videoWidth, videoHeight } = videoEl;
     console.dir(videoEl);
@@ -53,6 +59,8 @@ const PreviewVideo = ({ src, onRemove, thumbnail, thumbnailSet }) => {
     canvas.width = 400;
     canvas.height = Math.floor(((400 * videoHeight) / videoWidth) * 10) / 10;
     const ctx = canvas.getContext('2d');
+
+    if (!ctx) throw new Error('can\t get ctx in canvas');
     ctx.drawImage(
       videoEl,
       0,
@@ -74,18 +82,22 @@ const PreviewVideo = ({ src, onRemove, thumbnail, thumbnailSet }) => {
       <div className="absolute top-1 right-4 z-10 drop-shadow-[0_0_4px_black]">
         <button
           onClick={onRemove}
+          title="remove"
           className="icon-center-button relative h-6 w-6 p-2 hover:text-orange-400"
         >
           <i className="fas fa-xmark text-xl"></i>
         </button>
         <button
-          onClick={() =>
-            getThumbnailVideo(ref.current).then((linkImage) => {
+          title="preview"
+          onClick={() => {
+            const el = ref.current;
+            if (!el) return;
+            getThumbnailVideo(el).then((linkImage) => {
               thumbnailSet(linkImage);
               pushToast.success(`Create thumbnail success ![link](${linkImage} "Preview")
-              `);
-            })
-          }
+                `);
+            });
+          }}
           className="icon-center-button relative ml-2 h-6 w-6 p-2 hover:text-orange-400"
         >
           <i className="fa-solid fa-photo-film text-xl"></i>
@@ -110,7 +122,10 @@ const PreviewVideo = ({ src, onRemove, thumbnail, thumbnailSet }) => {
   );
 };
 
-const ImagePreviewVideoAnimate = (props) => {
+const ImagePreviewVideoAnimate: IReactProps<{
+  src: string;
+  alt: string;
+}> = (props) => {
   const [hide, hideSet] = useState(false);
 
   useEffect(() => {
@@ -127,10 +142,18 @@ const ImagePreviewVideoAnimate = (props) => {
   );
 };
 
-const FieldFileUi = ({ value, valueSet, remove, accept, size, ...props }) => {
-  const handleChange = ({ target: { files } }) => {
+const FieldFileUi: IReactProps<{
+  value: Array<File>;
+  valueSet: (v: Array<File>) => void;
+  remove?: (v: number) => void;
+  accept: string;
+  size: number;
+}> = ({ value, valueSet, remove, accept, size, ...props }) => {
+  const handleChange = ({
+    target: { files },
+  }: React.ChangeEvent<HTMLInputElement>) => {
     const regex = new RegExp(accept.replace('*', '.*'));
-    const checkFile = (file) => {
+    const checkFile = (file: File) => {
       let result = regex.test(file.type);
       if (!result) {
         const fileName =
@@ -150,10 +173,12 @@ const FieldFileUi = ({ value, valueSet, remove, accept, size, ...props }) => {
       }
       return result;
     };
-    const validate = [...files].every(checkFile);
+
+    const fileListToArray = [...(files ?? [])];
+    const validate = fileListToArray.every(checkFile);
 
     if (validate) {
-      valueSet([...files]);
+      valueSet(fileListToArray);
     }
   };
   return (

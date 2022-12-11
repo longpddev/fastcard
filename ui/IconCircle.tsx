@@ -1,14 +1,13 @@
 'use client';
 
+import { IReactProps } from '@/interfaces/common';
 import clsx from 'clsx';
 import React from 'react';
 
-const IconCircle = ({
-  className = '',
-  wrapClass = '',
-  size = 'lg',
-  ...props
-}) => {
+const IconCircle: IReactProps<{
+  wrapClass: string;
+  size?: 'xl' | 'lg' | 'md' | 'sm';
+}> = ({ className = '', wrapClass = '', size = 'lg', ...props }) => {
   return (
     <div
       className={clsx(

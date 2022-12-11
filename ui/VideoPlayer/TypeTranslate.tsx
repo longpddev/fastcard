@@ -8,6 +8,7 @@ import {
 import clsx from 'clsx';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import useShortcut, { useKeyupShortcut } from '@/hooks/useShortcut';
+import { IReactProps } from '@/interfaces/common';
 const KEY_IGNORE = {
   Backspace: 'Backspace',
   Control: 'Control',
@@ -44,6 +45,8 @@ export const TYPE_TRANSLATE_MODE = Object.freeze({
   HIGHLIGHT_ERROR: 'HIGHLIGHT_ERROR',
   RETYPING_ERROR: 'RETYPING_ERROR',
 });
+
+type ITYPE_TRANSLATE_MODE = typeof TYPE_TRANSLATE_MODE;
 /**
  * @param {{
  *   className: string,
@@ -57,7 +60,17 @@ export const TYPE_TRANSLATE_MODE = Object.freeze({
  * }} param0
  * @returns
  */
-const TypeTranslate = ({
+const TypeTranslate: IReactProps<{
+  className: string;
+  text: string;
+  onDone: () => void;
+  style: Record<string, string>;
+  isFocus: boolean;
+  shortcut: string;
+  isFocusSet: (s: boolean) => void;
+  mode?: ITYPE_TRANSLATE_MODE[keyof ITYPE_TRANSLATE_MODE];
+  alwayShowPlaceholder?: boolean;
+}> = ({
   className,
   text,
   onDone,
@@ -83,7 +96,7 @@ const TypeTranslate = ({
 
   const [tmpText, tmpTextSet] = useState('');
 
-  const ref = useRef();
+  const ref = useRef<HTMLInputElement>(null);
 
   const wordsClone = structuredClone(words);
   const masksOfWordsClone = structuredClone(masksOfWords);
@@ -101,13 +114,13 @@ const TypeTranslate = ({
     pointOfLetterInWordSet(0);
     remarkMaskWord();
   };
-  const markLetter = (type) => {
+  const markLetter = (type: 1 | -1) => {
     if (masksOfWords[pointOfWord][pointOfLetterInWord] === 0) {
       masksOfWords[pointOfWord][pointOfLetterInWord] = type;
     }
   };
   const isSpace = () => !isNextLetterInWord() && isNextWord();
-  const handleTyping = (char) => {
+  const handleTyping = (char: string) => {
     if (char in KEY_IGNORE) return false;
 
     if (isSpace()) {
@@ -217,6 +230,7 @@ const TypeTranslate = ({
       <input
         type="text"
         ref={ref}
+        title="typing here"
         onFocus={isFocusSet.bind(undefined, true)}
         onBlur={isFocusSet.bind(undefined, false)}
         value={tmpText}
@@ -237,7 +251,10 @@ const TypeTranslate = ({
   );
 };
 
-const Point = ({ isActive, isSleep }) => {
+const Point: IReactProps<{
+  isActive: boolean;
+  isSleep: boolean;
+}> = ({ isActive, isSleep }) => {
   if (!isActive) return null;
   return (
     <span

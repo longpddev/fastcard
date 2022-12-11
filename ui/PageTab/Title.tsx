@@ -2,8 +2,12 @@
 
 import React from 'react';
 import { useContext } from './context';
+import { IReactProps } from '@/interfaces/common';
+import { titlePage } from '../../../language_card/src/functions/common';
 
-const Title = ({ tabKey, children }) => {
+const Title: IReactProps<{
+  tabKey: string;
+}> = ({ tabKey, children }) => {
   const { tabActive, setTabActive, typeStep, tabList } = useContext();
   const tabKeyString = tabKey.toString();
   // public tabkey

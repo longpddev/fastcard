@@ -1,13 +1,13 @@
 import { run, runIdle } from '../functions/common';
 
-type IEmitterHandleEvent = () => void;
+type IEmitterHandleEvent = (v: unknown) => void;
 type IEmitterObserver = {
   cb: IEmitterHandleEvent;
   ctx: any;
 };
 class Emitter {
   e: Record<string, Array<IEmitterObserver>> = {};
-  on(evt: string, cb: IEmitterHandleEvent, ctx: any) {
+  on(evt: string, cb: IEmitterHandleEvent, ctx?: any) {
     if (!(evt in this.e)) {
       this.e[evt] = [];
     }
@@ -18,7 +18,7 @@ class Emitter {
     });
   }
 
-  off(evt: string, cb: IEmitterHandleEvent) {
+  off(evt: string, cb?: IEmitterHandleEvent) {
     let livesEvt: Array<IEmitterObserver> = [];
     const evts = this.e[evt];
 
@@ -29,7 +29,7 @@ class Emitter {
     livesEvt.length > 0 ? (this.e[evt] = livesEvt) : delete this.e[evt];
   }
 
-  once(evt: string, cb: IEmitterHandleEvent, ctx: any) {
+  once(evt: string, cb: IEmitterHandleEvent, ctx?: any) {
     const _this = this;
     const wrapCb = function () {
       _this.off(evt, wrapCb);

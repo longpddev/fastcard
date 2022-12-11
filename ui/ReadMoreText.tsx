@@ -3,25 +3,22 @@
 import React, { useEffect, useRef } from 'react';
 import { useState } from 'react';
 import { clsx } from 'clsx';
+import { IReactProps } from '@/interfaces/common';
 
-const ReadMoreText = ({
-  component,
-  children,
-  className = '',
-  maxLine = 3,
-  classNameText = '',
-}) => {
-  const Component = component || 'p';
+const ReadMoreText: IReactProps<{
+  maxLine?: number;
+  classNameText?: string;
+}> = ({ children, className = '', maxLine = 3, classNameText = '' }) => {
   const [less, lessSet] = useState(true);
   const [show, showSet] = useState(false);
-  const ref = useRef();
+  const ref = useRef<HTMLSpanElement>(null);
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
 
     const observer = new ResizeObserver(() => {
       const isScrollable = el.scrollHeight > el.clientHeight;
-      observer.disconnect(el);
+      observer.disconnect();
       if (!isScrollable) {
         showSet(false);
       } else {
@@ -30,10 +27,10 @@ const ReadMoreText = ({
     });
 
     observer.observe(el);
-    return () => observer.disconnect(el);
+    return () => observer.disconnect();
   }, []);
   return (
-    <Component className={className}>
+    <div className={className}>
       <span
         ref={ref}
         className={clsx('inline-block', classNameText, {
@@ -51,7 +48,7 @@ const ReadMoreText = ({
           {less ? 'read more' : 'read less'}
         </span>
       ) : null}
-    </Component>
+    </div>
   );
 };
 

@@ -2,8 +2,23 @@
 
 import TooltipShortCutItem from './TooltipShortCutItem';
 import { clsx } from 'clsx';
+import { IReactProps } from '@/interfaces/common';
 
-const TooltipShortCut = ({
+interface ITooltipShortCutProps {
+  width: number;
+  height: number;
+  top: number;
+  right: number;
+  bottom: number;
+  x: number;
+  y: number;
+  left: number;
+  keyName: string;
+  specialKey: string | undefined;
+  onActive: (s: boolean) => void;
+  active: boolean;
+}
+const TooltipShortCut: IReactProps<ITooltipShortCutProps> = ({
   width,
   height,
   top,

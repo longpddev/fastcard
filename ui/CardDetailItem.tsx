@@ -3,23 +3,22 @@
 import clsx from 'clsx';
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
 import { watchThunk } from '../functions/common';
 import { deleteCardThunk } from '../services/card/cardSlice';
 import { pushToast } from '@/ui/Toast/core';
 import { progressWatchPromise } from './ProgressGlobal';
-const CardDetailItem = ({
-  id,
-  image,
-  title,
-  createdAt,
-  className,
-  onDeleted,
-  ...props
-}) => {
-  const dispatch = useDispatch();
+import { IReactProps } from '@/interfaces/common';
+import { ICardStepResponse } from '@/api/fast_card_client_api';
+import Link from 'next/link';
+import { AppDispatch } from 'store/app';
+const CardDetailItem: IReactProps<{
+  cardData: ICardStepResponse;
+  title: string;
+  onDeleted: () => void;
+}> = ({ id, cardData, title, className, onDeleted, ...props }) => {
+  const dispatch = useDispatch<AppDispatch>();
   const handleDelete = () => {
-    dispatch(deleteCardThunk({ id }))
+    dispatch(deleteCardThunk({ id: cardData.id }))
       .then(watchThunk)
       .then(() => {
         onDeleted && onDeleted();
@@ -38,18 +37,25 @@ const CardDetailItem = ({
       )}
       {...props}
     >
-      <img src={image} alt="" className="h-10 w-10 rounded-md object-cover" />
+      <img
+        src={cardData.image.path}
+        alt=""
+        className="h-10 w-10 rounded-md object-cover"
+      />
       <div className="ml-4 flex-1">
         <p>{title}</p>
-        <p className="mt-2 text-sm text-slate-400">{createdAt.toString()}</p>
+        <p className="mt-2 text-sm text-slate-400">
+          {cardData.createdAt.toString()}
+        </p>
       </div>
       <Link
-        to={`/card-detail/${id}`}
+        href={`/card-detail/${cardData.id}`}
         className="button ml-auto flex-none px-3 text-blue-400"
       >
         <i className="fas fa-eye"></i>
       </Link>
       <button
+        title="delete card"
         onClick={() => {
           if (confirm('Are you sure for delete this Card hard work for create'))
             handleDelete();

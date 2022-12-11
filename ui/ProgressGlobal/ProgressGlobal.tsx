@@ -14,11 +14,10 @@ export const progressWatchPromise = () => {
   return () => progressDone();
 };
 
-window.progressWatchPromise = progressWatchPromise;
 const ProgressGlobal = () => {
   const [isDone, isDoneSet] = useState(false);
   const [isShow, isShowSet] = useState(false);
-  const ref = useRef();
+  const ref = useRef<HTMLDivElement>(null);
   const process = useRef(0);
 
   useEffect(() => {
@@ -45,7 +44,7 @@ const ProgressGlobal = () => {
       if (isDone) {
         factor = 3;
       } else if (process.current > 90) {
-        return;
+        return false;
       }
       process.current += factor;
       render();

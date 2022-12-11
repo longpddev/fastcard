@@ -9,10 +9,10 @@ import { useEffect } from 'react';
 const TARGET = 'vi';
 
 // option https://deep-translator-api.azurewebsites.net/docs#/default/google_translate_google__post
-interface ITranslation {
+export interface ITranslation {
   translatedText: string;
 }
-interface IDeepTranslatorResponse {
+export interface IDeepTranslatorResponse {
   data: {
     translations: ITranslation;
   };
@@ -23,7 +23,7 @@ const SOURCE = 'en';
 const RAPIT_GOOGLE_TRANSLATE =
   'https://deep-translate1.p.rapidapi.com/language/translate/v2';
 
-interface IFetchDataResponse {
+export interface IFetchDataResponse {
   translations: Array<ITranslation>;
 }
 const fetchData = memoizeWith<(words: string) => Promise<IFetchDataResponse>>(

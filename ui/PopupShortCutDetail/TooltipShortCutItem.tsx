@@ -4,6 +4,7 @@ import { useLayoutEffect } from 'react';
 import { useRef, useState } from 'react';
 import { clsx } from 'clsx';
 import { KEY_NAME, SPECIAL_KEY } from '@/constants/index';
+import { IReactProps } from '@/interfaces/common';
 const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
 const KEY_LABEL_MAPPING = {
   [SPECIAL_KEY.Command]: isMac ? 'command' : 'window',
@@ -13,7 +14,16 @@ const KEY_LABEL_MAPPING = {
   [KEY_NAME.Enter]: isMac ? 'return' : 'enter',
 };
 
-const TooltipShortCutItem = ({
+interface ITooltipShortCutItemProps {
+  keyName: string;
+  specialKey: string | undefined;
+  space?: number;
+  onActive: (s: boolean) => void;
+  anchorWidth: number;
+  anchorHeight: number;
+}
+
+const TooltipShortCutItem: IReactProps<ITooltipShortCutItemProps> = ({
   keyName,
   specialKey,
   space = 10,
@@ -21,8 +31,11 @@ const TooltipShortCutItem = ({
   anchorWidth,
   anchorHeight,
 }) => {
-  const ref = useRef();
-  const [position, positionSet] = useState({
+  const ref = useRef<HTMLDivElement>(null);
+  const [position, positionSet] = useState<{
+    top: number;
+    left: string | number;
+  }>({
     top: 0,
     left: `calc(${anchorWidth}px + ${space}px)`,
   });
@@ -31,7 +44,14 @@ const TooltipShortCutItem = ({
     top: true,
     left: true,
   });
-  const forward = useRef();
+  const forward = useRef(
+    {} as {
+      position: typeof position;
+      space: typeof space;
+      arrowSet: typeof arrowSet;
+      arrow: typeof arrow;
+    },
+  );
   forward.current = {
     position,
     space,
@@ -74,10 +94,13 @@ const TooltipShortCutItem = ({
       ref={ref}
     >
       <span className="absolute "></span>
-      {specialKey in KEY_LABEL_MAPPING
-        ? KEY_LABEL_MAPPING[specialKey] + ' + '
+      {specialKey && specialKey in KEY_LABEL_MAPPING
+        ? KEY_LABEL_MAPPING[specialKey as keyof typeof KEY_LABEL_MAPPING] +
+          ' + '
         : ''}
-      {keyName in KEY_LABEL_MAPPING ? [KEY_LABEL_MAPPING[keyName]] : keyName}
+      {keyName in KEY_LABEL_MAPPING
+        ? KEY_LABEL_MAPPING[keyName as keyof typeof KEY_LABEL_MAPPING]
+        : keyName}
     </div>
   );
 };

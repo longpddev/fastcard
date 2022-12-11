@@ -17,14 +17,29 @@ import React from 'react';
 import { useRef } from 'react';
 import { useState } from 'react';
 import PopupWordDefinitionsContent from './PopupWordDefinitionsContent';
+import { IReactProps } from '@/interfaces/common';
 
-const PopupWordDefinitionsPopup = ({ onClose, words = '' }) => {
-  const [stack, stackSet] = useState([]);
-  const forwardVar = useRef({});
+type test = typeof PopupWordDefinitionsSearchBy extends IReactProps
+  ? 'true'
+  : 'false';
+const PopupWordDefinitionsPopup: IReactProps<{
+  onClose: () => void;
+  words: string;
+}> = ({ onClose, words = '' }) => {
+  const [stack, stackSet] = useState<Array<string>>([]);
   const [stackPoint, stackPointSet] = useState(0);
   const [word, wordSet] = useState(words);
   const [typing, typingSet] = useState(words ? false : true);
   let { data, isLoading, isNotfound } = useWordDefinitions(typing ? '' : word);
+  const forwardVar = useRef(
+    {} as {
+      stack: typeof stack;
+      stackPoint: typeof stackPoint;
+      word: typeof word;
+      typing: typeof typing;
+      data: typeof data;
+    },
+  );
 
   forwardVar.current = {
     stack,
@@ -34,7 +49,7 @@ const PopupWordDefinitionsPopup = ({ onClose, words = '' }) => {
     data,
   };
 
-  const handleWordSet = (word) => {
+  const handleWordSet = (word: string) => {
     wordSet(word);
     const newList = [...stack, word];
     stackSet(newList);
@@ -51,22 +66,24 @@ const PopupWordDefinitionsPopup = ({ onClose, words = '' }) => {
     typingSet(true);
   });
 
-  const handleNavigateStack = (jump) => (e) => {
+  const handleNavigateStack = (jump: 1 | -1) => () => {
     const fw = forwardVar.current;
     const targetPoint = fw.stackPoint + jump;
     if (targetPoint < 0 || targetPoint > fw.stack.length - 1) return;
     wordSet(fw.stack[targetPoint]);
     stackPointSet(targetPoint);
   };
-  console.log(stackPoint);
+
   return (
     <Popup maxWidth={800} open={true} setOpen={onClose}>
       <When
         if={typing}
         component={PopupWordDefinitionsSearchBy}
-        searchBy={(w) => {
-          handleWordSet(w);
-          typingSet(false);
+        props={{
+          searchBy: (w) => {
+            handleWordSet(w);
+            typingSet(false);
+          },
         }}
       />
       <When if={!typing && isLoading}>
@@ -103,20 +120,23 @@ const PopupWordDefinitionsPopup = ({ onClose, words = '' }) => {
                 </div>
               ) : null}
             </h2>
-            <PopupWordDefinitionsContent
-              onDefineMore={(text) => {
-                for (const i of stack) {
-                  if (stack[i] === text) {
-                    stackPointSet(i);
-                    wordSet(text);
-                    return;
+
+            {data && (
+              <PopupWordDefinitionsContent
+                onDefineMore={(text) => {
+                  for (let i = 0; i < stack.length; i++) {
+                    if (stack[i] === text) {
+                      stackPointSet(i);
+                      wordSet(text);
+                      return;
+                    }
                   }
-                }
-                handleWordSet(text);
-              }}
-              data={data}
-              originalText={word}
-            />
+                  handleWordSet(text);
+                }}
+                data={data}
+                originalText={word}
+              />
+            )}
           </div>
         )}
       </When>
@@ -124,9 +144,11 @@ const PopupWordDefinitionsPopup = ({ onClose, words = '' }) => {
   );
 };
 
-const PopupWordDefinitionsSearchBy = ({ searchBy }) => {
+const PopupWordDefinitionsSearchBy: IReactProps<{
+  searchBy: (v: string) => void;
+}> = ({ searchBy }) => {
   const [word, wordSet] = useState(() => getTextSelect());
-  const bypass = useRef();
+  const bypass = useRef('');
   bypass.current = word;
   useShortcut(SHORTCUT_ACCEPT, () => searchBy && searchBy(bypass.current));
   return (

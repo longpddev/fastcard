@@ -1,8 +1,11 @@
 'use client';
 
+import { IReactProps } from '@/interfaces/common';
 import { useContext } from './context';
 
-const Content = ({ tabKey, children }) => {
+const Content: IReactProps<{
+  tabKey: string;
+}> = ({ tabKey, children }) => {
   const { tabActive, typeStep, handle, onSubmit } = useContext();
   const isActive = tabKey.toString() === tabActive;
 

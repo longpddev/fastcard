@@ -2,23 +2,23 @@
 
 import { ATTRIBUTE_SHORTCUT_BUTTON } from '@/constants/index';
 import useShortcut from '@/hooks/useShortcut';
+import { IReactProps } from '@/interfaces/common';
 import React, { useEffect, useRef } from 'react';
 
-const ButtonShortCut = ({
-  onClick,
-  shortcut = '',
-  onClickClassName = '',
-  ...props
-}) => {
+const ButtonShortCut: IReactProps<{
+  shortcut: string;
+  onClickClassName?: string;
+  onClick: () => void;
+}> = ({ onClick, shortcut = '', onClickClassName = '', ...props }) => {
   if (typeof shortcut !== 'string') throw new Error('shortcut must is string');
 
-  const ref = useRef();
-  const handleClick = useRef();
+  const ref = useRef<HTMLButtonElement>(null);
+  const handleClick = useRef({} as () => void);
   handleClick.current = () => {
     const el = /** @type { HTMLButtonElement }  */ ref.current;
 
     if (el) {
-      el.classList.add('animate-click-button', onClickClassName || undefined);
+      el.classList.add('animate-click-button', onClickClassName);
     }
 
     onClick();
@@ -34,10 +34,7 @@ const ButtonShortCut = ({
     if (!el) return;
     const handleAnimationEnd = () => {
       el.classList.contains('animate-click-button') &&
-        el.classList.remove(
-          'animate-click-button',
-          onClickClassName || undefined,
-        );
+        el.classList.remove('animate-click-button', onClickClassName);
     };
     el.addEventListener('animationend', handleAnimationEnd);
 

@@ -8,11 +8,21 @@ import { pushFastToast } from '@/ui/Toast';
 import IconCircle from '@/ui/IconCircle';
 import useShortcut from '@/hooks/useShortcut';
 import { SHORTCUT_RE_UNDO, SHORTCUT_UNDO } from '@/constants/index';
+import { IReactProps } from '@/interfaces/common';
 
-function parseTranscript(value) {
-  let parsed;
+export interface ICommandFn {
+  undo: () => void;
+  execute: () => void;
+}
+export interface IFieldJsonFormat {
+  time: number;
+  timeFormat: string;
+  text: string;
+}
+function parseTranscript(value: string) {
+  let parsed: Array<IFieldJsonFormat>;
   try {
-    parsed = JSON.parse(value);
+    parsed = JSON.parse(value) as Array<IFieldJsonFormat>;
   } catch (e) {
     throw "We can't parse transcript please check format json";
   }
@@ -36,11 +46,14 @@ function parseTranscript(value) {
   return parsed;
 }
 
-const FieldJson = ({ value, valueSet }) => {
+const FieldJson: IReactProps<{
+  value: string;
+  valueSet: (s: string) => void;
+}> = ({ value, valueSet }) => {
   const [innerValue, innerValueSet] = useState('');
   const [isPrev, isPrevSet] = useState(false);
-  const [parse, parseSet] = useState([]);
-  const handleChange = (e) => {
+  const [parse, parseSet] = useState<Array<IFieldJsonFormat>>([]);
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const val = e.target.value;
     innerValueSet(val);
   };
@@ -58,12 +71,13 @@ const FieldJson = ({ value, valueSet }) => {
             className="input min-h-[300px]"
             value={innerValue}
             onChange={handleChange}
+            title="type here"
             onBlur={() => {
               try {
                 parseTranscript(innerValue);
                 valueSet(innerValue);
               } catch (error) {
-                pushFastToast.error(error);
+                pushFastToast.error(error as string);
                 valueSet('');
                 return;
               }
@@ -94,7 +108,7 @@ const FieldJson = ({ value, valueSet }) => {
                   const result = parseTranscript(value);
                   parseSet(result);
                 } catch (error) {
-                  pushFastToast.error(error);
+                  pushFastToast.error(error as string);
                   parseSet([]);
                   return;
                 }
@@ -133,19 +147,28 @@ Exp:
   );
 };
 
-const Prev = ({ parse, parseSet }) => {
-  const command = useRef();
+const Prev: IReactProps<{
+  parse: Array<IFieldJsonFormat>;
+  parseSet: (v: Array<IFieldJsonFormat>) => void;
+}> = ({ parse, parseSet }) => {
+  const command = useRef(
+    {} as {
+      goto: (n: number) => void;
+      add: (a: ICommandFn) => void;
+      list: Array<ICommandFn>;
+    },
+  );
 
   if (!command.current) {
     command.current = (() => {
-      let list = [];
+      let list: Array<ICommandFn> = [];
       let point = -1;
-      const isExist = (pt) => {
+      const isExist = (pt: number) => {
         if (pt > list.length - 1) return false;
         if (pt < 0) return false;
         return true;
       };
-      const goto = (nextOrPrev) => {
+      const goto = (nextOrPrev: number) => {
         const newPoint = point + nextOrPrev;
         if (list.length === 0) return;
 
@@ -163,7 +186,7 @@ const Prev = ({ parse, parseSet }) => {
 
         point = newPoint;
       };
-      const add = ({ undo, execute }) => {
+      const add = ({ undo, execute }: ICommandFn) => {
         list = list.filter((_, index) => index <= point);
         list.push({ undo, execute });
         execute();
@@ -176,7 +199,7 @@ const Prev = ({ parse, parseSet }) => {
       };
     })();
   }
-  const handleTranscriptChange = (val, index) => {
+  const handleTranscriptChange = (val: string, index: number) => {
     command.current.add({
       undo: () => {
         parseSet(parse);
@@ -189,7 +212,7 @@ const Prev = ({ parse, parseSet }) => {
     });
   };
 
-  const handleDelete = (index) => {
+  const handleDelete = (index: number) => {
     command.current.add({
       undo: () => {
         parseSet(parse);
@@ -216,7 +239,7 @@ const Prev = ({ parse, parseSet }) => {
                 />
               </td>
               <td>
-                <button onClick={() => handleDelete(index)}>
+                <button onClick={() => handleDelete(index)} title="remove">
                   <IconCircle
                     wrapClass="text-[12px] hover:text-red-400"
                     className="fas fa-trash-can"
@@ -232,10 +255,13 @@ const Prev = ({ parse, parseSet }) => {
   );
 };
 
-const Editable = ({ value, valueSet }) => {
+const Editable: IReactProps<{
+  value: string;
+  valueSet: (v: string) => void;
+}> = ({ value, valueSet }) => {
   const [isEdit, isEditSet] = useState(false);
   const [_, rerender] = useState({});
-  const data = useRef();
+  const data = useRef('');
   useMemo(() => {
     data.current = value;
   }, [value]);
@@ -243,7 +269,7 @@ const Editable = ({ value, valueSet }) => {
     valueSet(data.current);
     isEditSet(false);
   };
-  const handleKeydown = (e) => {
+  const handleKeydown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       e.preventDefault();
       handleDone();
@@ -253,6 +279,7 @@ const Editable = ({ value, valueSet }) => {
     <input
       type="text"
       className="input rounded-none p-0"
+      title="type here"
       value={data.current}
       autoFocus={true}
       onBlur={() => handleDone()}

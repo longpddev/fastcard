@@ -34,13 +34,13 @@
     &:focus {
       @apply shadow-blue-700;
     }
-    &.first-active[valid],
+    &.first-active[data-valid],
     &.first-active.valid,
     &.first-active:valid {
       @apply shadow-green-700;
     }
 
-    &.first-active[invalid],
+    &.first-active[data-invalid],
     &.first-active.invalid,
     &.first-active:invalid {
       @apply shadow-orange-700;

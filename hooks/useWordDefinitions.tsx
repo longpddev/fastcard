@@ -4,30 +4,34 @@ import { memoizeWith } from 'ramda';
 import { useEffect, useState } from 'react';
 import { useRef } from 'react';
 
-interface IDictionaryapiLicense {
+export interface IDictionaryapiLicense {
   name: string;
   url: string;
 }
-interface IDictionaryapiPhonetic {
+export interface IDictionaryapiPhonetic {
   audio: string;
   sourceUrl?: string;
   license?: IDictionaryapiLicense;
   text?: string;
 }
-interface IDictionaryapiMeaning {
-  partOfSpeech: 'noun' | 'verb' | 'interjection';
-  definitions: Array<{
-    definition: 'string';
-    synonyms: Array<string>;
-    antonyms: Array<string>;
-    example?: string;
-  }>;
+
+export type IDictionaryapiPartOfSpeech = 'noun' | 'verb' | 'interjection';
+
+export type IDictionaryapiDefinition = {
+  definition: 'string';
+  synonyms: Array<string>;
+  antonyms: Array<string>;
+  example?: string;
+};
+export interface IDictionaryapiMeaning {
+  partOfSpeech: IDictionaryapiPartOfSpeech;
+  definitions: Array<IDictionaryapiDefinition>;
   synonyms: Array<string>;
   antonyms: Array<string>;
 }
 
 type IDictionaryapiSourceUrl = Array<string>;
-interface IDictionaryapiResponse {
+export interface IDictionaryapiResponse {
   word: string;
   phonetics: Array<IDictionaryapiPhonetic>;
   meanings: Array<IDictionaryapiMeaning>;

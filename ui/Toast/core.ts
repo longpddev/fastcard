@@ -18,14 +18,14 @@ export const TYPE: {
   loading: 'loading',
 };
 
-interface IItemToast {
+export interface IItemToast {
   message: string;
   type: keyof typeof TYPE;
   id: number;
   count_down: number;
 }
 
-type IItemSubscribe = (v: Array<IItemToast>) => void;
+export type IItemSubscribe = (v: Array<IItemToast>) => void;
 
 export const COUNT_DOWN = 6000;
 
@@ -91,8 +91,16 @@ export const removeToast = (toastItem: IItemToast) => {
 };
 
 export const useSubscribeToast = () => {
-  const [toast, setToast] = useState({});
-  useEffect(() => subscribeToast(() => setToast({})), []);
+  // const [toast, setToast] = useState({});
+  // useEffect(() => subscribeToast(() => setToast({})), []);
+
+  const [toast, setToast] = useState<Array<IItemToast>>([]);
+  useEffect(() => {
+    const unsubscribe = subscribeToast((items) => setToast(items));
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   return { toast, removeToast, pushToast };
 };

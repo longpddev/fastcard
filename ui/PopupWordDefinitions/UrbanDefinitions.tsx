@@ -5,19 +5,24 @@ import React, { useEffect, useMemo, useRef } from 'react';
 import { firstCapitalize, parseStringToArr } from '@/functions/common';
 import ReadMoreText from '@/ui/ReadMoreText';
 import UrbanDefinitionsItem from './UrbanDefinitionsItem';
+import { IReactProps } from '@/interfaces/common';
 
 /**
  *
  * @param { Date } date
  * @returns { string }
  */
-const formatTime = (date) => {
+const formatTime = (date: Date) => {
   return date.toDateString();
 };
 
-const UrbanDefinitions = ({ words, onDefineMore, limit = 7 }) => {
+const UrbanDefinitions: IReactProps<{
+  words: string;
+  onDefineMore: (w: string) => void;
+  limit?: number;
+}> = ({ words, onDefineMore, limit = 7 }) => {
   const { data, isError } = useUrbanDictionary(words);
-  const ref = useRef();
+  const ref = useRef<HTMLDivElement>(null);
   const items = useMemo(
     () => data?.filter((_, i) => i + 1 <= limit) || [],
     [data],
@@ -25,7 +30,7 @@ const UrbanDefinitions = ({ words, onDefineMore, limit = 7 }) => {
   useEffect(() => {
     const el = /** @type { HTMLDivElement | undefined } */ ref.current;
     if (!el) return;
-    const handleWheel = (e) => {
+    const handleWheel = (e: WheelEvent) => {
       const isScrollable = el.scrollWidth > el.clientWidth;
 
       if (!isScrollable) return;
@@ -38,10 +43,9 @@ const UrbanDefinitions = ({ words, onDefineMore, limit = 7 }) => {
 
       el.scrollTo({ left: currentScroll + delta });
     };
-    el.addEventListener('wheel', handleWheel, { passive: false });
 
-    return () =>
-      el.removeEventListener('wheel', handleWheel, { passive: false });
+    el.addEventListener('wheel', handleWheel, { passive: false });
+    return () => el.removeEventListener('wheel', handleWheel);
   }, []);
   return (
     <div className="flex gap-2 overflow-auto py-4" tabIndex={0} ref={ref}>
@@ -49,12 +53,7 @@ const UrbanDefinitions = ({ words, onDefineMore, limit = 7 }) => {
         <UrbanDefinitionsItem
           key={item.defid}
           onDefineMore={onDefineMore}
-          word={item.word}
-          definition={item.definition}
-          permalink={item.permalink}
-          example={item.example}
-          sound_urls={item.sound_urls}
-          written={formatTime(new Date(item.written_on))}
+          urbanData={item}
         />
       ))}
     </div>

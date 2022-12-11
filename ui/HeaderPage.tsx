@@ -1,8 +1,11 @@
 'use client';
 
+import { IReactProps } from '@/interfaces/common';
 import React, { Children } from 'react';
 
-const HeaderPage = ({ title, children }) => {
+const HeaderPage: IReactProps<{
+  title: string;
+}> = ({ title, children }) => {
   const newChild = Children.map(children, (child) => (
     <li className="ml-2">{child}</li>
   ));

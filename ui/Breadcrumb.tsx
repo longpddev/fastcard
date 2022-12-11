@@ -1,15 +1,18 @@
 'use client';
 
+import { IReactProps } from '@/interfaces/common';
+import Link from 'next/link';
 import React from 'react';
-import { Link } from 'react-router-dom';
 
-/**
- *
- * @param {{ path: Array<{name, path}>}} param0
- * @returns
- */
-const Breadcrumb = ({ paths = [] }) => {
-  const newPath = [
+export type BreadcrumbPath = {
+  name: string;
+  path: string;
+};
+
+const Breadcrumb: IReactProps<{
+  paths: Array<BreadcrumbPath>;
+}> = ({ paths = [] }) => {
+  const newPath: Array<BreadcrumbPath> = [
     {
       name: 'home',
       path: '/',
@@ -22,11 +25,11 @@ const Breadcrumb = ({ paths = [] }) => {
         {newPath.map((item, i) => (
           <li key={i}>
             {i === 0 ? (
-              <Link to={item.path}>
+              <Link href={item.path}>
                 <i className="fas fa-house"></i>
               </Link>
             ) : (
-              <Link to={item.path}>{item.name}</Link>
+              <Link href={item.path}>{item.name}</Link>
             )}
             {i !== newPath.length - 1 && (
               <i className="fas fa-chevron-right mx-3 inline-block text-sm text-slate-500"></i>

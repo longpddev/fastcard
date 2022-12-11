@@ -126,43 +126,39 @@ const defaultHeaders = new Headers({
 const formatBody = (body?: IRequestBody) => {
   const isObject = typeof body === 'object';
   const isEmpty = !Boolean(body);
-  const isFormData = body instanceof FormData;
-  if (isFormData) return body;
+  // const isFormData = body instanceof FormData;
+  // if (isFormData) return body;
   if (isEmpty) return undefined;
   if (isObject) return JSON.stringify(body);
   return body;
 };
 
 export const baseUrl = `${process.env.NEXT_PUBLIC_URL_BACKEND}/api/v1`;
-// const createMethod = async (point, method, body = null, headers) => {
-//   let result = await fetch(`${baseUrl}${point}`, {
-//     method,
-//     body: formatBody(body),
-//     headers: headers
-//       ? headers
-//       : {
-//           "Content-Type": "application/json",
-//         },
-//   });
-//   let isOk = result.ok;
-//   result = await result.json();
+const createMethodFetchRequest = async <T extends unknown>(
+  point: string,
+  method: IRequestMethod,
+  body: IRequestBody = undefined,
+  headers: Headers | undefined = defaultHeaders,
+  events: IRequestEvents,
+): Promise<T> => {
+  const result = await fetch(`${baseUrl}${point}`, {
+    method,
+    body: formatBody(body),
+    headers: headers
+      ? headers
+      : {
+          'Content-Type': 'application/json',
+        },
+  });
+  let isOk = result.ok;
+  const resultJson = (await result.json()) as T;
+  if (!isOk) {
+    return Promise.reject(resultJson);
+  }
 
-//   if (!isOk) {
-//     return Promise.reject(result);
-//   }
+  return resultJson;
+};
 
-//   return result;
-// };
-
-/**
- *
- * @param {string} point
- * @param {GET | POST | PUT | DELETE} method
- * @param {string | FormData | undefined | null } body
- * @param { Headers } headers
- * @param { (loaded: number, total: number)  => void} onProgress
- * @return { Promise<any> }
- */
 const createMethodXMLHttpRequest = <T extends unknown>(
   point: string,
   method: IRequestMethod,
@@ -234,13 +230,27 @@ const createMethodXMLHttpRequest = <T extends unknown>(
   // return result;
 };
 
+const createRequest = <T extends unknown>(
+  point: string,
+  method: IRequestMethod,
+  body: IRequestBody = undefined,
+  headers: Headers | undefined = defaultHeaders,
+  events: IRequestEvents,
+) => {
+  if (typeof window !== 'undefined') {
+    return createMethodXMLHttpRequest<T>(point, method, body, headers, events);
+  } else {
+    return createMethodFetchRequest<T>(point, method, body, headers, events);
+  }
+};
+
 const createMethodAuth = <T extends unknown>(
   point: string,
   method: IRequestMethod,
   body?: IRequestBody,
   events: IRequestEvents = {},
 ) =>
-  createMethodXMLHttpRequest<T>(
+  createRequest<T>(
     point,
     method,
     body,
@@ -266,7 +276,8 @@ export const uploadfile = <T extends IEndPointUploadFile>(
     }
     formData.append(name, value);
   }
-  return createMethodXMLHttpRequest(
+
+  return createRequest(
     splitParamsEndpoint(point, paramsEndPoint),
     method,
     formData,
@@ -295,7 +306,7 @@ const client: {
   DELETE: IEndPointFetch;
 } = {
   GET: (point, options) =>
-    createMethodXMLHttpRequest(
+    createRequest(
       splitParamsEndpoint(
         point,
         options && 'paramsEndPoint' in options
@@ -311,7 +322,7 @@ const client: {
       {},
     ),
   POST: (point, options) =>
-    createMethodXMLHttpRequest(
+    createRequest(
       splitParamsEndpoint(
         point,
         options && 'paramsEndPoint' in options
@@ -327,7 +338,7 @@ const client: {
       {},
     ),
   PUT: (point, options) =>
-    createMethodXMLHttpRequest(
+    createRequest(
       splitParamsEndpoint(
         point,
         options && 'paramsEndPoint' in options
@@ -343,7 +354,7 @@ const client: {
       {},
     ),
   DELETE: (point, options) =>
-    createMethodXMLHttpRequest(
+    createRequest(
       splitParamsEndpoint(
         point,
         options && 'paramsEndPoint' in options

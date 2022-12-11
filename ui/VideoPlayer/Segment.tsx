@@ -1,14 +1,26 @@
 'use client';
 
+import scrollIntoView from 'smooth-scroll-into-view-if-needed';
 import React from 'react';
 import clsx from 'clsx';
 import { useEffect } from 'react';
 import { useRef } from 'react';
-const Segment = ({ segment }) => {
-  const ref = useRef();
+import { IReactProps } from '@/interfaces/common';
+import { ISegment } from './function';
+const Segment: IReactProps<{
+  segment: ISegment;
+}> = ({ segment }) => {
+  const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    if (!segment.isActive() || !ref.current) return;
-    ref.current.scrollIntoViewIfNeeded && ref.current.scrollIntoViewIfNeeded();
+    const element = ref.current;
+    if (!segment.isActive()) return;
+    if (!element) return;
+
+    scrollIntoView(element, {
+      scrollMode: 'if-needed',
+      block: 'nearest',
+      inline: 'nearest',
+    });
   }, [segment.isActive()]);
   return (
     <div

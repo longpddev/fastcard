@@ -1,5 +1,6 @@
 'use client';
 
+import { IReactProps } from '@/interfaces/common';
 import clsx from 'clsx';
 import React, { useLayoutEffect } from 'react';
 import { useId } from 'react';
@@ -8,17 +9,18 @@ import { useRef } from 'react';
 import { useState } from 'react';
 import IconCircle from '../IconCircle';
 
-const MoreFeature = ({ children, className }) => {
+const MoreFeature: IReactProps = ({ children, className }) => {
   const [open, openSet] = useState(false);
-  const idRef = useRef();
+  const idRef = useRef<string>();
   if (!idRef.current)
     idRef.current = 'element' + Math.random().toString(32).slice(2, 7);
-  const ref = useRef();
+  const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const handleClick = (e) => {
-      if (!e.target.closest(`.${idRef.current}`)) {
+    const handleClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (!target?.closest(`.${idRef.current}`)) {
         openSet(false);
       }
     };
@@ -41,8 +43,8 @@ const MoreFeature = ({ children, className }) => {
   );
 };
 
-const MoreFeatureContent = ({ children }) => {
-  const ref = useRef();
+const MoreFeatureContent: IReactProps = ({ children }) => {
+  const ref = useRef<HTMLDivElement>(null);
   const [leftOrRight, leftOrRightSet] = useState('left');
   useLayoutEffect(() => {
     const el = ref.current;

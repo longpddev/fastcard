@@ -6,12 +6,12 @@ import { AnimatePresence } from 'framer-motion';
 import React from 'react';
 import { useSubscribeToast } from './core';
 import ToastElement from './ToastElement';
-function reverse(arr) {
-  const result = [];
+function reverse<T extends Array<unknown>>(arr: T): T {
+  const result = [] as unknown[];
   for (let i = arr.length - 1; i >= 0; i--) {
     result.push(arr[i]);
   }
-  return result;
+  return result as T;
 }
 const ToastContainer = () => {
   const { toast, removeToast } = useSubscribeToast();

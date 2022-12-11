@@ -1,9 +1,12 @@
 'use client';
 
 import useFindImageByWords from '@/hooks/useFindImageByWords';
+import { IReactProps } from '@/interfaces/common';
 import FindImageByWordsItem from './FindImageByWordsItem';
 
-const FindImageByWords = ({ words }) => {
+const FindImageByWords: IReactProps<{
+  words: string;
+}> = ({ words }) => {
   const { data, isError } = useFindImageByWords(words);
   const items = data?.data || [];
   return (

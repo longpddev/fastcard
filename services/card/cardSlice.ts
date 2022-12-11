@@ -1,5 +1,3 @@
-'use client';
-
 import {
   Card,
   ICardStep,
@@ -164,7 +162,7 @@ export const createGroupCardThunk = createAsyncThunk(
       },
     );
 
-    await dispatch(getGroupCardThunk());
+    // await dispatch(getGroupCardThunk());
     await dispatch(getCardLearnTodayThunk());
 
     return result;
@@ -213,7 +211,7 @@ export const deleteGroupCardThunk = createAsyncThunk(
         id,
       },
     });
-    await dispatch(getGroupCardThunk());
+    // await dispatch(getGroupCardThunk());
     return { id };
   },
 );
@@ -278,13 +276,18 @@ export const getCardLearnTodayThunk = createAsyncThunk(
   },
 );
 
-export const getGroupCardThunk = createAsyncThunk(
-  'card/getGroupCard',
-  async () => {
-    return (await clientAuth.GET<IEndPointGroupCardGet>('/group-card', null))
-      .data;
-  },
-);
+export const getGroupCard = async () => {
+  return (await clientAuth.GET<IEndPointGroupCardGet>('/group-card', null))
+    .data;
+};
+
+// export const getGroupCardThunk = createAsyncThunk(
+//   'card/getGroupCard',
+//   async () => {
+//     return (await clientAuth.GET<IEndPointGroupCardGet>('/group-card', null))
+//       .data;
+//   },
+// );
 
 export const updateCardLearnedThunk = createAsyncThunk(
   'card/updateCardLearned',
@@ -353,17 +356,35 @@ export const cardSlice = createSlice({
         state.process[payload.groupId],
       );
     },
+    setGroupCard: (
+      state,
+      {
+        payload,
+      }: {
+        payload: {
+          count: number;
+          rows: ICardGroupResponse[];
+        };
+      },
+    ) => {
+      state.groupCard.count = payload.count;
+      state.groupCard.ids = payload.rows.map((item) => item.id);
+      state.groupCard.entities = payload.rows.reduce(
+        (acc, item) => (acc[item.id] = item) && acc,
+        {} as Record<number, ICardGroupResponse>,
+      );
+    },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getGroupCardThunk.fulfilled, (state, { payload }) => {
-        state.groupCard.count = payload.count;
-        state.groupCard.ids = payload.rows.map((item) => item.id);
-        state.groupCard.entities = payload.rows.reduce(
-          (acc, item) => (acc[item.id] = item) && acc,
-          {} as Record<number, ICardGroupResponse>,
-        );
-      })
+      // .addCase(getGroupCardThunk.fulfilled, (state, { payload }) => {
+      //   state.groupCard.count = payload.count;
+      //   state.groupCard.ids = payload.rows.map((item) => item.id);
+      //   state.groupCard.entities = payload.rows.reduce(
+      //     (acc, item) => (acc[item.id] = item) && acc,
+      //     {} as Record<number, ICardGroupResponse>,
+      //   );
+      // })
       .addCase(
         getCardLearnTodayByGroupIdThunk.fulfilled,
         (state, { payload }) => {
@@ -404,4 +425,4 @@ export const selectorGroupNameExist = createSelector(
     ),
 );
 export default cardSlice.reducer;
-export const { initProcess, nextProcess } = cardSlice.actions;
+export const { initProcess, nextProcess, setGroupCard } = cardSlice.actions;

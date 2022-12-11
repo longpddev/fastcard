@@ -1,11 +1,17 @@
 'use client';
 
+import { IReactProps } from '@/interfaces/common';
 import React from 'react';
 import { useRef } from 'react';
 import { useEffect } from 'react';
 
-const ProgressUpload = ({ processing, speed, loaded, total, ...props }) => {
-  const ref = useRef();
+const ProgressUpload: IReactProps<{
+  processing: number;
+  speed: number;
+  loaded: number;
+  total: number;
+}> = ({ processing, speed, loaded, total, ...props }) => {
+  const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {}, []);
   return (
     <div {...props}>

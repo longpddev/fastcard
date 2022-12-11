@@ -2,8 +2,12 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { IReactProps } from '@/interfaces/common';
+import { MenuLink } from '.';
 
-const Submenu = ({ className = '', list = [], ...props }) => {
+const Submenu: IReactProps<{
+  list: Array<MenuLink>;
+}> = ({ className = '', list = [], ...props }) => {
   return (
     <div
       className={`${className} submenu block-up w-max overflow-hidden rounded-md bg-slate-800`}

@@ -4,6 +4,7 @@ import { curry, isNil } from 'ramda';
 import { KEY_NAME, SPECIAL_KEY } from '@/constants/index';
 import { PayloadAction } from '@reduxjs/toolkit';
 import { IBlobImage } from '@/interfaces/common';
+import { getCookie, setCookie, removeCookies } from 'cookies-next';
 export const titlePage = (title: string) => {
   if (document.title !== title) document.title = title;
 };
@@ -16,7 +17,9 @@ export const animate = (callback: () => boolean) => {
   }
 
   loop();
-  return () => (isLoop = false);
+  return () => {
+    isLoop = false;
+  };
 };
 
 export const isValidUrl = (url: string) => {
@@ -57,9 +60,9 @@ export const run = <T extends (...args: any) => any>(
 
 export const encodePassword = (password: string) => MD5(password).toString();
 export const token = {
-  get: () => localStorage.getItem(TOKEN_KEY),
-  set: (token: string) => localStorage.setItem(TOKEN_KEY, token),
-  reset: () => token.set(''),
+  get: () => getCookie(TOKEN_KEY),
+  set: (token: string) => setCookie(TOKEN_KEY, token),
+  reset: () => removeCookies(TOKEN_KEY),
 };
 
 interface IWatchThunk {
@@ -395,7 +398,10 @@ export const getSet =
  * @param { string } shortCutName
  * @returns { boolean }
  */
-export function matchShortCut(event: KeyboardEvent, shortCutName: string) {
+export function matchShortCut(
+  event: KeyboardEvent | React.KeyboardEvent<HTMLInputElement>,
+  shortCutName: string,
+) {
   const { keyName, specialKey } = extractNameShortCut(shortCutName);
   if (specialKey) {
     switch (specialKey) {

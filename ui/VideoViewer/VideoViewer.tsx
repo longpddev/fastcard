@@ -1,8 +1,9 @@
 'use client';
 
+import { IReactProps } from '@/interfaces/common';
 import React from 'react';
 
-const VideoViewer = (props) => {
+const VideoViewer: IReactProps = (props) => {
   return <video {...props}></video>;
 };
 
