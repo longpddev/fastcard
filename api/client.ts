@@ -22,6 +22,7 @@ interface IEndPoint {
   params: Record<string, string | number> | undefined;
   paramsEndPoint: Record<string, string | number> | undefined;
   response: any;
+  options: any;
 }
 
 interface IEndPointUploadFile extends IEndPoint {
@@ -40,6 +41,25 @@ export interface IEndPointCreator<
   params: Params;
   response: Response;
   paramsEndPoint: ParamsEndPoint;
+  options: MergeOptions<
+    Body,
+    {
+      body: Body;
+    },
+    MergeOptions<
+      Params,
+      {
+        params: Params;
+      },
+      ParamsEndPoint,
+      {
+        paramsEndPoint: ParamsEndPoint;
+      },
+      undefined
+    >,
+    undefined,
+    null
+  >;
 }
 
 export interface IEndPointUploadCreator<
@@ -68,7 +88,7 @@ type MergeOptions<
   TV extends unknown,
   H extends unknown,
   HV extends unknown,
-  DF = null,
+  DF = undefined,
 > = T extends undefined
   ? H extends undefined
     ? DF
@@ -77,31 +97,9 @@ type MergeOptions<
   ? Infer<TV, T>
   : Infer<TV, T> & Infer<HV, H>;
 
-type IEndPointFetch = <T extends IEndPoint>(
-  endPoint: Pickey<T, 'endPoint'>,
-  // options: {
-  //   body: Pickey<T, 'body'>;
-  //   params: Pickey<T, 'params'>;
-  // },
-  options: MergeOptions<
-    Pickey<T, 'body'>,
-    {
-      body: Pickey<T, 'body'>;
-    },
-    MergeOptions<
-      Pickey<T, 'params'>,
-      {
-        params: Pickey<T, 'params'>;
-      },
-      Pickey<T, 'paramsEndPoint'>,
-      {
-        paramsEndPoint: Pickey<T, 'paramsEndPoint'>;
-      },
-      undefined
-    >,
-    undefined
-  >,
-) => Promise<Pickey<T, 'response'>>;
+type MergeOb<T extends unknown> = {
+  [K in keyof T]: T[K];
+};
 
 type IRequestEvents = {
   onProgress?: IEventProgress;
@@ -243,6 +241,134 @@ const createRequest = <T extends unknown>(
     return createMethodFetchRequest<T>(point, method, body, headers, events);
   }
 };
+// type IEndPointFetch = <T extends IEndPoint>(
+//   endPoint: Pickey<T, 'endPoint'>,
+// options: MergeOptions<
+//   Pickey<T, 'body'>,
+//   {
+//     body: Pickey<T, 'body'>;
+//   },
+//   number,
+//   MergeOptions<
+//     Pickey<T, 'params'>,
+//     {
+//       params: Pickey<T, 'params'>;
+//     },
+//     Pickey<T, 'paramsEndPoint'>,
+//     {
+//       paramsEndPoint: Pickey<T, 'paramsEndPoint'>;
+//     },
+//     undefined
+//   >
+// >,
+// ) => Promise<Pickey<T, 'response'>>;
+const createRequestFactory =
+  (method: IRequestMethod) =>
+  <T extends IEndPoint>(
+    endPoint: T['endPoint'],
+    options: T['options'],
+  ): Promise<T['response']> => {
+    const cloneObject = options as MergeOb<typeof options>;
+    if (options) {
+      type test = typeof options;
+      type ob = MergeOb<test>;
+      type test12 = ob['paramsEndPoint'];
+    }
+
+    switch (method) {
+      case 'PUT':
+      case 'POST':
+        return createRequest(
+          splitParamsEndpoint(
+            endPoint,
+            cloneObject && 'paramsEndPoint' in cloneObject
+              ? cloneObject.paramsEndPoint
+              : undefined,
+          ) +
+            paramToString(
+              cloneObject && 'params' in cloneObject
+                ? cloneObject.params
+                : undefined,
+            ),
+          method,
+          cloneObject && 'body' in cloneObject ? cloneObject.body : undefined,
+          undefined,
+          {},
+        );
+      case 'GET':
+      case 'DELETE':
+        return createRequest(
+          splitParamsEndpoint(
+            endPoint,
+            cloneObject && 'paramsEndPoint' in cloneObject
+              ? cloneObject.paramsEndPoint
+              : undefined,
+          ) +
+            paramToString(
+              cloneObject && 'params' in cloneObject
+                ? options.params
+                : undefined,
+            ),
+          method,
+          undefined,
+          undefined,
+          {},
+        );
+    }
+  };
+
+const createRequestAuthFactory =
+  (method: IRequestMethod) =>
+  <T extends IEndPoint>(
+    endPoint: T['endPoint'],
+    options: T['options'],
+  ): Promise<T['response']> => {
+    const cloneObject = options as MergeOb<typeof options>;
+    if (options) {
+      type test = typeof options;
+      type ob = MergeOb<test>;
+      type test12 = ob['paramsEndPoint'];
+    }
+
+    switch (method) {
+      case 'PUT':
+      case 'POST':
+        return createMethodAuth(
+          splitParamsEndpoint(
+            endPoint,
+            cloneObject && 'paramsEndPoint' in cloneObject
+              ? cloneObject.paramsEndPoint
+              : undefined,
+          ) +
+            paramToString(
+              cloneObject && 'params' in cloneObject
+                ? cloneObject.params
+                : undefined,
+            ),
+          method,
+          cloneObject && 'body' in cloneObject ? cloneObject.body : undefined,
+          undefined,
+        );
+      case 'GET':
+      case 'DELETE':
+        return createMethodAuth(
+          splitParamsEndpoint(
+            endPoint,
+            cloneObject && 'paramsEndPoint' in cloneObject
+              ? cloneObject.paramsEndPoint
+              : undefined,
+          ) +
+            paramToString(
+              cloneObject && 'params' in cloneObject
+                ? options.params
+                : undefined,
+            ),
+          method,
+          undefined,
+          undefined,
+        );
+    }
+  };
 
 const createMethodAuth = <T extends unknown>(
   point: string,
@@ -299,138 +425,18 @@ const paramToString = (params: Record<string, string | number> | undefined) => {
   return '?' + urlSearch.toString();
 };
 
-const client: {
-  GET: IEndPointFetch;
-  POST: IEndPointFetch;
-  PUT: IEndPointFetch;
-  DELETE: IEndPointFetch;
-} = {
-  GET: (point, options) =>
-    createRequest(
-      splitParamsEndpoint(
-        point,
-        options && 'paramsEndPoint' in options
-          ? options.paramsEndPoint
-          : undefined,
-      ) +
-        paramToString(
-          options && 'params' in options ? options.params : undefined,
-        ),
-      'GET',
-      undefined,
-      undefined,
-      {},
-    ),
-  POST: (point, options) =>
-    createRequest(
-      splitParamsEndpoint(
-        point,
-        options && 'paramsEndPoint' in options
-          ? options.paramsEndPoint
-          : undefined,
-      ) +
-        paramToString(
-          options && 'params' in options ? options.params : undefined,
-        ),
-      'POST',
-      options && 'body' in options ? options.body : undefined,
-      undefined,
-      {},
-    ),
-  PUT: (point, options) =>
-    createRequest(
-      splitParamsEndpoint(
-        point,
-        options && 'paramsEndPoint' in options
-          ? options.paramsEndPoint
-          : undefined,
-      ) +
-        paramToString(
-          options && 'params' in options ? options.params : undefined,
-        ),
-      'PUT',
-      options && 'body' in options ? options.body : undefined,
-      undefined,
-      {},
-    ),
-  DELETE: (point, options) =>
-    createRequest(
-      splitParamsEndpoint(
-        point,
-        options && 'paramsEndPoint' in options
-          ? options.paramsEndPoint
-          : undefined,
-      ) +
-        paramToString(
-          options && 'params' in options ? options.params : undefined,
-        ),
-      'DELETE',
-      undefined,
-      undefined,
-      {},
-    ),
+const client = {
+  GET: createRequestFactory('GET'),
+  POST: createRequestFactory('POST'),
+  PUT: createRequestFactory('PUT'),
+  DELETE: createRequestFactory('DELETE'),
 };
 
-export const clientAuth: {
-  GET: IEndPointFetch;
-  POST: IEndPointFetch;
-  PUT: IEndPointFetch;
-  DELETE: IEndPointFetch;
-} = {
-  GET: (point, options) =>
-    createMethodAuth(
-      splitParamsEndpoint(
-        point,
-        options && 'paramsEndPoint' in options
-          ? options.paramsEndPoint
-          : undefined,
-      ) +
-        paramToString(
-          options && 'params' in options ? options.params : undefined,
-        ),
-      'GET',
-    ),
-  POST: (point, options) =>
-    createMethodAuth(
-      splitParamsEndpoint(
-        point,
-        options && 'paramsEndPoint' in options
-          ? options.paramsEndPoint
-          : undefined,
-      ) +
-        paramToString(
-          options && 'params' in options ? options.params : undefined,
-        ),
-      'POST',
-      options && 'body' in options ? options.body : undefined,
-    ),
-  PUT: (point, options) =>
-    createMethodAuth(
-      splitParamsEndpoint(
-        point,
-        options && 'paramsEndPoint' in options
-          ? options.paramsEndPoint
-          : undefined,
-      ) +
-        paramToString(
-          options && 'params' in options ? options.params : undefined,
-        ),
-      'PUT',
-      options && 'body' in options ? options.body : undefined,
-    ),
-  DELETE: (point, options) =>
-    createMethodAuth(
-      splitParamsEndpoint(
-        point,
-        options && 'paramsEndPoint' in options
-          ? options.paramsEndPoint
-          : undefined,
-      ) +
-        paramToString(
-          options && 'params' in options ? options.params : undefined,
-        ),
-      'DELETE',
-    ),
+export const clientAuth = {
+  GET: createRequestAuthFactory('GET'),
+  POST: createRequestAuthFactory('POST'),
+  PUT: createRequestAuthFactory('PUT'),
+  DELETE: createRequestAuthFactory('DELETE'),
 };
 
 export default client;

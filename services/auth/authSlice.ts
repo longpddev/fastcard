@@ -57,7 +57,7 @@ export const getUserInfo = createAsyncThunk('auth/get_user_info', async () => {
   if (!tokenData) throw new Error("token doesn't exits");
 
   return {
-    token: tokenData,
+    token: tokenData as string,
     user: result.data,
   };
 });
