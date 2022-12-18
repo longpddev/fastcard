@@ -10,11 +10,11 @@ export interface IPageTabProps {
   children: Array<JSX.Element> | JSX.Element;
   defaultActive: string;
   typeStep: boolean;
-  onNext: (cur: string, next: string) => boolean;
-  beforeNext: (tabKey: string) => boolean | undefined;
-  onPrev: (prev: string) => boolean;
+  onNext?: (cur: string, next: string) => boolean;
+  beforeNext?: (tabKey: string) => boolean | undefined;
+  onPrev?: (prev: string) => boolean;
   onSubmit: () => void;
-  controlRef: { current: any };
+  controlRef?: { current: any };
 }
 
 /**

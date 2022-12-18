@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useState } from 'react';
+import { useState, Children } from 'react';
 import CardExplain from './CardExplain';
 import CardQuestion from './CardQuestion';
 
@@ -37,7 +37,9 @@ const CardLearn: IReactProps<{
   groupId: number;
 }> = ({ groupId }) => {
   const [isFront, isFrontSet] = useState(true);
-  const process = useSelector((s: RootState) => s.card.process[groupId]);
+  const process = useSelector<RootState>(
+    (s) => s.card.process[groupId],
+  ) as number;
   const settings = useUserSettings();
   const dispatch = useDispatch<AppDispatch>();
   const cardLearnEntities = useSelector(
@@ -90,8 +92,9 @@ const CardLearn: IReactProps<{
                 image={getMedia(card.frontCard.image?.path)}
                 width={card.frontCard.image?.width}
                 height={card.frontCard.image?.height}
-                children={card.frontCard.content}
-              />
+              >
+                {card.frontCard.content}
+              </CardCreator>
             </motion.div>
           )}
           {!isFront && (
@@ -105,8 +108,9 @@ const CardLearn: IReactProps<{
                 image={getMedia(card.backCard.image?.path)}
                 width={card.backCard.image?.width}
                 height={card.backCard.image?.height}
-                children={card.backCard.content}
-              />
+              >
+                {card.backCard.content}
+              </CardCreator>
             </motion.div>
           )}
         </AnimatePresence>
@@ -125,6 +129,7 @@ const CardCreator: IReactProps<{
   image: string;
   width: number;
   height: number;
+  children: string;
 }> = ({ type, ...props }) => {
   if (!(type in CARD_TYPE)) throw new Error('type do not exist');
 

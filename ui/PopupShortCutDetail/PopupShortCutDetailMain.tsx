@@ -6,7 +6,7 @@ import {
   SHORTCUT_TOGGLE_GUILD_SHORTCUT,
 } from '@/constants/index';
 import useShortcut from '@/hooks/useShortcut';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import OutsideTheApp from '@/ui/OutsideTheApp';
 import { extractNameShortCut } from '@/functions/common';
 import TooltipShortCut from './TooltipShortCut';
@@ -16,6 +16,7 @@ type DOMRectReadable = {
 };
 
 function getAllShortCutButton() {
+  if (typeof document === 'undefined') return [];
   const rootElement = document.fullscreenElement || document.body;
   const els = Array.from(
     rootElement.querySelectorAll(`[${ATTRIBUTE_SHORTCUT_BUTTON}]`),
@@ -47,7 +48,13 @@ const PopupShortCutDetailMain = () => {
   const [active, activeSet] = useState(-1);
   useShortcut(SHORTCUT_TOGGLE_GUILD_SHORTCUT, () => openSet((prev) => !prev));
   useShortcut(SHORTCUT_ESCAPE, () => openSet(false));
-  const listItem = useMemo(() => getAllShortCutButton(), [open]);
+  const [listItem, listItemSet] = useState<
+    ReturnType<typeof getAllShortCutButton>
+  >([]);
+
+  useEffect(() => {
+    listItemSet(getAllShortCutButton());
+  }, [open]);
   if (!open) return null;
 
   return (

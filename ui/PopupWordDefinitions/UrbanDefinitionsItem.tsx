@@ -84,6 +84,7 @@ const UrbanDefinitionsItem: IReactProps<{
         ))}
 
         <a
+          rel="noreferrer"
           href={urbanData.permalink}
           target="_blank"
           title="link to urban"

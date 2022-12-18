@@ -5,6 +5,7 @@ import { KEY_NAME, SPECIAL_KEY } from '@/constants/index';
 import { PayloadAction } from '@reduxjs/toolkit';
 import { IBlobImage } from '@/interfaces/common';
 import { getCookie, setCookie, removeCookies } from 'cookies-next';
+import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context';
 export const titlePage = (title: string) => {
   if (document.title !== title) document.title = title;
 };
@@ -59,10 +60,21 @@ export const run = <T extends (...args: any) => any>(
 ): ReturnType<T> => callback();
 
 export const encodePassword = (password: string) => MD5(password).toString();
+
+const TOKEN_VALUE = {
+  value: '',
+};
 export const token = {
-  get: () => getCookie(TOKEN_KEY),
-  set: (token: string) => setCookie(TOKEN_KEY, token),
-  reset: () => removeCookies(TOKEN_KEY),
+  TOKEN_VALUE: '',
+  get: () => TOKEN_VALUE.value,
+  set: (token: string) => {
+    setCookie(TOKEN_KEY, token);
+    TOKEN_VALUE.value = token;
+  },
+  reset: () => {
+    removeCookies(TOKEN_KEY);
+    TOKEN_VALUE.value = '';
+  },
 };
 
 interface IWatchThunk {
@@ -454,3 +466,9 @@ export function splitParamsEndpoint(
 
   return endPoint;
 }
+
+export const globalNavigate: {
+  current: undefined | AppRouterInstance;
+} = {
+  current: undefined,
+};

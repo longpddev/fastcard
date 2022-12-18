@@ -107,3 +107,8 @@ export const ALL_SHORTCUT = {
   SHORTCUT_VIDEO_PLAYER_CHANGE_MODE,
   SHORTCUT_VIDEO_PLAYER_TRANSCRIPT_FOCUS,
 };
+
+export const ROUTER = {
+  login: '/login',
+  home: '/',
+};

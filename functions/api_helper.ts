@@ -43,7 +43,7 @@ export const MethodFactory = () => {
         } catch (e) {
           console.log(e);
           res.status(400).json({
-            message: e.message,
+            message: (e as Error).message,
           });
           return;
         }

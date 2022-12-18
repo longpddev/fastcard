@@ -23,6 +23,7 @@ export interface ICardBaseProps {
   title: JSX.Element;
   width?: number;
   height?: number;
+  children: string;
 }
 const CardBase: IReactProps<ICardBaseProps> = ({
   image,

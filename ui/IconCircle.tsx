@@ -5,7 +5,7 @@ import clsx from 'clsx';
 import React from 'react';
 
 const IconCircle: IReactProps<{
-  wrapClass: string;
+  wrapClass?: string;
   size?: 'xl' | 'lg' | 'md' | 'sm';
 }> = ({ className = '', wrapClass = '', size = 'lg', ...props }) => {
   return (

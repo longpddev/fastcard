@@ -1,4 +1,4 @@
-import { IEndPointCreator } from './client';
+import { IEndPointCreator } from './type';
 
 type ResponseFormat<
   Data extends unknown,

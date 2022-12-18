@@ -18,7 +18,11 @@ const ButtonShortCut: IReactProps<{
     const el = /** @type { HTMLButtonElement }  */ ref.current;
 
     if (el) {
-      el.classList.add('animate-click-button', onClickClassName);
+      el.classList.add('animate-click-button');
+
+      if (onClickClassName) {
+        el.classList.add(onClickClassName);
+      }
     }
 
     onClick();
@@ -33,8 +37,14 @@ const ButtonShortCut: IReactProps<{
 
     if (!el) return;
     const handleAnimationEnd = () => {
-      el.classList.contains('animate-click-button') &&
-        el.classList.remove('animate-click-button', onClickClassName);
+      const classList = el.classList;
+      classList.contains('animate-click-button') &&
+        classList.remove('animate-click-button');
+
+      if (classList.contains('animate-click-button')) {
+        classList.remove('animate-click-button');
+        if (onClickClassName) classList.remove(onClickClassName);
+      }
     };
     el.addEventListener('animationend', handleAnimationEnd);
 

@@ -18,6 +18,7 @@ export const store = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(queryApi.middleware),
+  devTools: true,
 });
 
 export type RootState = ReturnType<typeof store.getState>;

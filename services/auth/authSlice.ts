@@ -1,6 +1,4 @@
-'use client';
-
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { isEmpty } from 'ramda';
 import client, { clientAuth } from '../../api/client';
 import { encodePassword, token } from '../../functions/common';
@@ -13,42 +11,62 @@ import {
   IEndPointAuthUserUpdate,
   IEndPointUserSettings,
   IGender,
-  IUserInfo,
   IUserSettings,
 } from '@/api/fast_card_client_api';
-import { Valueof } from '@/interfaces/common';
+import { PromiseResult, Valueof } from '@/interfaces/common';
+
+export const loginApi = async ({
+  email,
+  password,
+}: {
+  email: string;
+  password: string;
+}) => {
+  const result = await client.POST<IEndPointAuthLogin>('/auth/login', {
+    body: {
+      username: email,
+      password: encodePassword(password),
+    },
+  });
+
+  token.set(result.data.token);
+  return result.data;
+};
 
 export const loginThunk = createAsyncThunk(
   'auth/loginThunk',
   async ({ email, password }: { email: string; password: string }) => {
-    const result = await client.POST<IEndPointAuthLogin>('/auth/login', {
-      body: {
-        username: email,
-        password: encodePassword(password),
-      },
-    });
-    token.set(result.data.token);
-    return result.data;
+    return loginApi({ email, password });
   },
 );
+
+export const signupApi = async ({
+  email,
+  password,
+}: {
+  email: string;
+  password: string;
+}) => {
+  const result = await client.POST<IEndPointAuthSignup>('/auth/signup', {
+    body: {
+      name: email,
+      email,
+      password: encodePassword(password),
+    },
+  });
+
+  token.set(result.data.token);
+  return result.data;
+};
 
 export const signupThunk = createAsyncThunk(
   'auth/signupThunk',
   async ({ email, password }: { email: string; password: string }) => {
-    const result = await client.POST<IEndPointAuthSignup>('/auth/signup', {
-      body: {
-        name: email,
-        email,
-        password: encodePassword(password),
-      },
-    });
-
-    token.set(result.data.token);
-    return result.data;
+    return signupApi({ email, password });
   },
 );
 
-export const getUserInfo = createAsyncThunk('auth/get_user_info', async () => {
+export const getUserInfoApi = async () => {
   const result = await clientAuth.GET<IEndPointAuthUserInfo>(
     '/auth/user-info',
     null,
@@ -60,38 +78,70 @@ export const getUserInfo = createAsyncThunk('auth/get_user_info', async () => {
     token: tokenData as string,
     user: result.data,
   };
+};
+
+export type getUserInfoApiResponse = PromiseResult<typeof getUserInfoApi>;
+
+export const getUserInfo = createAsyncThunk('auth/get_user_info', async () => {
+  return await getUserInfoApi();
 });
 
+export const syncAccountSettingsApi = async (settings: IUserSettings) => {
+  if (isEmpty(settings)) throw new Error('settings is empty');
+
+  const result = await clientAuth.PUT<IEndPointUserSettings>(
+    '/users/settings',
+    {
+      body: {
+        settings,
+      },
+    },
+  );
+
+  return result.data;
+};
 export const syncAccountSettingsThunk = createAsyncThunk(
   'auth/syncAccountSettings',
   async (_, { getState }) => {
     const settings = (getState() as RootState).auth.settings;
-
-    if (isEmpty(settings)) throw new Error('settings is empty');
-
-    const result = await clientAuth.PUT<IEndPointUserSettings>(
-      '/users/settings',
-      {
-        body: {
-          settings,
-        },
-      },
-    );
-
-    return result.data;
+    return await syncAccountSettingsApi(settings);
   },
 );
+
+export const updateAccountApi = async ({ username }: { username: string }) => {
+  return await clientAuth.PUT<IEndPointAuthUserUpdate>('/users', {
+    body: {
+      name: username,
+    },
+  });
+};
 
 export const updateAccountThunk = createAsyncThunk(
   'auth/updateAccount',
   async ({ username }: { username: string }) => {
-    return await clientAuth.PUT<IEndPointAuthUserUpdate>('/users', {
-      body: {
-        name: username,
-      },
-    });
+    return await updateAccountApi({ username });
   },
 );
+
+export const changePasswordApi = async ({
+  oldPassword,
+  newPassword,
+}: {
+  oldPassword: string;
+  newPassword: string;
+}) => {
+  const result = await clientAuth.PUT<IEndPointAuthUserChangePassword>(
+    '/auth/change-password',
+    {
+      body: {
+        oldPassword: encodePassword(oldPassword),
+        newPassword: encodePassword(newPassword),
+      },
+    },
+  );
+
+  return result;
+};
 
 export const changePasswordThunk = createAsyncThunk(
   'auth/changePassword',
@@ -102,17 +152,7 @@ export const changePasswordThunk = createAsyncThunk(
     oldPassword: string;
     newPassword: string;
   }) => {
-    const result = await clientAuth.PUT<IEndPointAuthUserChangePassword>(
-      '/auth/change-password',
-      {
-        body: {
-          oldPassword: encodePassword(oldPassword),
-          newPassword: encodePassword(newPassword),
-        },
-      },
-    );
-
-    return result;
+    return await changePasswordApi({ oldPassword, newPassword });
   },
 );
 
@@ -140,6 +180,7 @@ const initialState = () => {
   };
   return result;
 };
+
 const authSlice = createSlice({
   name: 'auth',
   initialState: initialState(),
@@ -174,6 +215,33 @@ const authSlice = createSlice({
         ...state.settings,
         [key]: payload.value as IUserSettings[typeof key],
       };
+    },
+    loginAction: (
+      state,
+      { payload }: PayloadAction<IEndPointAuthLogin['response']['data']>,
+    ) => {
+      const userInfo = payload.user;
+      state.token = payload.token;
+      state.user = userInfo;
+      state.loading = false;
+    },
+    signUpAction: (
+      state,
+      { payload }: PayloadAction<IEndPointAuthSignup['response']['data']>,
+    ) => {
+      const userInfo = payload.user;
+      state.token = payload.token;
+      state.user = userInfo;
+      state.loading = false;
+    },
+    setUserInfoAction: (
+      state,
+      { payload }: PayloadAction<PromiseResult<typeof getUserInfoApi>>,
+    ) => {
+      const userInfo = payload.user;
+      state.token = payload.token;
+      state.user = userInfo;
+      state.loading = false;
     },
   },
   extraReducers: (builder) => {
@@ -219,4 +287,10 @@ const authSlice = createSlice({
 
 export default authSlice.reducer;
 
-export const { logout, changeSettings } = authSlice.actions;
+export const {
+  logout,
+  changeSettings,
+  loginAction,
+  signUpAction,
+  setUserInfoAction,
+} = authSlice.actions;

@@ -2,7 +2,6 @@
 
 import useUrbanDictionary from '@/hooks/useUrbanDictionary';
 import React, { useEffect, useMemo, useRef } from 'react';
-import { firstCapitalize, parseStringToArr } from '@/functions/common';
 import ReadMoreText from '@/ui/ReadMoreText';
 import UrbanDefinitionsItem from './UrbanDefinitionsItem';
 import { IReactProps } from '@/interfaces/common';

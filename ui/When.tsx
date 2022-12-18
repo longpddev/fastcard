@@ -22,7 +22,7 @@ const When = <Tn,>({
   if (!condition) return null;
   const childrenIdFn = typeof children === 'function';
 
-  const Component = component as IReactProps;
+  const Component = component as unknown as IReactProps;
   if (Component) {
     return (
       <Component {...props}>{childrenIdFn ? children() : children}</Component>

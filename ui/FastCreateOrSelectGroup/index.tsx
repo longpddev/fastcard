@@ -35,7 +35,7 @@ const FastCreateOrSelectGroup: IReactProps<{
         >
           {groupCardList.length === 0 && (
             <option value="" disabled>
-              group doesn't found
+              {"group doesn't found"}
             </option>
           )}
 

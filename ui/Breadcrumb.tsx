@@ -10,7 +10,7 @@ export type BreadcrumbPath = {
 };
 
 const Breadcrumb: IReactProps<{
-  paths: Array<BreadcrumbPath>;
+  paths?: Array<BreadcrumbPath>;
 }> = ({ paths = [] }) => {
   const newPath: Array<BreadcrumbPath> = [
     {

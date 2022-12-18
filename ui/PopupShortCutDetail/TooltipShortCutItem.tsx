@@ -5,7 +5,11 @@ import { useRef, useState } from 'react';
 import { clsx } from 'clsx';
 import { KEY_NAME, SPECIAL_KEY } from '@/constants/index';
 import { IReactProps } from '@/interfaces/common';
-const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+let isMac = false;
+
+if (typeof navigator !== 'undefined') {
+  isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+}
 const KEY_LABEL_MAPPING = {
   [SPECIAL_KEY.Command]: isMac ? 'command' : 'window',
   [SPECIAL_KEY.Ctrl]: isMac ? 'control' : 'Ctrl',

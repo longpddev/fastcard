@@ -40,6 +40,8 @@ export type PropsType<T extends (props: any) => any> = T extends (
   ? R
   : never;
 
-type test = IReactProps<{ long: string }>;
-
-type result = test extends IReactProps<{}> ? 'true' : 'false';
+export type PromiseResolve<T extends Promise<any>> = T extends Promise<infer U>
+  ? U
+  : never;
+export type PromiseResult<T extends (...args: any) => Promise<any>> =
+  PromiseResolve<ReturnType<T>>;

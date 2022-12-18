@@ -2,7 +2,7 @@
 
 import { IReactProps } from '@/interfaces/common';
 import clsx from 'clsx';
-import { useEffect, useMemo, useRef } from 'react';
+import { useMemo, useRef } from 'react';
 type ICheckList = Array<any>;
 const defaultChecklist: ICheckList = [];
 type IInputValidateProps = {
@@ -10,9 +10,11 @@ type IInputValidateProps = {
   plug: any;
   value: string;
   name: string;
-  checkList: ICheckList;
-  inputClass: string;
-  label: string;
+  type: 'email' | 'text' | 'number' | 'password';
+  required?: boolean;
+  checkList?: ICheckList;
+  inputClass?: string;
+  label?: string;
 };
 
 export const InputValidate: IReactProps<IInputValidateProps> = ({

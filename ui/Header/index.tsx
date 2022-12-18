@@ -1,6 +1,6 @@
 'use client';
 
-import React, { memo } from 'react';
+import React, { memo, use } from 'react';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import logo from '@/assets/logo-120.png';
@@ -20,12 +20,12 @@ export type MenuLink = {
     onClick: () => void;
   };
 };
-
+// const cachePromise = getGroupCard();
 const Header = () => {
   const { isLogin } = useLogin();
   const dispatch = useDispatch();
   const navigate = useRouter();
-
+  // const data = use(cachePromise);
   const menu: Array<MenuLink> = [
     {
       path: '/create-card',

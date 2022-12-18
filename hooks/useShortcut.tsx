@@ -39,17 +39,19 @@ const register = (
 let listKeydownShortCut: IShortcutList = {
   get: [],
 };
-
-document.addEventListener('keydown', (e) => {
-  initHandle(listKeydownShortCut, e);
-});
-
 let listKeyupShortCut: IShortcutList = {
   get: [],
 };
-document.addEventListener('keyup', (e) => {
-  initHandle(listKeyupShortCut, e);
-});
+
+if (typeof document !== 'undefined') {
+  document.addEventListener('keydown', (e) => {
+    initHandle(listKeydownShortCut, e);
+  });
+
+  document.addEventListener('keyup', (e) => {
+    initHandle(listKeyupShortCut, e);
+  });
+}
 
 export default function useShortcut(
   shortcutName: string,

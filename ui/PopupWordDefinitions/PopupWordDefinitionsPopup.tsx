@@ -24,7 +24,7 @@ type test = typeof PopupWordDefinitionsSearchBy extends IReactProps
   : 'false';
 const PopupWordDefinitionsPopup: IReactProps<{
   onClose: () => void;
-  words: string;
+  words?: string;
 }> = ({ onClose, words = '' }) => {
   const [stack, stackSet] = useState<Array<string>>([]);
   const [stackPoint, stackPointSet] = useState(0);

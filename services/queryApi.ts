@@ -1,9 +1,8 @@
 'use client';
 
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { baseUrl } from '../api/client';
-import { token } from '../functions/common';
 import { RootState } from 'store/app';
+import { baseUrl } from '@/api/fetch';
 
 export const queryApi = createApi({
   reducerPath: 'queryApi',
