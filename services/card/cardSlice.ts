@@ -37,7 +37,7 @@ export type ICardImageFile = {
 };
 
 export type ICardCreate = {
-  fileImage: ICardImageFile;
+  fileImage: ICardImageFile | undefined;
   detail: string;
 };
 
@@ -56,10 +56,19 @@ export const createCardApi = async ({
   const [questionImage, answerImage, explainImage] = await Promise.all(
     run(() => {
       const result = [
-        uploadImageAndGetData(question.fileImage),
-        uploadImageAndGetData(answer.fileImage),
+        question.fileImage
+          ? uploadImageAndGetData(question.fileImage)
+          : Promise.resolve(undefined),
+        answer.fileImage
+          ? uploadImageAndGetData(answer.fileImage)
+          : Promise.resolve(undefined),
       ];
-      explain && result.push(uploadImageAndGetData(explain.fileImage));
+      explain &&
+        result.push(
+          explain.fileImage
+            ? uploadImageAndGetData(explain.fileImage)
+            : Promise.resolve(undefined),
+        );
       return result;
     }),
   );
@@ -475,7 +484,7 @@ export const cardSlice = createSlice({
     },
     updateCardLearnedAction: (
       state,
-      { payload }: PayloadAction<Omit<IUpdateCardLearnedApiParams, 'idHard'>>,
+      { payload }: PayloadAction<Omit<IUpdateCardLearnedApiParams, 'isHard'>>,
     ) => {
       const card = state.learnToday.entities[payload.groupId].card;
 

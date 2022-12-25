@@ -7,9 +7,9 @@ import InputFile from './InputFile';
 import ShowCroppedImage from './ShowCroppedImage';
 import { IBlobImage, ICroppedImage, IReactProps } from '@/interfaces/common';
 const FileUpLoad: IReactProps<{
-  croppedImage: ICroppedImage;
+  croppedImage: ICroppedImage | undefined;
   imageUrl: string;
-  setImageUrl: (v: string | undefined) => void;
+  setImageUrl?: (v: string | undefined) => void;
   setCroppedImage: (v: ICroppedImage | null) => void;
 }> = ({ croppedImage, imageUrl, setImageUrl, setCroppedImage }) => {
   return (

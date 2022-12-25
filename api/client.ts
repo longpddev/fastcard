@@ -69,11 +69,6 @@ const createRequestAuthFactory =
     options: T['options'],
   ): Promise<T['response']> => {
     const cloneObject = options as MergeOb<typeof options>;
-    if (options) {
-      type test = typeof options;
-      type ob = MergeOb<test>;
-      type test12 = ob['paramsEndPoint'];
-    }
 
     switch (method) {
       case 'PUT':
@@ -176,7 +171,8 @@ export const clientAuth = {
 export default client;
 
 export const getMedia = (url: string) => {
-  if (!url) throw new Error('url is require');
+  // if (!url) throw new Error('url is require');
+  if (!url) return;
   if (isValidUrl(url)) {
     return url;
   } else {

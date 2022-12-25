@@ -6,8 +6,11 @@ import updateCookie from '@/api/updateCookie';
 import {
   getCardLearnTodayByGroupIdApi,
   getGroupCardApi,
+  setCardLearnTodayByGroupIdAction,
+  setGroupCard,
 } from '@/services/card/cardSlice';
-import { getUserInfoApi } from '@/services/auth/authSlice';
+import { getUserInfoApi, setUserInfoAction } from '@/services/auth/authSlice';
+import { store } from 'store/app';
 
 async function Layout({ children }: { children: React.ReactNode }) {
   updateCookie();
@@ -21,6 +24,7 @@ async function Layout({ children }: { children: React.ReactNode }) {
       }),
     ),
   );
+
   return (
     <InitDataInPage value={{ userInfo, groupCard, cardLearnTodays }}>
       <Header />

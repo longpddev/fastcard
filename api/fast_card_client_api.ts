@@ -467,3 +467,15 @@ export type IEndPointVideoDelete = IEndPointCreator<
   },
   ResponseFormat<number>
 >;
+
+export type IEndPointGetListCardResponse = ResponseFormat<{
+  count: number;
+  rows: Array<{
+    cardGroupId: number;
+    createAt: string;
+    updateAt: string;
+    userId: number;
+    id: number;
+    cardStep: Array<ICardStepResponse>;
+  }>;
+}>;

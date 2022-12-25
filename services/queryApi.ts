@@ -3,6 +3,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { RootState } from 'store/app';
 import { baseUrl } from '@/api/fetch';
+import { IEndPointGetListCardResponse } from '@/api/fast_card_client_api';
 
 export const queryApi = createApi({
   reducerPath: 'queryApi',
@@ -17,7 +18,10 @@ export const queryApi = createApi({
     },
   }),
   endpoints: (builder) => ({
-    getListCard: builder.query({
+    getListCard: builder.query<
+      IEndPointGetListCardResponse,
+      { groupId: number; limit?: number; pageIndex?: number }
+    >({
       query: ({ groupId, limit = 10, pageIndex = 1 }) =>
         `card${
           groupId

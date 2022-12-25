@@ -38,7 +38,7 @@ const CardDetailItem: IReactProps<{
       {...props}
     >
       <img
-        src={cardData.image.path}
+        src={cardData.image?.path}
         alt=""
         className="h-10 w-10 rounded-md object-cover"
       />

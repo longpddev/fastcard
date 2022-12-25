@@ -1,16 +1,18 @@
 'use client';
 
 import React from 'react';
-import { useState, Children } from 'react';
+import { useState } from 'react';
 import CardExplain from './CardExplain';
 import CardQuestion from './CardQuestion';
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useDispatch, useSelector } from 'react-redux';
-import { path } from 'ramda';
 import { getMedia } from '@/api/client';
-import { nextProcess, updateCardLearnedThunk } from '@/services/card/cardSlice';
-import { watchThunk } from '@/functions/common';
+import {
+  nextProcess,
+  updateCardLearnedAction,
+  updateCardLearnedApi,
+} from '@/services/card/cardSlice';
 import { pushFastToast } from '../Toast/core';
 import { CARD_LEAN_TYPE, CARD_TYPE } from '@/constants/index';
 import CardAnswer from './CardAnswer';
@@ -49,9 +51,9 @@ const CardLearn: IReactProps<{
 
   const handleAction = (type: string) => {
     const update = (isHard: boolean) => () =>
-      dispatch(updateCardLearnedThunk({ cardId: card.id, isHard, groupId }))
-        .then(watchThunk)
+      updateCardLearnedApi({ cardId: card.id, isHard, groupId })
         .then(() => {
+          dispatch(updateCardLearnedAction({ cardId: card.id, groupId }));
           isFrontSet(true);
         })
         .catch((e) => {
@@ -69,10 +71,10 @@ const CardLearn: IReactProps<{
     return caseOb[type as keyof typeof caseOb]();
   };
 
-  if (card.backCard.image) {
-    const image = new Image();
-    image.src = getMedia(card.backCard.image.path);
-  }
+  // if (card.backCard.image) {
+  //   const image = new Image();
+  //   image.src = getMedia(card.backCard.image.path);
+  // }
 
   const animateSetting = settings.cardAnimate
     ? animateOption[settings.cardAnimate]
@@ -126,7 +128,7 @@ const CardLearn: IReactProps<{
 
 const CardCreator: IReactProps<{
   type: string;
-  image: string;
+  image: string | undefined;
   width: number;
   height: number;
   children: string;

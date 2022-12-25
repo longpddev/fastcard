@@ -3,7 +3,7 @@ import MD5 from 'crypto-js/md5';
 import { curry, isNil } from 'ramda';
 import { KEY_NAME, SPECIAL_KEY } from '@/constants/index';
 import { PayloadAction } from '@reduxjs/toolkit';
-import { IBlobImage } from '@/interfaces/common';
+import { IBlobImage, ICroppedImage } from '@/interfaces/common';
 import { getCookie, setCookie, removeCookies } from 'cookies-next';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context';
 export const titlePage = (title: string) => {
@@ -61,11 +61,14 @@ export const run = <T extends (...args: any) => any>(
 
 export const encodePassword = (password: string) => MD5(password).toString();
 
+// TOKEN_VALUE used both server and client side,
+// the way initial TOKEN_VALUE is different,
+// in server we use cookie function of nextjs and use top or root component (like layout) for set initial TOKEN_VALUE
+// but in client we can't use that way, we use cookie client function to get token and initial TOKEN_VALUE
 const TOKEN_VALUE = {
-  value: '',
+  value: getCookie(TOKEN_KEY) || '',
 };
 export const token = {
-  TOKEN_VALUE: '',
   get: () => TOKEN_VALUE.value,
   set: (token: string) => {
     setCookie(TOKEN_KEY, token);
@@ -147,17 +150,17 @@ export const firstCapitalize = (text: string) => {
   return text[0].toUpperCase() + text.slice(1, text.length);
 };
 
-// export const getFileNameWithExtension = (objectFile: IBlobImage) =>
-//   objectFile.fileName + '.' + objectFile.extension;
+export const getFileNameWithExtension = (objectFile: ICroppedImage) =>
+  objectFile.fileName + '.' + objectFile.extension;
 
-// export const getFileImageField = (imageOb) =>
-//   imageOb
-//     ? {
-//         file: new File([imageOb.file], getFileNameWithExtension(imageOb)),
-//         width: imageOb.width,
-//         height: imageOb.height,
-//       }
-//     : null;
+export const getFileImageField = (imageOb?: ICroppedImage) =>
+  imageOb
+    ? {
+        file: new File([imageOb.file], getFileNameWithExtension(imageOb)),
+        width: imageOb.width,
+        height: imageOb.height,
+      }
+    : undefined;
 
 export function runIdle<T extends (...argus: any) => void>(
   cb: T,
@@ -177,7 +180,7 @@ export const pastThen = (cb: (v: any) => void) => (result: any) => {
   return result;
 };
 
-type IMaybeInitData = Maybe | Array<any> | null;
+type IMaybeInitData = any;
 
 class Maybe {
   data: Array<any>;

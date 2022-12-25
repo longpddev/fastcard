@@ -8,6 +8,7 @@ import Title from './Title';
 
 export interface IPageTabProps {
   children: Array<JSX.Element> | JSX.Element;
+
   defaultActive: string;
   typeStep: boolean;
   onNext?: (cur: string, next: string) => boolean;
@@ -17,12 +18,6 @@ export interface IPageTabProps {
   controlRef?: { current: any };
 }
 
-/**
- *
- * @param {function} onNext event next step end return false to stop step
- * @param {function} onPrev event prev step end return false to stop step
- * @returns
- */
 const PageTab: IReactChainComponentProps<
   IPageTabProps,
   HTMLElement,

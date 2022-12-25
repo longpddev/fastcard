@@ -14,8 +14,11 @@ export const paramToString = (
 };
 
 export const formatBody = (body?: IRequestBody) => {
-  const isObject = typeof body === 'object';
+  const isObject = body instanceof Object;
   const isEmpty = !Boolean(body);
+  if (typeof window !== 'undefined') {
+    if (body instanceof FormData) return body;
+  }
   // const isFormData = body instanceof FormData;
   // if (isFormData) return body;
   if (isEmpty) return undefined;

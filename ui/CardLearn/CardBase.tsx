@@ -19,7 +19,7 @@ const publicHeightCard = (() => {
 })();
 
 export interface ICardBaseProps {
-  image?: string;
+  image: string | undefined;
   title: JSX.Element;
   width?: number;
   height?: number;
